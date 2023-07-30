@@ -1,0 +1,38 @@
+#!/bin/bash
+
+
+if [ "x$1" = "x" ]; then
+
+   for i in output/*.txt; do
+       F=`echo $i | sed -e 's#output#images#' -e 's#\.txt#\.png#'`
+       if [ ! -e $F ]; then
+           echo $i $F
+           ./harness.py $i > out.svg
+           inkscape -D out.svg -b white -e $F
+           rm out.svg
+       fi
+   done
+
+elif [ "x$1" = "xdata" ]; then
+
+for i in data/lents* data/mays*; do
+
+    F=`echo $i | awk -F / '{print "output/"$2"_"}'`
+    echo $F
+    
+    ./convert.py $i/men ${F}men.txt
+    cat $i/men_r | sed 's/,/,~/g' | awk '{if(index($1,"#")==1){print $0", "}else{print}}' | tr -d '\n' |  sed 's/#/#~/g' | tr '#' '\n' | awk '{if(length($0)>0){print "Results,"$0}}' | sed 's#r*$#t#' | tr '~' '#' >> ${F}men.txt
+
+
+    ./convert.py $i/women ${F}women.txt
+    cat $i/women_r | sed 's/,/,~/g' | awk '{if(index($1,"#")==1){print $0", "}else{print}}' | tr -d '\n' |  sed 's/#/#~/g' | tr '#' '\n' | awk '{if(length($0)>0){print "Results,"$0}}' | sed 's#r*$#t#' | tr '~' '#' >> ${F}women.txt
+
+done
+
+else
+
+   echo $1 | tr '/.' '  ' | awk '{printf("var %s = \"", $2)}'
+   awk '{print $0"\\n\\"}' $1
+   echo "\";"
+
+fi
