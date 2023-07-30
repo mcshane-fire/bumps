@@ -128,7 +128,6 @@ def process_bump(move, crew_num, up, div_head):
     if move[crew_num - up] != 0:
         print("Bumping a crew that has already got a result")
         return False
-    print("Bumping crew %d down %d" % (crew_num-up, up))
     move[crew_num - up] = -up
 
     # find the boat that is currently pointing to this spot
