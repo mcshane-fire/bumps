@@ -128,6 +128,7 @@ def process_bump(move, crew_num, up, div_head):
     if move[crew_num - up] != 0:
         print("Bumping a crew that has already got a result")
         return False
+    print("Bumping crew %d down %d" % (crew_num-up, up))
     move[crew_num - up] = -up
 
     # find the boat that is currently pointing to this spot
@@ -180,8 +181,10 @@ def process_results(event):
                     for day in range(day_num, event['days'], 1):
                         event['div_size'][day] = sizes
 
+
+        print("Current move[%d] = %d" % (crew_num, move[crew_num]))
         # if we've already got a result for this crew, then we can skip over it
-        while crew_num <= div_head and move[crew_num] != 0:
+        while crew_num >= div_head and move[crew_num] != 0:
             if debug:
                 print("Skipping crew:%d, got %d" % (crew_num, move[crew_num]))
             crew_num = crew_num - 1
@@ -286,7 +289,7 @@ def process_results(event):
                 blades = True
 
             event['crews'][crew_num]['gain'] = gain
-            event['crewa'][crew_num]['blades'] = blades
+            event['crews'][crew_num]['blades'] = blades
             event['crews'][nc]['end'] = event['crews'][crew_num]['start']
             
 
