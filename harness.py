@@ -165,8 +165,9 @@ def process_results(event):
         if debug:
             print("\nNew command:%s (day:%d div:%d crew:%d div_head:%d)" % (c, day_num, div_num, crew_num, div_head))
 
+            
         # only allow division size changes between full days of racing, and not before the first day
-        if c[0] == 'd' and crew == len(event['crews'])-1 and day_num > 0 and day_num <= event['days']:
+        if c[0] == 'd' and crew_num == -1 and day_num < event['days']-1:
             # division size change
             sizes = c.replace("<"," ").replace(">"," ").replace("."," ").split()[1:]
             sizes = [ int(x) for x in sizes ]
@@ -177,7 +178,7 @@ def process_results(event):
                 for s in sizes:
                     num += s
                 if num == len(event['crews']):
-                    for day in range(day_num, event['days'], 1):
+                    for day in range(day_num+1, event['days'], 1):
                         event['div_size'][day] = sizes
 
 
@@ -370,13 +371,33 @@ def draw_divisions(out, xoff, yoff, event, space, draw_colours = False):
                     
         top = top + state['scale']
 
-    #XXXXXXXXX
-    #top = yoff
-    #for d in event['div_size']:
-    #    out.add(out.rect(insert=(xoff-space,top), size=((event['days'] * state['scale'])+(space*2), len(d) * state['scale']), stroke='black', fill='none'))
-    #    top = top + (state['scale'] * len(d))
 
-    return top
+    #top = yoff
+    # box around all divisions
+    out.add(out.rect(insert=(xoff-space,yoff), size=((event['days'] * state['scale'])+(space*2), len(event['crews']) * state['scale']), stroke='black', fill='none'))
+
+    # draw in lines between divisions
+    left = xoff-space
+    right = left + space + state['scale']
+    prev_div_height = None
+    for day in range(event['days']):
+        div_height = []
+        top = yoff
+        if day == event['days']-1:
+            right += space
+        for div in range(len(event['div_size'][day])-1):
+            top += event['div_size'][day][div] * state['scale']
+            div_height.append(top)
+            out.add(out.line(start=(left, top), end=(right, top), stroke='black', stroke_width=1))
+
+            if prev_div_height is not None and prev_div_height[div] != div_height[div]:
+                out.add(out.line(start=(left, prev_div_height[div]), end=(left, div_height[div]), stroke='black', stroke_width=1))
+
+        prev_div_height = div_height
+        left = right
+        right += state['scale']
+
+    return yoff + (len(event['crews']) * state['scale'])
 
 def draw_extra_text(out, xoff, yoff, event, extra):
     top = yoff
@@ -443,7 +464,7 @@ def draw_stripes(out, xoff, yoff, width, x2off, event, event2 = None, extra = 0)
         if cn < num:
             swidth = swidth + extra
         if alt == 1:
-            rect = out.add(out.rect(insert=(xoff,top), size=(swidth, state['scale']), fill='lightgray', stroke_width=0))
+            rect = out.add(out.rect(insert=(xoff,top), size=(swidth, state['scale']), fill='lightgray', stroke_opacity=0, stroke_width=0))
             rect.fill(opacity=0.35)
         alt = 1 - alt
         top = top + state['scale']

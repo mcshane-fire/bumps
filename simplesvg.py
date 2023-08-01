@@ -175,12 +175,13 @@ class Text:
 
 
 class Rect:
-    def __init__(self, insert, size, fill, stroke, stroke_width, name, mask):
+    def __init__(self, insert, size, fill, stroke, stroke_width, stroke_opacity, name, mask):
         self.defs = {'insert':insert,
                      'size':size,
                      'fill':fill,
                      'stroke':stroke,
                      'stroke_width':stroke_width,
+                     'stroke_opacity':stroke_opacity,
                      'mask':mask,
                      'id':name}
         
@@ -202,6 +203,8 @@ class Rect:
             args += ' fill-opacity="%g"' % self.defs['opacity']
         if self.defs['stroke'] != None:
             args += ' stroke="%s"' % self.defs['stroke']
+        if self.defs['stroke_opacity'] != None:
+            args += ' stroke_opacity="%g"' % self.defs['stroke_opacity']
         if self.defs['id'] != None:
             args += ' id="%s"' % self.defs['id']
         if 'rx' in self.defs:
@@ -312,8 +315,8 @@ class Drawing:
     def text(self, label, insert, font_size, stroke_width, fill, text_anchor=None, mask=None, decoration=None, vertical_align=None):
         return Text(label, insert, font_size, stroke_width, fill, text_anchor, mask, decoration, vertical_align)
 
-    def rect(self, insert=None, size=None, fill=None, stroke_width=1, stroke=None, name=None, mask=None):
-        return Rect(insert, size, fill, stroke, stroke_width, name, mask)
+    def rect(self, insert=None, size=None, fill=None, stroke_width=1, stroke=None, stroke_opacity=None, name=None, mask=None):
+        return Rect(insert, size, fill, stroke, stroke_width, stroke_opacity, name, mask)
 
     def circle(self, center, r, fill, stroke=None, stroke_width=None, name=None):
         return Circle(center, r, fill, stroke, stroke_width, name)
