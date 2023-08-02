@@ -140,7 +140,7 @@ def process_bump(move, crew_num, up, div_head):
     return True
 
 def process_results(event):
-    debug = True
+    debug = False
 
     event['move'] = []
     event['completed'] = []
@@ -182,7 +182,6 @@ def process_results(event):
                         event['div_size'][day] = sizes
 
 
-        print("Current move[%d] = %d" % (crew_num, move[crew_num]))
         # if we've already got a result for this crew, then we can skip over it
         while crew_num >= div_head and move[crew_num] != 0:
             if debug:
@@ -198,7 +197,8 @@ def process_results(event):
                     print("Run out of days of racing with more results still to go")
                     return
 
-                print("\nMoving to day %d" % day_num)
+                if debug:
+                    print("\nMoving to day %d" % day_num)
                 div_num = len(event['div_size'][day_num])-1
                 crew_num = len(event['crews'])-1
                 div_head = crew_num - event['div_size'][day_num][div_num] + 1
@@ -207,7 +207,8 @@ def process_results(event):
                 crew_num += 1
                 div_head -= event['div_size'][day_num][div_num]
 
-            print("\nMoving to division %d" % (div_num))
+            if debug:
+                print("\nMoving to division %d" % (div_num))
 
         if debug:
             print("Processing command:%s (day:%d div:%d crew:%d div_head:%d: pos:%d)" % (c, day_num, div_num, crew_num, div_head, crew_num - div_head + 1))
@@ -268,7 +269,9 @@ def process_results(event):
             crew_num = crew_num - (size+1)
                 
         elif c == 't':
-            crew = div_head
+            if debug:
+                print("Skipping division, setting crew from %d to div_head-1 %d" % (crew_num, div_head-1))
+            crew_num = div_head-1
             continue
 
         # if we've seen at least one result, mark this division as completed
@@ -318,11 +321,16 @@ def draw_divisions(out, xoff, yoff, event, space, draw_colours = False):
             t = event['move'][day]
             up = t[c]
 
-            #XXXXXX
+            tmp = c
             raceday = True
-            #if event['completed'][day][d] == False and up == 0:
-            #    raceday = False
-
+            for d in range(len(event['div_size'][day])):
+                if tmp < event['div_size'][day][d]:
+                    if event['completed'][day][d] == False and up == 0:
+                        #print("Day %d, crew %d in div %d not raced" % (day, c, d))
+                        raceday = False
+                    break
+                tmp -= event['div_size'][day][d]
+                
             #out.add(out.line(start=(xpos, ypos), end=(xpos+state['scale'], ypos-(up*state['scale'])), stroke=colour, stroke_width=linewidth))
             xpos = xpos + state['scale']
             ypos = ypos - (up*state['scale'])
