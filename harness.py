@@ -144,20 +144,23 @@ def process_results(event):
 
     event['move'] = []
     event['completed'] = []
+    event['skip'] = []
     for d in range(event['days']):
         event['move'].append([0] * len(event['crews']))
+        event['skip'].append([False] * len(event['crews']))
         event['completed'].append([False] * len(event['div_size'][0]))
     
     all = ""
     for r in event['results']:
         all = all + r
 
-    pat = re.compile('r|t|u|o[0-9]+|e-?[0-9]+|w[0-9]+|d<[^>]*>')
+    pat = re.compile('r|t|u|o[0-9]+|e-?[0-9]+|v-?[0-9]+|w[0-9]+|x|d<[^>]*>')
     m = pat.findall(all)
     day_num = 0                                                   # 0 is the first day
     div_num = len(event['div_size'][day_num])-1                   # 0 is the first division
     crew_num = len(event['crews'])-1                              # 0 is the headship crew
     div_head = crew_num - event['div_size'][day_num][div_num] + 1 # index of the head crew in the current division
+    crews_withdrawn = 0
     
     for c in m:
         move = event['move'][day_num]
@@ -171,13 +174,14 @@ def process_results(event):
             # division size change
             sizes = c.replace("<"," ").replace(">"," ").replace("."," ").split()[1:]
             sizes = [ int(x) for x in sizes ]
-            
-            print("Div size change: %s" % sizes)
+
+            if debug:
+                print("Div size change: %s" % sizes)
             if len(sizes) == len(event['div_size'][0]):
                 num = 0
                 for s in sizes:
                     num += s
-                if num == len(event['crews']):
+                if num == len(event['crews']) - crews_withdrawn:
                     for day in range(day_num+1, event['days'], 1):
                         event['div_size'][day] = sizes
 
@@ -185,7 +189,7 @@ def process_results(event):
         # if we've already got a result for this crew, then we can skip over it
         while crew_num >= div_head and move[crew_num] != 0:
             if debug:
-                print("Skipping crew:%d, got %d" % (crew_num, move[crew_num]))
+                print("Skipping crew:%d, got %s" % (crew_num, move[crew_num]))
             crew_num = crew_num - 1
 
         if crew_num < div_head:
@@ -199,8 +203,9 @@ def process_results(event):
 
                 if debug:
                     print("\nMoving to day %d" % day_num)
+                move = event['move'][day_num]
                 div_num = len(event['div_size'][day_num])-1
-                crew_num = len(event['crews'])-1
+                crew_num = len(event['crews'])-1-crews_withdrawn
                 div_head = crew_num - event['div_size'][day_num][div_num] + 1
             else:
                 div_num -= 1
@@ -232,7 +237,7 @@ def process_results(event):
             crew_num = crew_num - 1
             if debug:
                 print("Overbumped %d, moving to crew %d" % (up, crew_num))
-        elif c.startswith("e"):
+        elif c.startswith("e") or c.startswith("v"):
             up = int(c[1:])
 
             # safe to call even if this isn't a sandwich crew position
@@ -244,6 +249,11 @@ def process_results(event):
             crew_num = crew_num - 1
             if debug:
                 print("Exact move %d to crew %d, was %d now %d, moving to crew %d" % (up, p, move[p]-up, move[p], crew_num))
+            if c.startswith("v"):
+                if debug:
+                    print("Virtual result, crew %d didn't race" % (p))
+                event['skip'][day_num][p] = True
+                
         elif c.startswith("w"):
             size = int(c[1:])
             if crew_num - size < div_head:
@@ -267,7 +277,17 @@ def process_results(event):
                 print("Washing machine crew %d down %d.  Moving to crew %d" % (crew_num-size, size, crew_num-size-1))
             move[crew_num - size] = -size
             crew_num = crew_num - (size+1)
-                
+
+        elif c == 'x':
+            if debug:
+                print("Crew %d withdrawn, moving to crew %d" % (crew_num, crew_num-1))
+            move[crew_num] = None
+            crews_withdrawn += 1
+            crew_num -= 1
+            event['div_size'][day_num][div_num] -= 1
+            for day in range(day_num+1, event['days'], 1):
+                event['div_size'][day][div_num] = event['div_size'][day_num][div_num]
+            
         elif c == 't':
             if debug:
                 print("Skipping division, setting crew from %d to div_head-1 %d" % (crew_num, div_head-1))
@@ -283,6 +303,10 @@ def process_results(event):
         gain = 0
         blades = True
         for m in event['move']:
+            if m[nc] == None:
+                event['crews'][crew_num]['gain'] = None
+                break
+            
             gain = gain + m[nc]
             if m[nc] <= 0:
                 blades = False
@@ -314,6 +338,7 @@ def draw_divisions(out, xoff, yoff, event, space, draw_colours = False):
                 linewidth = 2
 
         lines = []
+        skipped = []
         points = []
         last = [xpos, ypos]
             
@@ -321,6 +346,10 @@ def draw_divisions(out, xoff, yoff, event, space, draw_colours = False):
             t = event['move'][day]
             up = t[c]
 
+            if up is None:
+                out.add(out.circle(center=last, r=3, fill=colour))
+                break
+            
             tmp = c
             raceday = True
             for d in range(len(event['div_size'][day])):
@@ -330,8 +359,10 @@ def draw_divisions(out, xoff, yoff, event, space, draw_colours = False):
                         raceday = False
                     break
                 tmp -= event['div_size'][day][d]
+
+            if event['skip'][day][c] == True:
+                raceday = False
                 
-            #out.add(out.line(start=(xpos, ypos), end=(xpos+state['scale'], ypos-(up*state['scale'])), stroke=colour, stroke_width=linewidth))
             xpos = xpos + state['scale']
             ypos = ypos - (up*state['scale'])
 
@@ -339,9 +370,11 @@ def draw_divisions(out, xoff, yoff, event, space, draw_colours = False):
                 if len(points) == 0:
                     points.append(last)
                 points.append([xpos, ypos])
-            elif len(points) > 0:
-                lines.append(points)
-                points = []
+            else:
+                if len(points) > 0:
+                    lines.append(points)
+                    points = []
+                skipped.append([last, [xpos, ypos]])
                     
             last = [xpos, ypos]
                 
@@ -372,9 +405,8 @@ def draw_divisions(out, xoff, yoff, event, space, draw_colours = False):
             for l in lines:
                 out.add(out.polyline(points=l, stroke=colour, stroke_width=linewidth, fill='none'))
 
-        for i in range(len(lines) - 1):
-            p = [lines[i][-1], lines[i+1][0]]
-            out.add(out.polyline(points=p, stroke="lightgray", stroke_width=1, fill='none'))
+        for line in skipped:
+            out.add(out.polyline(points=line, stroke="lightgray", stroke_width=1, fill='none'))
                 
                     
         top = top + state['scale']
@@ -451,12 +483,17 @@ def draw_crews(out, xoff, yoff, event, gain, align):
     top = yoff
     for crew in event['crews']:
         top = top + state['scale']
+        offset = 0        
+        if gain == 1:
+            if crew['gain'] is None:
+                continue
+            offset = state['scale'] * crew['gain']
         colour = 'black'
         if crew['highlight']:
             colour = 'blue'
         elif crew['blades']:
             colour = 'red'
-        out.add(out.text(crew['start'], insert=(xoff,top-3-(gain * state['scale'] * crew['gain'])), font_size=13, stroke_width=0, fill=colour, text_anchor=align))
+        out.add(out.text(crew['start'], insert=(xoff,top-3-offset), font_size=13, stroke_width=0, fill=colour, text_anchor=align))
 
 def draw_stripes(out, xoff, yoff, width, x2off, event, event2 = None, extra = 0):
     top = yoff
