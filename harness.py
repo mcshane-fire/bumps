@@ -278,6 +278,12 @@ def process_results(event):
         # if we've seen at least one result, mark this division as completed
         event['completed'][day_num][div_num] = True
 
+    full_set = False
+    if day_num == event['days']-1 and crew_num == -1:
+        if debug:
+            print("Completed all divisions & days")
+        full_set = True
+        
     # work out finishing names and blades, etc
     for crew_num in range(len(event['crews'])):
         nc = crew_num;
@@ -296,7 +302,8 @@ def process_results(event):
             nc = nc - m[nc]
 
         if finished:
-            if nc == 0 and event['completed'][-1][0] == True:
+            # only award headship blades if we've completed all the racing
+            if nc == 0 and full_set == True:
                 blades = True
 
             event['crews'][crew_num]['gain'] = gain
@@ -304,17 +311,16 @@ def process_results(event):
             event['crews'][nc]['end'] = event['crews'][crew_num]['start']
             
 
-
 def step_on(event):
-    for div in event['divisions']:
-        for crew in div:
-            crew['start'] = crew['end']
-            crew['gain'] = 0
-            crew['blades'] = False
+    for crew in event['crews']:
+        crew['start'] = crew['end']
+        crew['gain'] = 0
+        crew['blades'] = False
 
     event['year'] = event['year']+1
     del event['move']
     del event['completed']
+    del event['skip']
     event['results'] = []
         
         
@@ -334,9 +340,11 @@ def write_file(state, name):
     if event['set'] in state['abbrev_map']:
         abbrev = state['abbrev_map'][event['set']]
 
-    for i in event['divisions']:
+    crew_num = 0
+    for div_size in event['div_size'][-1]:
         output.write("Division")
-        for crew in i:
+        for i in range(div_size):
+            crew = event['crews'][crew_num+i]
             for p in abbrev:
                 if crew['start'].startswith(abbrev[p]['name']):
                     fin = p
@@ -349,6 +357,8 @@ def write_file(state, name):
                     output.write(",%s" % fin)
                     break
         output.write("\n")
+        crew_num += div_size
+        
     output.write("\n")
     if len(event['results']) > 0:
         output.write("Results\n")
@@ -399,7 +409,7 @@ state = {
     'highlight' : None,
     'readstdin' : False,
     'output' : None,
-    'stepon' : False,
+    'stepon' : None,
     
     'svg_config' : {'scale' : 16,
                     'right' : 128, #scale*8
@@ -412,20 +422,30 @@ state = {
                     'Torpids' : abbreviations.ocol}
 }
     
-sys.argv.pop(0)
+cmd = sys.argv.pop(0)
+if len(sys.argv) == 0:
+    print("%s   Usage notes" % cmd)
+    print(" -c          : Enables per-club colours in results lines")
+    print(" -r          : Enables reading results from stdin")
+    print(" -h <prefix> : Enables highlights for crews with names starting with <prefix>")
+    print(" -w <file>   : Writes svg output to <file>")
+    print(" -s <file>   : Writes template for next year into <file>")
+    print(" Any additional arguments are treated as files containing results to be read in")
+    sys.exit()
+
 while len(sys.argv) > 0:
     arg = sys.argv.pop(0)
     
     if arg == '-c':
-        state['colours'] = True
+        state['svg_config']['colours'] = True
+    elif arg == '-r':
+        state['readstdin'] = True
+    elif arg == '-h':
+        state['highlight'] = sys.argv.pop(0)
     elif arg == '-w':
         state['output'] = sys.argv.pop(0)
     elif arg == '-s':
-        state['stepon'] = True
-    elif arg == '-h':
-        state['highlight'] = sys.argv.pop(0)
-    elif arg == '-r':
-        state['readstdin'] = True
+        state['stepon'] = sys.argv.pop(0)
     else:
         sys.argv.insert(0, arg)
         break
@@ -441,10 +461,10 @@ for s in state['sets']:
     #get_stats(s, days)
 
 if len(state['sets']) == 1:
-    if state['stepon'] == False:
+    if state['stepon'] is None:
         draw.write_svg(state['output'], state['sets'][0], state['svg_config'])
     else:
         step_on(state['sets'][0])
-        write_file(state, "out.txt")
+        write_file(state, state['stepon'])
 else:
     draw.write_multi_svg(state['output'], state['sets'], state['svg_config'])
