@@ -8,12 +8,9 @@
 #   which day overbumps occur, etc
 # add cra club names
 # figure out how to tell how long a piece of text is
-# ability to cancel a division, so we don't see the lines (2001 & 2002 lents men)
-
 
 import sys, re
-import simplesvg, abbreviations
-
+import abbreviations, draw
 
 def add_crew(crews, str, abbrev):
     #print str
@@ -30,9 +27,8 @@ def add_crew(crews, str, abbrev):
         crew['college'] = abbrev[short]
 
     crew['start'] = str
-    crew['end'] = str
+    crew['end'] = None
     crews.append(crew)
-  
 
 def read_file(state, name, highlight = None):
     abbrev = {}
@@ -96,21 +92,6 @@ def read_file(state, name, highlight = None):
                 crew['highlight'] = True
                     
     return ret
-
-#def create_blank_move(event):
-#    event['move'] = []
-#    event['completed'] = []
-#    for d in range(0, event['days']):
-#        today = []
-#        comp = []
-#        for n in event['divisions']:
-#            div = []
-#            for c in n:
-#                div.append(0)
-#            today.append(div)
-#            comp.append(False)
-#        event['move'].append(today)
-#        event['completed'].append(comp)
 
 def find_sandwich_boat(move, position):
     c = position
@@ -302,9 +283,11 @@ def process_results(event):
         nc = crew_num;
         gain = 0
         blades = True
+        finished = True
         for m in event['move']:
             if m[nc] == None:
                 event['crews'][crew_num]['gain'] = None
+                finished = False
                 break
             
             gain = gain + m[nc]
@@ -312,6 +295,7 @@ def process_results(event):
                 blades = False
             nc = nc - m[nc]
 
+        if finished:
             if nc == 0 and event['completed'][-1][0] == True:
                 blades = True
 
@@ -320,324 +304,6 @@ def process_results(event):
             event['crews'][nc]['end'] = event['crews'][crew_num]['start']
             
 
-def draw_divisions(out, xoff, yoff, event, space, draw_colours = False):
-    top = yoff
-    for crew_num in range(len(event['crews'])):
-        ypos = top + (state['scale']/2)
-        xpos = xoff
-        c = crew_num
-        crew = event['crews'][crew_num]
-        colour = "gray"
-        linewidth = 1
-        if draw_colours == False:
-            if crew['highlight']: 
-                colour = "blue"
-                linewidth = 3
-            elif crew['blades']:
-                colour = "red"
-                linewidth = 2
-
-        lines = []
-        skipped = []
-        points = []
-        last = [xpos, ypos]
-            
-        for day in range(0, event['days']):
-            t = event['move'][day]
-            up = t[c]
-
-            if up is None:
-                out.add(out.circle(center=last, r=3, fill=colour))
-                break
-            
-            tmp = c
-            raceday = True
-            for d in range(len(event['div_size'][day])):
-                if tmp < event['div_size'][day][d]:
-                    if event['completed'][day][d] == False and up == 0:
-                        #print("Day %d, crew %d in div %d not raced" % (day, c, d))
-                        raceday = False
-                    break
-                tmp -= event['div_size'][day][d]
-
-            if event['skip'][day][c] == True:
-                raceday = False
-                
-            xpos = xpos + state['scale']
-            ypos = ypos - (up*state['scale'])
-
-            if raceday:
-                if len(points) == 0:
-                    points.append(last)
-                points.append([xpos, ypos])
-            else:
-                if len(points) > 0:
-                    lines.append(points)
-                    points = []
-                skipped.append([last, [xpos, ypos]])
-                    
-            last = [xpos, ypos]
-                
-            c = c - up;
-
-        if len(points) > 0:
-            lines.append(points)
-
-        if draw_colours and 'college' in crew and 'colours' in crew['college']:
-            colours = crew['college']['colours']
-            if len(colours) == 1:
-                for l in lines:
-                    out.add(out.polyline(points=l, stroke=colours[0], stroke_width=3, fill='none'))
-            else:
-                arr = [state['dash'], (state['dash']/2) * (len(colours)-1)]
-                off = 0
-                nextoff = arr[1]
-                for l in lines:
-                    for c in colours:
-                        polyline = out.polyline(points=l, stroke=c, stroke_width=3, fill='none')
-                        polyline.dasharray(arr, offset=off)
-                        out.add(polyline)
-                        off = nextoff
-                        nextoff = nextoff - (state['dash']/2)
-                        arr = [state['dash']/2, (state['dash']/2) * len(colours)]
-
-        else:
-            for l in lines:
-                out.add(out.polyline(points=l, stroke=colour, stroke_width=linewidth, fill='none'))
-
-        for line in skipped:
-            out.add(out.polyline(points=line, stroke="lightgray", stroke_width=1, fill='none'))
-                
-                    
-        top = top + state['scale']
-
-
-    #top = yoff
-    # box around all divisions
-    out.add(out.rect(insert=(xoff-space,yoff), size=((event['days'] * state['scale'])+(space*2), len(event['crews']) * state['scale']), stroke='black', fill='none'))
-
-    # draw in lines between divisions
-    left = xoff-space
-    right = left + space + state['scale']
-    prev_div_height = None
-    for day in range(event['days']):
-        div_height = []
-        top = yoff
-        if day == event['days']-1:
-            right += space
-        for div in range(len(event['div_size'][day])-1):
-            top += event['div_size'][day][div] * state['scale']
-            div_height.append(top)
-            out.add(out.line(start=(left, top), end=(right, top), stroke='black', stroke_width=1))
-
-            if prev_div_height is not None and prev_div_height[div] != div_height[div]:
-                out.add(out.line(start=(left, prev_div_height[div]), end=(left, div_height[div]), stroke='black', stroke_width=1))
-
-        prev_div_height = div_height
-        left = right
-        right += state['scale']
-
-    return yoff + (len(event['crews']) * state['scale'])
-
-def draw_extra_text(out, xoff, yoff, event, extra):
-    top = yoff
-    for div_num in range(len(event['div_size'][0])):
-        label = None
-        fontsize = 25
-        colour = 'lightgray'
-        num = event['div_size'][0][div_num]
-
-        if extra == 'number' and num > 8:
-            label = "Division %d" % (div_num+1)
-        elif extra == 'title' and num > 12:
-            label = "%s %d - %s" % (event['short'], event['year'], event['gender'])
-        elif extra == 'both':
-            fontsize = 12
-            colour = 'darkred'
-            if num > 10:
-                label = "%s %d - %s, Division %d" % (event['short'], event['year'], event['gender'], div_num+1)
-            else:
-                label = "Division %d" % (div_num+1)
-
-        if label != None:
-            text = out.add(out.text(label, insert=None, font_size=fontsize, stroke_width=0, fill=colour))
-            text.rotate(90, [xoff, top+5])
-
-        top = top + (state['scale'] * num)
-
-
-def draw_numbers(out, xoff, yoff, event, align, reset = False):
-    top = yoff
-    number = 1
-    div_num = 0
-    
-    for crew in event['crews']:
-        top = top + state['scale']
-        out.add(out.text(str(number), insert=(xoff, top-3), font_size=13, stroke_width=0, fill='gray', text_anchor=align))
-        number = number + 1
-        if reset and number-1 == event['div_size'][0][div_num]:
-            number = 1
-            div_num += 1
-
-def draw_crews(out, xoff, yoff, event, gain, align):
-    top = yoff
-    for crew in event['crews']:
-        top = top + state['scale']
-        offset = 0        
-        if gain == 1:
-            if crew['gain'] is None:
-                continue
-            offset = state['scale'] * crew['gain']
-        colour = 'black'
-        if crew['highlight']:
-            colour = 'blue'
-        elif crew['blades']:
-            colour = 'red'
-        out.add(out.text(crew['start'], insert=(xoff,top-3-offset), font_size=13, stroke_width=0, fill=colour, text_anchor=align))
-
-def draw_stripes(out, xoff, yoff, width, x2off, event, event2 = None, extra = 0):
-    top = yoff
-    alt = 0
-
-    num = 0
-    if event2 != None:
-        num = len(event2['crews'])
-
-    cn = 0
-    for crew in event['crews']:
-        swidth = width
-        if cn < num:
-            swidth = swidth + extra
-        if alt == 1:
-            rect = out.add(out.rect(insert=(xoff,top), size=(swidth, state['scale']), fill='lightgray', stroke_opacity=0, stroke_width=0))
-            rect.fill(opacity=0.35)
-        alt = 1 - alt
-        top = top + state['scale']
-        cn = cn + 1
-
-    if x2off != None and False:
-        alt = 0
-        for r in range(0, event['days']):
-            if alt == 1:
-                rect = out.add(out.rect(insert=(x2off + (r * state['scale']), yoff), size=(state['scale'], top-yoff), fill='lightgray', stroke_width=0))
-                rect.fill(opacity=0.15)
-            alt = 1 - alt
-
-def draw_join(out, xoff, yoff, event, event2):
-    added = []
-    yoff = yoff + (state['scale']/2)
-    cn2 = 0
-    for div2 in event2['divisions']:
-        for crew2 in div2:
-            cn = 0
-            found = False
-            for div in event['divisions']:
-                for crew in div:
-                    if crew2['start'] == crew['end']:
-                        found = True
-                        break
-                    cn = cn + 1
-                if found:
-                    break
-            if found:
-                out.add(out.line(start=(xoff, yoff + (state['scale']*cn)), end=(xoff + state['sep'], yoff + (state['scale']*cn2)), stroke = 'lightgray', stroke_width = 1))
-            else:
-                added.append({'height' : (yoff + (state['scale'] * cn2)), 'crew' : crew2})
-            cn2 = cn2 + 1
-
-    xsep = state['sep'] / (len(added)+1)
-    xpos = xoff + xsep
-    ynext = yoff + (state['scale'] * event['crews']) - (state['scale']/2) + 4
-    ysep = 12
-    for crew in added:
-        out.add(out.line(start=(xpos, crew['height']), end=(xpos, ynext), stroke = 'gray', stroke_width = 1))
-        out.add(out.line(start=(xpos, crew['height']), end=(xoff + state['sep'], crew['height']), stroke = 'gray', stroke_width = 1))
-        out.add(out.text(crew['crew']['start'], insert=(xpos, ynext+8), font_size=9, stroke_width=0, fill='black', text_anchor='end'))
-        xpos = xpos + xsep
-        ynext = ynext + ysep
-
-    return ynext
-    
-
-def write_svg(state):
-    out = simplesvg.Drawing()
-
-    event = state['sets'][0]
-    left = 15+25
-    
-    draw_stripes(out, left, 0, (state['right']*2) + (state['scale'] * event['days']), state['right'], event)
-    draw_numbers(out, left+3, 0, event, 'start', True)
-    draw_numbers(out, left + (2*state['right']) + (state['scale'] * event['days']) -3, 0, event, 'end', False)
-    #draw_extra_text(out, left+20, 0, event, 'number')
-    #draw_extra_text(out, left + (2*state['right']) + (state['scale'] * event['days']) -40, 0, event, 'name') 
-    draw_extra_text(out, left-15, 0, event, 'both')
-
-    draw_crews(out, left + state['right']-3, 0, event, 0, 'end')
-    draw_crews(out, left + state['right'] + (state['scale'] * event['days']) + 3, 0, event, 1, 'start')
-
-    h = draw_divisions(out, left + state['right'], 0, event, state['right'], draw_colours = state['colours'])
-    
-    out.setsize(left + (state['right']*2) + (state['scale'] * event['days']), h)
-
-    if state['output'] is None:
-        print(out.tostring())
-    else:
-        fp = open(state['output'], 'w')
-        fp.write(out.tostring())
-        fp.close()
-                    
-
-def write_multi_svg(state):
-    out = simplesvg.Drawing()
-    sets = state['sets']
-    
-    width = 0
-    height = 0
-    top = 20
-
-    xpos = state['right']
-    eleft = state['right']
-    for event_num in range(0, len(sets)):
-        event = sets[event_num]
-        event2 = event
-        extra = state['sep']
-        if event_num < len(sets)-1:
-            event2 = sets[event_num+1]
-        else:
-            extra = state['right']
-
-        out.add(out.text(str(event['year']), insert=(xpos+(state['scale'] * event['days'])/2, top-3), font_size=13, stroke_width=0, fill='black', text_anchor='middle'))
-        draw_stripes(out, xpos-eleft, top, eleft + (state['scale'] * event['days']), xpos, event, event2, extra)
-        eleft = 0
-        xpos = xpos + (state['scale'] * event['days']) + state['sep']
-
-        if event_num < len(sets)-1:
-            h = draw_join(out, xpos-state['sep'], top, event, event2)
-            if h > height:
-                height = h
-
-    width = xpos - state['sep'] + state['right']
-    draw_numbers(out, 3, top, sets[0], 'start', False)
-    draw_numbers(out, xpos - state['sep'] + state['right'] - 3, top, sets[-1], 'end', False)
-
-    draw_crews(out, state['right']-3, top, sets[0], 0, 'end')
-    draw_crews(out, xpos - state['sep'] + 3, top, sets[-1], 1, 'start')
-
-    xpos = state['right']
-    for event in sets:
-        h = draw_divisions(out, xpos, top, event, 0, draw_colours = state['colours'])
-        if h > height:
-            height = h
-        xpos = xpos + (state['scale'] * event['days']) + state['sep']
-
-    out.setsize(width, height)
-
-    if state['output'] is None:
-        print(out.tostring())
-    else:
-        fp = open(state['output'], 'w')
-        fp.write(out.tostring())
-        fp.close()
 
 def step_on(event):
     for div in event['divisions']:
@@ -729,16 +395,17 @@ def get_stats(event, days):
     #print "%s/%s/%s %g %s" % (event['short'], event['year'], event['gender'], get_ave(upa), upa)
 
 state = {
+    'sets' : [],
     'highlight' : None,
     'readstdin' : False,
-    'colours' : False,
     'output' : None,
     'stepon' : False,
-    'scale' : 16,
-    'right' : 130,
-    'sep' : 32, #scale*2
-    'dash' : 6,
-    'sets' : [],
+    
+    'svg_config' : {'scale' : 16,
+                    'right' : 128, #scale*8
+                    'sep' : 32, #scale*2
+                    'dash' : 6,
+                    'colours' : False},
     'abbrev_map' : {'Summer Eights' : abbreviations.ocol,
                     'Lent Bumps' : abbreviations.ccol,
                     'May Bumps' : abbreviations.ccol,
@@ -764,26 +431,20 @@ while len(sys.argv) > 0:
         break
 
 while len(sys.argv) > 0:
-    #print "doing %s" % sys.argv[0]
     state['sets'].append(read_file(state, sys.argv.pop(0), state['highlight']))
 
 if state['readstdin']:
     state['sets'].append(read_file(state, None, state['highlight']))
 
-#days = [{}, {}, {}, {}]
-
 for s in state['sets']:
     process_results(s)
     #get_stats(s, days)
 
-#for d in days:
-#    print "%g %s" % (get_ave(d), d)
-
 if len(state['sets']) == 1:
     if state['stepon'] == False:
-        write_svg(state)
+        draw.write_svg(state['output'], state['sets'][0], state['svg_config'])
     else:
         step_on(state['sets'][0])
         write_file(state, "out.txt")
 else:
-    write_multi_svg(state)
+    draw.write_multi_svg(state['output'], state['sets'], state['svg_config'])
