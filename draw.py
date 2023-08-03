@@ -143,7 +143,7 @@ def draw_extra_text(svg_config, out, xoff, yoff, event, extra):
 
         if label != None:
             text = out.add(out.text(label, insert=None, font_size=fontsize, stroke_width=0, fill=colour))
-            text.rotate(90, [xoff, top+5])
+            text.rotate(90, [xoff - fontsize - 2, top+5])
 
         top = top + (svg_config['scale'] * num)
 
@@ -247,14 +247,15 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
 def write_svg(output, event, svg_config):
     out = simplesvg.Drawing()
 
-    left = 15+25
+    # leave space for division titles down the left hand side
+    left = svg_config['scale'] * 2
     
     draw_stripes(svg_config, out, left, 0, (svg_config['right']*2) + (svg_config['scale'] * event['days']), svg_config['right'], event)
     draw_numbers(svg_config, out, left+3, 0, event, 'start', True)
     draw_numbers(svg_config, out, left + (2*svg_config['right']) + (svg_config['scale'] * event['days']) -3, 0, event, 'end', False)
     #draw_extra_text(svg_config, out, left+20, 0, event, 'number')
     #draw_extra_text(svg_config, out, left + (2*svg_config['right']) + (svg_config['scale'] * event['days']) -40, 0, event, 'name') 
-    draw_extra_text(svg_config, out, left-15, 0, event, 'both')
+    draw_extra_text(svg_config, out, left, 0, event, 'both')
 
     draw_crews(svg_config, out, left + svg_config['right']-3, 0, event, 0, 'end')
     draw_crews(svg_config, out, left + svg_config['right'] + (svg_config['scale'] * event['days']) + 3, 0, event, 1, 'start')
