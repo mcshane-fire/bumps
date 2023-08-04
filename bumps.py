@@ -83,8 +83,12 @@ def read_file(name, highlight = None):
                     
     return ret
 
-def find_sandwich_boat(move, position):
-    c = position
+def find_sandwich_boat(move, position, start = None):
+    if start is None:
+        c = position
+    else:
+        c = start
+        
     while c < len(move) and c - move[c] != position:
         c += 1
 
@@ -125,20 +129,20 @@ def process_results(event):
     for r in event['results']:
         all = all + r
 
-    pat = re.compile('r|t|u|o[0-9]+|e-?[0-9]+|v-?[0-9]+|w[0-9]+|x|d<[^>]*>')
+    pat = re.compile('r|t|u|o[0-9]+|e-?[0-9]+|v-?[0-9]+|w[0-9]+|x|d<[^>]*>|p')
     m = pat.findall(all)
     day_num = 0                                                   # 0 is the first day
     div_num = len(event['div_size'][day_num])-1                   # 0 is the first division
     crew_num = len(event['crews'])-1                              # 0 is the headship crew
     div_head = crew_num - event['div_size'][day_num][div_num] + 1 # index of the head crew in the current division
     crews_withdrawn = 0
+    penalty = 0
     
     for c in m:
         move = event['move'][day_num]
         
         if debug:
             print("\nNew command:%s (day:%d div:%d crew:%d div_head:%d)" % (c, day_num, div_num, crew_num, div_head))
-
             
         # only allow division size changes between full days of racing, and not before the first day
         if c[0] == 'd' and crew_num == -1 and day_num < event['days']-1:
@@ -217,6 +221,27 @@ def process_results(event):
                 return
 
             move[p] += up
+
+            if penalty != 0:
+                # figure out which crews benefitted from this move
+                benefit = []
+                for ep in range(1, penalty+1):
+                    p2 = find_sandwich_boat(move, p-move[p]+ep, crew_num)
+                    if p2 is None:
+                        print("Can't find source for crew %d" % (p-move[p]+ep))
+                        return
+                    benefit.append(p2)
+                    if debug:
+                        print("Found position %d:%d that ends is %d position, benefits by 1" % (ep, p2, p-move[p]+ep))
+                
+                move[p] -= penalty
+                for ep in benefit:
+                    move[ep] += 1
+
+                if debug:
+                    print("Applying penalty %d to crew %d, reverse penalty to crew %d" % (penalty, p, p2))
+                penalty = 0
+            
             crew_num = crew_num - 1
             if debug:
                 print("Exact move %d to crew %d, was %d now %d, moving to crew %d" % (up, p, move[p]-up, move[p], crew_num))
@@ -264,6 +289,11 @@ def process_results(event):
                 print("Skipping division, setting crew from %d to div_head-1 %d" % (crew_num, div_head-1))
             crew_num = div_head-1
             continue
+
+        elif c == 'p':
+            penalty += 1
+            if debug:
+                print("Storing %d penalty bump to apply to crew %d" % (penalty, crew_num))
 
         # if we've seen at least one result, mark this division as completed
         event['completed'][day_num][div_num] = True
