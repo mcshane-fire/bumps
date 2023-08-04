@@ -201,12 +201,15 @@ def draw_stripes(svg_config, out, xoff, yoff, width, x2off, event, event2 = None
         cn = cn + 1
 
     if x2off != None:
-        alt = 0
-        for r in range(0, event['days']):
-            if alt == 1:
-                rect = out.add(out.rect(insert=(x2off + (r * svg_config['scale']), yoff), size=(svg_config['scale'], top-yoff), fill='lightgray', stroke_width=0))
-                rect.fill(opacity=0.2)
-            alt = 1 - alt
+        alt = 1
+        for r in range(1, event['days']):
+            if False:
+                if alt == 1:
+                    rect = out.add(out.rect(insert=(x2off + (r * svg_config['scale']), yoff), size=(svg_config['scale'], top-yoff), fill='lightgray', stroke_width=0))
+                    rect.fill(opacity=0.2)
+                alt = 1 - alt
+            else:
+                out.add(out.line(start=(x2off + (r * svg_config['scale']), yoff), end=(x2off + (r * svg_config['scale']), top), stroke_width=0.2, stroke='lightgray'))
 
 def draw_join(svg_config, out, xoff, yoff, event, event2):
     added = []
