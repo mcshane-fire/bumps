@@ -253,7 +253,7 @@ def write_svg(output, event, svg_config):
     # leave space for division titles down the left hand side
     left = svg_config['scale'] * 2
     
-    draw_stripes(svg_config, out, left, 0, (svg_config['right']*2) + (svg_config['scale'] * event['days']), svg_config['right'], event)
+    draw_stripes(svg_config, out, left, 0, (svg_config['right']*2) + (svg_config['scale'] * event['days']), left+svg_config['right'], event)
     draw_numbers(svg_config, out, left+3, 0, event, 'start', True)
     draw_numbers(svg_config, out, left + (2*svg_config['right']) + (svg_config['scale'] * event['days']) -3, 0, event, 'end', False)
     #draw_extra_text(svg_config, out, left+20, 0, event, 'number')
