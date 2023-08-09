@@ -1,0 +1,2 @@
+Year NDay Positions each day    Flags 1=bumped & got bumped
+2017   4   73  73  73  72  71   0   0   0   0   0

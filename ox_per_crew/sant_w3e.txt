@@ -1,0 +1,2 @@
+Year NDay Positions each day    ; Flags -1=norace, 1=bumped & got bumped
+2022   4  77  77  76  76  75   0   0   0   0

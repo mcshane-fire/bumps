@@ -1,0 +1,2 @@
+Year NDay Positions each day    Flags -1=norace, 1=bumped & got bumped
+2021   4   64  64  63  63  62   0   0   0   0
