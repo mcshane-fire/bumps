@@ -1,6 +1,6 @@
 #!/bin/python3
 
-import sys, re, re
+import sys, re, os
 import abbreviations
 
 def add_div(list, output, abbrev):
@@ -119,8 +119,217 @@ def print_div(msg, div):
         else:
             print("%d: %s %s" % (i+1, div[i]['name'], div[i]['results']))
     print("")
-    
-    
+
+def skipped(results, day, div, position):
+    if 'skipped' not in results[div][position]:
+        return False
+
+    return results[div][position]['skipped'][day]
+
+def generate_from_moves(output, ret, debug):
+    output.write("Set,%s\n" % ret['set'])
+    output.write("Short,%s\n" % ret['short'])
+    output.write("Gender,%s\n" % ret['gender'])
+    output.write("Year,%s\n" % ret['year'])
+    if ret['days'] != 4:
+        output.write("Days,%s\n\n" % ret['days'])
+    else:
+        output.write("\n")
+
+    npat = re.compile("^(.*) ([0-9]+)$")
+
+    for div in ret['divisions']:
+        s = "Division"
+        for c in div:
+            s += ",%s" % c['name']
+        output.write("%s\n" % s)
+
+    output.write("\nResults\n")
+
+    cur_day = []
+    for div in range(ret['num_divisions']):
+        cur_day.append([])
+        for c in ret['divisions'][div]:
+            cur_day[-1].append(c)
+        if div != ret['num_divisions']-1:
+            cur_day[-1].append(None) # except for last div, add empty entry for sandwich boat
+        
+    for day in range(ret['days']):
+        if debug:
+            print("\n\n-------------- DAY %s --------------\n\n" % (day+1))
+
+        next_day = []
+        for div in range(ret['num_divisions']):
+            next_day.append([None] * len(cur_day[div]))
+            if div != ret['num_divisions']-1:
+                next_day[-1].append(None) # except for last div, add dummy entry for sandwich boat
+
+        results = ""
+        for div in range(ret['num_divisions']-1, -1, -1):
+            d = cur_day[div]
+            squash = [False] * len(d)
+            if debug:
+                print_div("Division %d at start of race" % (div+1), d)
+
+            withdraw = []
+                
+            for ci in range(len(d)-1, -1, -1):
+                c = d[ci]
+                if c is None:
+                    print("Missing crew at position %d" % (ci+1))
+                    return False
+
+                if debug:
+                    print("Pos:%d, crew %s, result:%s" % (ci+1, c['name'], c['results'][day]))
+
+                if c['results'][day] is None:
+                    # crew withdrew
+                    withdraw.append(ci)
+                    results += "x"
+                    continue
+                    
+                npos = ci - c['results'][day]
+                ndiv = div
+                tpos = npos
+                tdiv = ndiv
+                tres = c['results'][day]
+                sandwich = False
+                if npos < 0:
+                    if div == 0:
+                        print("Bumping up above headship")
+                        return False
+                    else:
+                        ndiv -= 1
+                        npos += len(cur_day[ndiv])
+                        tpos = 0 # end of the first race they ended up top of that division
+                        tres = ci # in the first race they went up ci places
+                        # put them in sandwich boat for next division
+                        cur_day[div-1][-1] = {'name' : c['name'], 'results' : []}
+                        for rd in range(ret['days']):
+                            cur_day[div-1][-1]['results'].append(c['results'][rd])
+                        cur_day[div-1][-1]['results'][day] -= ci
+                        if debug:
+                            print("\tPromoted to sandwich in div %d (up): %s" % (div, cur_day[div-1][-1]))
+                        sandwich = True
+
+                elif npos == 0 and div > 0:
+                    # copy crew into sandwich for next division
+                    cur_day[div-1][-1] = {'name' : c['name'], 'results' : []}
+                    for rd in range(ret['days']):
+                        cur_day[div-1][-1]['results'].append(c['results'][rd])
+                    cur_day[div-1][-1]['results'][day] -= ci
+                    if debug:
+                        print("\tPromoted to sandwich in div %d (level): %s" % (div, cur_day[div-1][-1]))
+                    sandwich = True
+                    
+                elif npos >= len(d):
+                    if div == ret['num_divisions']-1:
+                        print("Bumping down below footship")
+                        return False
+                    else:
+                        ndiv += 1
+                        npos -= len(d)
+                        if npos != 0:
+                            print("Bumped down below sandwich boat in a single race")
+                            return False
+
+                if not sandwich:
+                    if debug:
+                        print("\tEnd of day: %d/%d  End of race: %d/%d" % (ndiv+1, npos+1, tdiv+1, tpos+1))
+                    if next_day[ndiv][npos] is not None:
+                        print_div("Error, collision in crew: div %d, position %d" % (ndiv+1, npos+1), next_day[ndiv])
+                        return False
+                    else:
+                        next_day[ndiv][npos] = c
+
+                # work out whether we need to add a result code
+                if not squash[ci]:
+                    if 'skipped' in c and c['skipped'][day]:
+                        results += "v%d" % tres
+                    elif tres == 0:
+                        results += "r"
+                    elif tres == 1 and cur_day[tdiv][tpos]['results'][day] == -1 and not skipped(cur_day, day, tdiv, tpos):
+                        results += "u"
+                        squash[tpos] = True
+                    elif tres > 0 and (tres - 1) % 2 == 0 and cur_day[tdiv][tpos]['results'][day] == -tres and not skipped(cur_day, day, tdiv, tpos):
+                        results += "o%d" % tres
+                        squash[tpos] = True
+                    elif tres == 1:
+                        j = ci-1
+                        # see how many crews went up 1 above
+                        # need to cope if the crew starting second went up more than one (bumping from sandwich in the next division)
+                        while j > 0 and cur_day[tdiv][j]['results'][day] is not None and (cur_day[tdiv][j]['results'][day] == 1 or (j == 1 and cur_day[tdiv][j]['results'][day] > 1)) and not skipped(cur_day, day, tdiv, j):
+                            j -= 1
+                        # need the next crew to go down that many places
+                        if cur_day[tdiv][j]['results'][day] is not None and cur_day[tdiv][j]['results'][day] == j-ci and not skipped(cur_day, day, tdiv, j):
+                            results += "w%d" % (ci-j)
+                            for k in range(j, ci, 1):
+                                squash[k] = True
+                        else:
+                            results += "e1"
+                    else:
+                        results += "e%d" % (tres)
+
+            for ci in withdraw:
+                if debug:
+                    print("Removing last crew in division for next day due to withdrawal")
+                next_day[div].pop(-1)
+
+            if div != ret['num_divisions']-1:
+                if next_day[div+1][0] is not None:
+                    print_div("Expecting empty slot at head of division %d" % (div+2), next_day[div+1])
+                    return False
+
+                if debug:
+                    print("\tMoving sandwich boat %s back to head of div %d" % (next_day[div][-1]['name'], div))
+                next_day[div+1][0] = next_day[div][-1]
+                next_day[div][-1] = None
+
+            if debug:
+                print("Results: %s" % results)
+                output.write("%s\n" % results)
+                results = ""
+                print_div("Division %d for next day" % (div+1), next_day[div])
+                
+            results += " "
+
+        output.write("%s" % results.strip())
+
+        cur_day = next_day
+
+    return True
+
+def create_short_name(name, abbrev):
+    out = name
+    if abbrev is not None:
+        cand = None
+        for k in abbrev.keys():
+            if out.startswith(abbrev[k]['name']):
+                if cand is None or len(abbrev[k]['name']) > len(abbrev[cand]['name']):
+                    cand = k
+        if cand is not None:
+            rest = out[len(abbrev[cand]['name']):].strip()
+            num = ''
+            if len(rest) > 0:
+                num = None
+                for i in range(len(abbreviations.roman)):
+                    if rest == abbreviations.roman[i]:
+                        num = i+1
+                        break
+
+            if num is not None:
+                out = "%s%s" % (cand, num)
+        else:
+            for i in range(len(abbreviations.roman)):
+                if out.endswith(abbreviations.roman[i]):
+                    if cand is None or len(abbreviations.roman[i]) > len(abbreviations.roman[cand]):
+                        cand = i
+            if cand is not None:
+                pref = out[:(len(out) - len(abbreviations.roman[cand]))]
+                out = "%s%s" % (pref, cand+1)
+    return out
+
+                        
 def convert_ad_format(name, outname):
     input = open(name, 'r')
     output = open(outname, 'w')
@@ -140,13 +349,11 @@ def convert_ad_format(name, outname):
     ret['set'] = None
     ret['days'] = None
     ret['gender'] = None
-    ret['crews'] = []
     ret['divisions'] = []
     ret['results'] = []
-
-    divisions = None
+    ret['num_divisions'] = None
+    
     crews = None
-    days = None
 
     div_crews = None
     div_title = None
@@ -164,11 +371,11 @@ def convert_ad_format(name, outname):
                 ret['short'] = title_map[m.group(1)][1]
                 ret['year'] = m.group(2);
                 abbrev = title_map[m.group(1)][2]
-        elif divisions is None:
+        elif ret['num_divisions'] is None:
             m = cpat.match(line)
             if m:
-                days = int(m.group(1))
-                divisions = int(m.group(2))
+                ret['days'] = int(m.group(1))
+                ret['num_divisions'] = int(m.group(2))
                 crews = int(m.group(3))
         else:
             m = dpat.match(line)
@@ -189,13 +396,13 @@ def convert_ad_format(name, outname):
             else:
                 p = line.strip().split(" ")
                 crew = {'results' : []}
-                for i in range(days):
+                for i in range(ret['days']):
                     while p[-1] == '':
                         p.pop()
                     crew['results'].insert(0, int(p.pop()))
                 while p[-1] == '':
                     p.pop()
-                crew['name'] = ' '.join(p)
+                crew['name'] = create_short_name(' '.join(p), abbrev)
                 curdiv.append(crew)
 
     if len(curdiv) != 0:
@@ -209,194 +416,171 @@ def convert_ad_format(name, outname):
         print("Mismatch in number of crews found")
         return
 
-    if divisions != len(ret['divisions']):
+    if ret['num_divisions'] != len(ret['divisions']):
         print("Mismatch in number of divisions")
         return
 
-    output.write("Set,%s\n" % ret['set'])
-    output.write("Short,%s\n" % ret['short'])
-    output.write("Gender,%s\n" % ret['gender'])
-    output.write("Year,%s\n" % ret['year'])
-    if days != 4:
-        output.write("Days,%s\n\n" % days)
-    else:
-        output.write("\n")
+    generate_from_moves(output, ret, debug)
 
-    npat = re.compile("^(.*) ([0-9]+)$")
+def convert_per_crew(source_directory, dest_directory):
+    pat = re.compile("^([a-z][a-z][a-z][a-z])_([mw])([1-9])([te])\.txt$")
 
-    for div in ret['divisions']:
-        s = "Division"
-        for c in div:
-            out = c['name']
-            if abbrev is not None:
-                cand = None
-                for k in abbrev.keys():
-                    if out.startswith(abbrev[k]['name']):
-                        if cand is None or len(abbrev[k]['name']) > len(abbrev[cand]['name']):
-                            cand = k
-                if cand is not None:
-                    rest = out[len(abbrev[cand]['name']):].strip()
-                    num = ''
-                    if len(rest) > 0:
-                        num = None
-                        for i in range(len(abbreviations.roman)):
-                            if rest == abbreviations.roman[i]:
-                                num = i+1
-                                break
+    all = {'me' : {'gender' : 'Men', 'set' : 'Summer Eights', 'short' : 'Eights', 'data' : {}},
+           'we' : {'gender' : 'Women', 'set' : 'Summer Eights', 'short' : 'Eights', 'data' : {}},
+           'mt' : {'gender' : 'Men', 'set' : 'Torpids', 'short' : 'Torpids', 'data' : {}},
+           'wt' : {'gender' : 'Women', 'set' : 'Torpids', 'short' : 'Torpids', 'data' : {}}}
 
-                    if num is not None:
-                        out = "%s%s" % (cand, num)
-                        c['name'] = out
-                else:
-                    for i in range(len(abbreviations.roman)):
-                        if out.endswith(abbreviations.roman[i]):
-                            if cand is None or len(abbreviations.roman[i]) > len(abbreviations.roman[cand]):
-                                cand = i
-                    if cand is not None:
-                        pref = out[:(len(out) - len(abbreviations.roman[cand]))]
-                        out = "%s%s" % (pref, cand+1)
-                        c['name'] = out
-            
-            s += ",%s" % out
-        output.write("%s\n" % s)
-
-    output.write("\nResults\n")
-
-    cur_day = []
-    for div in range(divisions):
-        cur_day.append([])
-        for c in ret['divisions'][div]:
-            cur_day[-1].append(c)
-        if div != divisions-1:
-            cur_day[-1].append(None) # except for last div, add empty entry for sandwich boat
-        
-    for day in range(days):
-        if debug:
-            print("\n\n-------------- DAY %s --------------\n\n" % (day+1))
-
-        next_day = []
-        for div in range(divisions):
-            next_day.append([None] * len(ret['divisions'][div]))
-            if div != divisions-1:
-                next_day[-1].append(None) # except for last div, add dummy entry for sandwich boat
-
-        results = ""
-        for div in range(divisions-1, -1, -1):
-            d = cur_day[div]
-            squash = [False] * len(d)
-            if debug:
-                print_div("Division %d at start of race" % (div+1), d)
-
-            for ci in range(len(d)-1, -1, -1):
-                c = d[ci]
-                if c is None:
-                    print("Missing crew at position %d" % (ci+1))
-                    return
-
-                if debug:
-                    print("Pos:%d, crew %s, result:%d" % (ci+1, c['name'], c['results'][day]))
-                npos = ci - c['results'][day]
-                ndiv = div
-                tpos = npos
-                tdiv = ndiv
-                tres = c['results'][day]
-                sandwich = False
-                if npos < 0:
-                    if div == 0:
-                        print("Bumping up above headship")
-                        return
+    coll = {'ball' : 'B',
+            'bras' : 'Br',
+            'chri' : 'Ch',
+            'corp' : 'Co',
+            'exet' : 'E',
+            'grte' : 'GT',
+            'hert' : 'H',
+            'jesu' : 'J',
+            'kebl' : 'K',
+            'lady' : 'LM',
+            'lina' : 'L',
+            'linc' : 'Lc',
+            'magd' : 'Mg',
+            'mans' : 'Mf',
+            'mert' : 'Mt',
+            'newc' : 'N',
+            'orie' : 'O',
+            'osle' : 'OG',
+            'pemb' : 'P',
+            'quee' : 'Q',
+            'rege' : 'R',
+            'sann' : 'SAn',
+            'sant' : 'SAt',
+            'sben' : 'SB',
+            'scat' : 'SC',
+            'sedm' : 'SE',
+            'shil' : 'SHi',
+            'shug' : 'SHu',
+            'sjoh' : 'SJ',
+            'some' : 'S',
+            'spet' : 'SP',
+            'trin' : 'T',
+            'univ' : 'U',
+            'wadh' : 'Wh',
+            'wolf' : 'Wf',
+            'worc' : 'Wt'}
+    
+    for filename in os.listdir(source_directory):
+        f = os.path.join(source_directory, filename)
+        if os.path.isfile(f):
+            m = pat.match(filename)
+            if m:
+                code = "%s%s" % (m.group(2), m.group(4))
+                if code in all and m.group(1) in coll:
+                    if int(m.group(3)) == 1:
+                        crew = coll[m.group(1)]
                     else:
-                        ndiv -= 1
-                        npos += len(cur_day[ndiv])
-                        tpos = 0 # end of the first race they ended up top of that division
-                        tres = ci # in the first race they went up ci places
-                        # put them in sandwich boat for next division
-                        cur_day[div-1][-1] = {'name' : c['name'], 'results' : []}
-                        for rd in range(days):
-                            cur_day[div-1][-1]['results'].append(c['results'][rd])
-                        cur_day[div-1][-1]['results'][day] -= ci
-                        if debug:
-                            print("\tPromoted to sandwich in div %d (up): %s" % (div, cur_day[div-1][-1]))
-                        sandwich = True
+                        crew = "%s%s" % (coll[m.group(1)], m.group(3))
+                    fp = open(f, 'r')
+                    i = 0
+                    next(fp)
+                    try:
+                        for line in fp:
+                            p = line.strip().split()
+                            for i in range(len(p)):
+                                p[i] = int(p[i])
+                            if p[1] == 0:
+                                continue
+                                
+                            if len(p) != (p[1] * 2) + 3 and len(p) != (p[1] * 2) + 4 and len(p) != p[1] + 3:
+                                print("Wrong number of arguments in '%s:%s'" % (filename, line.strip()))
+                                return
 
-                elif npos == 0 and div > 0:
-                    # copy crew into sandwich for next division
-                    cur_day[div-1][-1] = {'name' : c['name'], 'results' : []}
-                    for rd in range(days):
-                        cur_day[div-1][-1]['results'].append(c['results'][rd])
-                    cur_day[div-1][-1]['results'][day] -= ci
-                    if debug:
-                        print("\tPromoted to sandwich in div %d (level): %s" % (div, cur_day[div-1][-1]))
-                    sandwich = True
-                    
-                elif npos >= len(d):
-                    if div == divisions-1:
-                        print("Bumping down below footship")
+                            if p[0] not in all[code]['data']:
+                                all[code]['data'][p[0]] = {'days' : p[1], 'start' : [], 'crew' : {}}
+                                for i in range(p[1]+1):
+                                    all[code]['data'][p[0]]['start'].append([])
+
+                            b = all[code]['data'][p[0]]
+                            if b['days'] != p[1]:
+                                print("Different number of days in %s:%d:%d != %d" % (filename, p[0], b['days'], p[1]))
+                                return
+
+                            b['crew'][crew] = p[2:]
+                            
+                            withdrawn = False
+                            for i in range(b['days']+1):
+                                if withdrawn and p[i+2] != 999:
+                                    print("Withdrawn crew then races in %s:%s" % (filename, line.strip()))
+                                    return
+                                elif p[i+2] == 999:
+                                    withdrawn = True
+                                else:
+                                    while len(b['start'][i]) < p[i+2]:
+                                        b['start'][i].append(None)
+                                    other = b['start'][i][p[i+2]-1]
+                                    if other != None:
+                                        print("Overlapping crews in %s/%s/%d, day %d, position %d, %s and %s" % (all[code]['short'], all[code]['gender'], p[0], i, p[i+2], other, crew))
+                                        print("  %s: %s" % (other, b['crew'][other]))
+                                        print("  %s: %s" % (crew, b['crew'][crew]))
+                                        #return
+                                    b['start'][i][p[i+2]-1] = crew
+                                    
+
+                        fp.close()
+                        #print(filename, i, coll[m.group(1)], m.group(3), code)
+                    except ValueError:
+                        print("Error in converting '%s:%s:%s'" % (filename, line.strip(), p[i]))
                         return
-                    else:
-                        ndiv += 1
-                        npos -= len(d)
-                        if npos != 0:
-                            print("Bumped down below sandwich boat in a single race")
-                            return
 
-                if not sandwich:
-                    if debug:
-                        print("\tEnd of day: %d/%d  End of race: %d/%d" % (ndiv+1, npos+1, tdiv+1, tpos+1))
-                    if next_day[ndiv][npos] is not None:
-                        print_div("Error, collision in crew: div %d, position %d" % (ndiv+1, npos+1), next_day[ndiv])
-                        return
-                    else:
-                        next_day[ndiv][npos] = c
+    for c in all:
+        for y in sorted(all[c]['data'].keys()):
+            empty = 0
+            for d in all[c]['data'][y]['start']:
+                for crew in d:
+                    if crew is None:
+                        empty += 1
+            if empty == 0:
+                # generate output
+                data = all[c]['data'][y]
 
-                # work out whether we need to add a result code
-                if not squash[ci]:
-                    if tres == 0:
-                        results += "r"
-                    elif tres == 1 and cur_day[tdiv][tpos]['results'][day] == -1:
-                        results += "u"
-                        squash[tpos] = True
-                    elif tres > 0 and (tres - 1) % 2 == 0 and cur_day[tdiv][tpos]['results'][day] == -tres:
-                        results += "o%d" % tres
-                        squash[tpos] = True
-                    elif tres == 1:
-                        j = ci-1
-                        # see how many crews went up 1 above
-                        # need to cope if the crew starting second went up more than one (bumping from sandwich in the next division)
-                        while j > 0 and (cur_day[tdiv][j]['results'][day] == 1 or (j == 1 and cur_day[tdiv][j]['results'][day] > 1)):
-                            j -= 1
-                        # need the next crew to go down that many places
-                        if cur_day[tdiv][j]['results'][day] == j-ci:
-                            results += "w%d" % (ci-j)
-                            for k in range(j, ci, 1):
-                                squash[k] = True
+                ret = {}
+                ret['set'] = all[c]['set']
+                ret['short'] = all[c]['short']
+                ret['gender'] = all[c]['gender']
+                ret['year'] = y
+                ret['days'] = data['days']
+                ret['divisions'] = []
+                ret['num_divisions'] = 1
+
+                curdiv = []
+                for crew in data['start'][0]:
+                    crec = {'name' : crew, 'results' : [], 'skipped' : []}
+                    for d in range(data['days']):
+                        if data['crew'][crew][d+1] == 999:
+                            crec['results'].append(None)
                         else:
-                            results += "e1"
-                    else:
-                        results += "e%d" % (tres)
+                            crec['results'].append(data['crew'][crew][d] - data['crew'][crew][d+1])
 
-            if div != divisions-1:
-                if next_day[div+1][0] is not None:
-                    print_div("Expecting empty slot at head of division %d" % (div+2), next_day[div+1])
+                        if len(data['crew'][crew]) >= (2*data['days'])+1 and data['crew'][crew][d+data['days']+1] == -1:
+                            crec['skipped'].append(True)
+                        else:
+                            crec['skipped'].append(False)
+                        
+                    curdiv.append(crec)
+                    
+                ret['divisions'].append(curdiv)
+
+                #print(c, y, ret)
+                fp = open("%s/%s%d.txt" % (dest_directory, c, y), 'w')
+                if generate_from_moves(fp, ret, False) == False:
                     return
-
-                if debug:
-                    print("\tMoving sandwich boat %s back to head of div %d" % (next_day[div][-1]['name'], div))
-                next_day[div+1][0] = next_day[div][-1]
-                next_day[div][-1] = None
-
-            if debug:
-                print("Results: %s" % results)
-                results = ""
-                print_div("Division %d for next day" % (div+1), next_day[div])
-            results += " "
-
-        output.write("%s\n" % results.strip())
-
-        cur_day = next_day
-
+                fp.close()
+            else:
+                print("Missing %d crews in %s/%s/%d" % (empty, all[c]['short'], all[c]['gender'], y))
+                if empty > 170:
+                    print(all[c]['data'][y]['start'])
+                
 
 while len(sys.argv) > 0:
+
     arg = sys.argv.pop(0)
 
     if arg == '-c':
@@ -407,4 +591,8 @@ while len(sys.argv) > 0:
         src = sys.argv.pop(0)
         dest = sys.argv.pop(0)
         convert_ad_format(src, dest)
+    elif arg == '-pc':
+        src = sys.argv.pop(0)
+        dest = sys.argv.pop(0)
+        convert_per_crew(src, dest)
         
