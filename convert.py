@@ -1,7 +1,7 @@
 #!/bin/python3
 
 import sys, re, os
-import abbreviations
+import abbreviations, escapes
 
 def add_div(list, output, abbrev):
     if len(list) == 0:
@@ -161,8 +161,6 @@ def generate_from_moves(output, ret, debug):
         next_day = []
         for div in range(ret['num_divisions']):
             next_day.append([None] * len(cur_day[div]))
-            if div != ret['num_divisions']-1:
-                next_day[-1].append(None) # except for last div, add dummy entry for sandwich boat
 
         results = ""
         for div in range(ret['num_divisions']-1, -1, -1):
@@ -279,6 +277,9 @@ def generate_from_moves(output, ret, debug):
                 if next_day[div+1][0] is not None:
                     print_div("Expecting empty slot at head of division %d" % (div+2), next_day[div+1])
                     return False
+                if next_day[div][-1] is None:
+                    print_div("Expecting to find sandwich boat at bottom of div %d" % (div+1), next_day[div])
+                    return False
 
                 if debug:
                     print("\tMoving sandwich boat %s back to head of div %d" % (next_day[div][-1]['name'], div))
@@ -287,13 +288,13 @@ def generate_from_moves(output, ret, debug):
 
             if debug:
                 print("Results: %s" % results)
-                output.write("%s\n" % results)
+                output.write("%s " % results)
                 results = ""
                 print_div("Division %d for next day" % (div+1), next_day[div])
-                
-            results += " "
+            else:
+                results += " "
 
-        output.write("%s" % results.strip())
+        output.write("%s\n" % results.strip())
 
         cur_day = next_day
 
@@ -422,6 +423,44 @@ def convert_ad_format(name, outname):
 
     generate_from_moves(output, ret, debug)
 
+def add_crew_data(all, code, crew, p):
+    if len(p) != (p[1] * 2) + 3 and len(p) != (p[1] * 2) + 4 and len(p) != p[1] + 3:
+        print("Wrong number of arguments in '%s'" % (p))
+        return False
+
+    if p[0] not in all[code]['data']:
+        all[code]['data'][p[0]] = {'days' : p[1], 'start' : [], 'crew' : {}}
+        for i in range(p[1]+1):
+            all[code]['data'][p[0]]['start'].append([])
+
+    b = all[code]['data'][p[0]]
+    if b['days'] != p[1]:
+        print("Different number of days in %d:%d != %d" % (p[0], b['days'], p[1]))
+        return False
+
+    b['crew'][crew] = p[2:]
+
+    withdrawn = False
+    for i in range(b['days']+1):
+        if withdrawn and p[i+2] != 999:
+            print("Withdrawn crew then races in %s:%s" % (filename, line.strip()))
+            return False
+        elif p[i+2] == 999:
+            withdrawn = True
+        else:
+            while len(b['start'][i]) < p[i+2]:
+                b['start'][i].append(None)
+            other = b['start'][i][p[i+2]-1]
+            if other != None:
+                print("Overlapping crews in %s/%s/%d, day %d, position %d, %s and %s" % (all[code]['short'], all[code]['gender'], p[0], i, p[i+2], other, crew))
+                print("  %s: %s" % (other, b['crew'][other]))
+                print("  %s: %s" % (crew, b['crew'][crew]))
+                #return
+            b['start'][i][p[i+2]-1] = crew
+
+    return True
+
+
 def convert_per_crew(source_directory, dest_directory):
     pat = re.compile("^([a-z][a-z][a-z][a-z])_([mw])([1-9])([te])\.txt$")
 
@@ -472,6 +511,7 @@ def convert_per_crew(source_directory, dest_directory):
         if os.path.isfile(f):
             m = pat.match(filename)
             if m:
+                # create two character code for men/women & eights/torpids
                 code = "%s%s" % (m.group(2), m.group(4))
                 if code in all and m.group(1) in coll:
                     if int(m.group(3)) == 1:
@@ -488,41 +528,8 @@ def convert_per_crew(source_directory, dest_directory):
                                 p[i] = int(p[i])
                             if p[1] == 0:
                                 continue
-                                
-                            if len(p) != (p[1] * 2) + 3 and len(p) != (p[1] * 2) + 4 and len(p) != p[1] + 3:
-                                print("Wrong number of arguments in '%s:%s'" % (filename, line.strip()))
+                            if add_crew_data(all, code, crew, p) == False:
                                 return
-
-                            if p[0] not in all[code]['data']:
-                                all[code]['data'][p[0]] = {'days' : p[1], 'start' : [], 'crew' : {}}
-                                for i in range(p[1]+1):
-                                    all[code]['data'][p[0]]['start'].append([])
-
-                            b = all[code]['data'][p[0]]
-                            if b['days'] != p[1]:
-                                print("Different number of days in %s:%d:%d != %d" % (filename, p[0], b['days'], p[1]))
-                                return
-
-                            b['crew'][crew] = p[2:]
-                            
-                            withdrawn = False
-                            for i in range(b['days']+1):
-                                if withdrawn and p[i+2] != 999:
-                                    print("Withdrawn crew then races in %s:%s" % (filename, line.strip()))
-                                    return
-                                elif p[i+2] == 999:
-                                    withdrawn = True
-                                else:
-                                    while len(b['start'][i]) < p[i+2]:
-                                        b['start'][i].append(None)
-                                    other = b['start'][i][p[i+2]-1]
-                                    if other != None:
-                                        print("Overlapping crews in %s/%s/%d, day %d, position %d, %s and %s" % (all[code]['short'], all[code]['gender'], p[0], i, p[i+2], other, crew))
-                                        print("  %s: %s" % (other, b['crew'][other]))
-                                        print("  %s: %s" % (crew, b['crew'][crew]))
-                                        #return
-                                    b['start'][i][p[i+2]-1] = crew
-                                    
 
                         fp.close()
                         #print(filename, i, coll[m.group(1)], m.group(3), code)
@@ -530,13 +537,25 @@ def convert_per_crew(source_directory, dest_directory):
                         print("Error in converting '%s:%s:%s'" % (filename, line.strip(), p[i]))
                         return
 
+    # add escapes
+    for m in escapes.missing:
+        #print("Adding escape %s" % m)
+        if add_crew_data(all, m['code'], m['name'], m['data']) == False:
+            return
+
+    mfp = open("missing.txt", 'w')
+
     for c in all:
         for y in sorted(all[c]['data'].keys()):
             empty = 0
             for d in all[c]['data'][y]['start']:
+                ec = 0
                 for crew in d:
                     if crew is None:
-                        empty += 1
+                        ec += 1
+                if ec > empty:
+                    empty = ec
+                    
             if empty == 0:
                 # generate output
                 data = all[c]['data'][y]
@@ -549,8 +568,17 @@ def convert_per_crew(source_directory, dest_directory):
                 ret['days'] = data['days']
                 ret['divisions'] = []
                 ret['num_divisions'] = 1
+                div_size = [len(data['start'][0])]
+
+                debug = False
+
+                cw = "%s%d" % (c, y)
+                if cw in escapes.div_size:
+                    ret['num_divisions'] = len(escapes.div_size[cw])
+                    div_size = escapes.div_size[cw]
 
                 curdiv = []
+                div_num = 0
                 for crew in data['start'][0]:
                     crec = {'name' : crew, 'results' : [], 'skipped' : []}
                     for d in range(data['days']):
@@ -565,20 +593,79 @@ def convert_per_crew(source_directory, dest_directory):
                             crec['skipped'].append(False)
                         
                     curdiv.append(crec)
-                    
-                ret['divisions'].append(curdiv)
+                    if len(curdiv) == div_size[div_num]:
+                        div_num += 1
+                        ret['divisions'].append(curdiv)
+                        curdiv = []
 
-                #print(c, y, ret)
+                if len(curdiv) != 0:
+                    print("Mismatch in division sizes")
+                    return
+
+                if len(ret['divisions']) == 0:
+                    print("%s%s has no crews" % (c, y))
+                    continue
+                
+                if debug:
+                    print(c, y, ret)
                 fp = open("%s/%s%d.txt" % (dest_directory, c, y), 'w')
-                if generate_from_moves(fp, ret, False) == False:
+                if generate_from_moves(fp, ret, debug) == False:
                     return
                 fp.close()
             else:
                 print("Missing %d crews in %s/%s/%d" % (empty, all[c]['short'], all[c]['gender'], y))
-                if empty > 170:
-                    print(all[c]['data'][y]['start'])
-                
+                data = all[c]['data'][y]
 
+                prefix = [y, data['days']]
+                missing = []
+                for i in range(empty):
+                    missing.append([None] * (data['days']+1))
+
+                for day_num in range(data['days']+1):
+                    i = 0
+                    crews = data['start'][day_num]
+                    for crew_num in range(len(crews)):
+                        if crews[crew_num] is None:
+                            missing[i][day_num] = crew_num+1
+                            i += 1
+                            
+                for i in range(len(missing)):
+                    mfp.write("    {'code' : '%s', 'name' : '', 'data' : " % c)
+                    flags = []
+                    for day_num in range(data['days'], 0, -1):
+                        if missing[i][day_num] is None:
+                            missing[i][day_num] = 999
+                        else:
+                            break
+                    
+                    for day_num in range(len(missing[i])):
+                        if missing[i][day_num] is None:
+                            flags.append(-1)
+                            missing[i][day_num] = len(data['start'][day_num])+1
+                            data['start'][day_num].append("m%d" % i)
+                        else:
+                            flags.append(0)
+
+                    mfp.write("%s},\n" % (prefix+missing[i]+flags[1:]))
+                
+                if False and c == 'me' and y == 1851:
+                    mx = 0
+                    for d in all[c]['data'][y]['start']:
+                        if len(d) > mx:
+                            mx = len(d)
+                    for i in range(mx):
+                        ln = "%3d: " % i
+                        for d in all[c]['data'][y]['start']:
+                            if i < len(d):
+                                ln += "%5s" % d[i]
+                            else:
+                                ln += "     "
+                        print(ln)
+                    #return
+                
+    mfp.close()
+
+    
 while len(sys.argv) > 0:
 
     arg = sys.argv.pop(0)
