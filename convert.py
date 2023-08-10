@@ -296,6 +296,14 @@ def generate_from_moves(output, ret, debug):
 
         output.write("%s\n" % results.strip())
 
+        if ret['div_size_change'] and day < ret['days']-1:
+            line = "d<"
+            for i in range(len(next_day)-1):
+                next_day[i].insert(-1, next_day[i+1].pop(0))
+                line += "%d." % (len(next_day[i])-1)
+            line += "%d>" % len(next_day[-1])
+            output.write("%s\n" % line)
+
         cur_day = next_day
 
     return True
@@ -353,6 +361,7 @@ def convert_ad_format(name, outname):
     ret['divisions'] = []
     ret['results'] = []
     ret['num_divisions'] = None
+    ret['div_size_change'] = False
     
     crews = None
 
@@ -372,6 +381,10 @@ def convert_ad_format(name, outname):
                 ret['short'] = title_map[m.group(1)][1]
                 ret['year'] = m.group(2);
                 abbrev = title_map[m.group(1)][2]
+
+                if ret['short'] == 'Torpids' and int(ret['year']) >= 1960 and int(ret['year']) <= 1979:
+                    ret['div_size_change'] = True
+                    
         elif ret['num_divisions'] is None:
             m = cpat.match(line)
             if m:
