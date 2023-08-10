@@ -1,5 +1,9 @@
 #!/bin/python3
 
+# TODO
+# initialise move to None to help spot where results are missing
+# spot where two crews move to the same position for the next day and error
+
 import re
 import abbreviations
 
@@ -294,7 +298,7 @@ def process_results(event):
             penalty += 1
             if debug:
                 print("Storing %d penalty bump to apply to crew %d" % (penalty, crew_num))
-
+                
         # if we've seen at least one result, mark this division as completed
         event['completed'][day_num][div_num] = True
 

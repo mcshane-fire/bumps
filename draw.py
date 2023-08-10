@@ -264,8 +264,8 @@ def write_svg(output, event, svg_config):
     draw_crews(svg_config, out, left + svg_config['right'] + (svg_config['scale'] * event['days']) + 3, 0, event, 1, 'start')
 
     h = draw_divisions(svg_config, out, left + svg_config['right'], 0, event, svg_config['right'], draw_colours = svg_config['colours'])
-    
-    out.setsize(left + (svg_config['right']*2) + (svg_config['scale'] * event['days']), h)
+
+    out.setsize(left + (svg_config['right']*2) + (svg_config['scale'] * event['days'])+1, h+1)
 
     if output is None:
         print(out.tostring())
@@ -318,7 +318,7 @@ def write_multi_svg(output, sets, svg_config):
             height = h
         xpos = xpos + (svg_config['scale'] * event['days']) + svg_config['sep']
 
-    out.setsize(width, height)
+    out.setsize(width+1, height+1)
 
     if output is None:
         print(out.tostring())
