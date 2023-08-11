@@ -1,0 +1,76 @@
+<html>
+
+<head>
+<title>Bumps Chart Generation</title>
+</head>
+
+
+<body>
+
+<table><tr valign="top"><td width="60%">
+
+<textarea rows="40" cols="80" id="textid" onkeydown="onKeyDownHandler()" onkeyup="onKeyUpHandler()">
+</textarea>
+<p>
+Populate with: <select id="setoption" onChange="onChangeHandler()">
+<option value="blank">Blank</option>
+</select>
+<p>
+
+<table border="0"><tr valign="top"><td width="40%">
+<b>Club abbreviation list</b>
+<div id="abbrev"></div>
+<td width="30%">
+<b>Results</b><p>
+
+Results are entered from the first day to the last day, and in reverse
+division order for each day.
+
+In each division, enter the results from the bottom crew up, including
+the sandwich crew if it's not the bottom division.
+
+Allowable entries:<p>
+<table border="0">
+<tr><td><b>r</b><td>  The crew rowed over<br>
+<tr><td><b>u</b><td>  The crew bumped up one place.<br>
+<tr><td><b>o3</b><td> The crew overbumped up 3 places.  Replace 3
+    with 5 or 7 if needed.<br>
+<tr><td><b>e2</b><td> The crew went up exactly 2 places.  Replace 2
+    with the exact number gained.<br>
+<tr><td><b>t</b><td> Finished that division, all remaining crews rowed over<br>
+</table>
+
+Replace the numbers with the exact places gained.  You rarely
+need <b>e</b> entries, here the numbers can be negative.  For <b>u</b>
+and <b>o</b> results, the crew that has been bumped has a known
+result, and can skipped. 
+
+</table>
+
+<b>General format</b><p>
+
+Start with metadata, setting the name and other relevant fields.
+Entries are one per line, comma separated between field name and value.<p>
+
+The enter divisions.  Each division starts with the keyword
+'Division'.  After this all entries can be comma separated or on
+different lines.  Each entry is a single crew, and can be a fully
+spelt out word or an abbreviation.  Abbreviations use the club code as
+listed above, followed by a number.
+
+After the keyword 'Results' we then get a result strings.  These can
+be comma separated, or on different lines.  Strings starting with a
+hash character are stripped out.  
+
+<td width="300px" height="2000px">
+
+<div id="chart"></div>
+
+
+<script language="JavaScript" src="generate.js"></script>
+<script language="JavaScript" src="captured.js"></script>
+<noscript>Your browser either does not support JavaScript, or has it turned off.</noscript>
+
+</table>
+</body>
+</html>
