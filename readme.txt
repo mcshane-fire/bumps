@@ -64,13 +64,13 @@ Valid result codes:
   r        This crew remained level for the day, likely rowing over.
   u        This crew bumped up one place, and the crew above went down one place.
   o<num>   This crew overbumped up <num> places, exchanging positions with the crew starting <num> places above.
-  t        This result terminates the current division, if given at the start of that division it means that division didn't race.
-  x        This crew withdraws from racing and will not race any further.  Division size is reduced by one for subsequent days.
+  t        This result skips over all crews remaining in the current division, it can indicate that division didn't race.
+  x        This crew withdraws from racing this and following days.  Division size is reduced by one on following days.
   e<num>   This crew goes up <num> places, <num> can be negative for a crew going down.
   v<num>   Similar to above, but that crew will be shown with a lighter line to indicate they didn't race that day.
   w<num>   The next <num> crews all went up by one, the next crew went down <num> places.
   d<1.2.3> The division sizes change for the next day.  Inside literal <> brackets is a dot separated list of division sizes.
   p        The next crew with an e or v code receives a penalty bump after the e/v code has been applied.
 
-For codes u, o & w that indicate the results for multiple crews no further codes need to be included for any of the crews specified.
+For codes u, o & w that indicate the results for multiple crews no codes are included for any of the crews specified.
 For ease of reading, codes from each division are typically seperated by a space, results from each day occur on a newline.
