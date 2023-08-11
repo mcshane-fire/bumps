@@ -474,13 +474,13 @@ def add_crew_data(all, code, crew, p):
     return True
 
 
-def convert_per_crew(source_directory, dest_directory):
+def convert_per_crew(source_directory, dest_directory, check_directory):
     pat = re.compile("^([a-z][a-z][a-z][a-z])_([mw])([1-9])([te])\.txt$")
 
-    all = {'me' : {'gender' : 'Men', 'set' : 'Summer Eights', 'short' : 'Eights', 'data' : {}},
-           'we' : {'gender' : 'Women', 'set' : 'Summer Eights', 'short' : 'Eights', 'data' : {}},
-           'mt' : {'gender' : 'Men', 'set' : 'Torpids', 'short' : 'Torpids', 'data' : {}},
-           'wt' : {'gender' : 'Women', 'set' : 'Torpids', 'short' : 'Torpids', 'data' : {}}}
+    all = {'me' : {'file' : 'eights%d_men.txt', 'gender' : 'Men', 'set' : 'Summer Eights', 'short' : 'Eights', 'data' : {}},
+           'we' : {'file' : 'eights%d_women.txt', 'gender' : 'Women', 'set' : 'Summer Eights', 'short' : 'Eights', 'data' : {}},
+           'mt' : {'file' : 'torpids%d_men.txt', 'gender' : 'Men', 'set' : 'Torpids', 'short' : 'Torpids', 'data' : {}},
+           'wt' : {'file' : 'torpids%d_women.txt', 'gender' : 'Women', 'set' : 'Torpids', 'short' : 'Torpids', 'data' : {}}}
 
     coll = {'ball' : 'B',
             'bras' : 'Br',
@@ -583,6 +583,10 @@ def convert_per_crew(source_directory, dest_directory):
                 ret['num_divisions'] = 1
                 div_size = [len(data['start'][0])]
 
+                ret['div_size_change'] = False
+                if all[c]['short'] == 'Torpids' and y >= 1960 and y <= 1979:
+                    ret['div_size_change'] = True
+                    
                 debug = False
 
                 cw = "%s%d" % (c, y)
@@ -618,10 +622,18 @@ def convert_per_crew(source_directory, dest_directory):
                 if len(ret['divisions']) == 0:
                     print("%s%s has no crews" % (c, y))
                     continue
+
+                fn = all[c]['file'] % y
+                
+                if check_directory != None:
+                    cf = "%s/%s" % (check_directory, fn)
+                    if os.path.isfile(cf):
+                        continue
                 
                 if debug:
                     print(c, y, ret)
-                fp = open("%s/%s%d.txt" % (dest_directory, c, y), 'w')
+                    
+                fp = open("%s/%s" % (dest_directory, fn), 'w')
                 if generate_from_moves(fp, ret, debug) == False:
                     return
                 fp.close()
@@ -681,9 +693,9 @@ def convert_per_crew(source_directory, dest_directory):
 cmd = sys.argv.pop(0)
 if len(sys.argv) == 0:
     print("%s   Usage notes" % cmd)
-    print(" -c <src file> <dest file>   : Converts a start order file containing lists of divisions")
-    print(" -ad <src file> <dest file>  : Converts an 'ad_format' bumps results file")
-    print(" -pc <src dir> <dest dir>    : Reads a set of per-crew files and outputs all valid results files")
+    print(" -c <src file> <dest file>              : Converts a start order file containing lists of divisions")
+    print(" -ad <src file> <dest file>             : Converts an 'ad_format' bumps results file")
+    print(" -pc <src dir> <dest dir> [<check dir>] : Reads a set of per-crew files and outputs all valid results files [not in <check dir>]")
     
 while len(sys.argv) > 0:
 
@@ -700,5 +712,9 @@ while len(sys.argv) > 0:
     elif arg == '-pc':
         src = sys.argv.pop(0)
         dest = sys.argv.pop(0)
-        convert_per_crew(src, dest)
+        if len(sys.argv) > 0:
+            cdir = sys.argv.pop(0)
+        else:
+            cdir = None
+        convert_per_crew(src, dest, cdir)
         
