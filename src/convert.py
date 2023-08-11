@@ -678,6 +678,12 @@ def convert_per_crew(source_directory, dest_directory):
                 
     mfp.close()
 
+cmd = sys.argv.pop(0)
+if len(sys.argv) == 0:
+    print("%s   Usage notes" % cmd)
+    print(" -c <src file> <dest file>   : Converts a start order file containing lists of divisions")
+    print(" -ad <src file> <dest file>  : Converts an 'ad_format' bumps results file")
+    print(" -pc <src dir> <dest dir>    : Reads a set of per-crew files and outputs all valid results files")
     
 while len(sys.argv) > 0:
 
