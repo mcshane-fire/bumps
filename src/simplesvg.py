@@ -171,7 +171,7 @@ class Text:
             args += ' x="%g"' % self.defs['insert'][0]
             args += ' y="%g"' % self.defs['insert'][1]
             
-        return '<text %s>%s</text>\n' % (args, self.defs['label'])
+        return '<text %s>%s</text>\n' % (args, self.defs['label'].replace("&", "&amp;"))
 
 
 class Rect:
