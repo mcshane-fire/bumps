@@ -560,6 +560,13 @@ def convert_per_crew(source_directory, dest_directory, check_directory):
 
     for c in all:
         for y in sorted(all[c]['data'].keys()):
+            # if a results file for this set of bumps exists, skip doing anything
+            fn = all[c]['file'] % y
+            if check_directory != None:
+                cf = "%s/%s" % (check_directory, fn)
+                if os.path.isfile(cf):
+                    continue
+
             empty = 0
             for d in all[c]['data'][y]['start']:
                 ec = 0
@@ -623,13 +630,6 @@ def convert_per_crew(source_directory, dest_directory, check_directory):
                     print("%s%s has no crews" % (c, y))
                     continue
 
-                fn = all[c]['file'] % y
-                
-                if check_directory != None:
-                    cf = "%s/%s" % (check_directory, fn)
-                    if os.path.isfile(cf):
-                        continue
-                
                 if debug:
                     print(c, y, ret)
                     
