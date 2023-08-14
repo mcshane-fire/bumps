@@ -1,0 +1,14 @@
+Set,CRA Bumps
+Short,CRA
+Gender,Women
+Year,1984
+
+Division,Ci,N,N2,F,Darwin,Ca,N3,Ci2,Macdonalds,R,Ca2,Addenbrooke's,Ci3,Darwin 2,N4,Ca3,R2,F2,Telephones,Macdonalds 2,Ci4,N5,R3
+
+Results
+ro3uuurrrrurururr
+rruurruuro3ururrr
+urrruurrururrrrrrr
+rurrrurruururrrru
+
+

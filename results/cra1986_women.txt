@@ -1,0 +1,13 @@
+Set,CRA Bumps
+Short,CRA
+Gender,Women
+Year,1986
+
+Division,Ci,N,Ci2,N2,Ci3,Ca,N3,N4,Addenbrooke's,Ca2,Ci4,N5,Ca3,Coopers & Lybrand,Univ Sports,Lady Somerset,Leckhampton,Ci5,Addenbrooke's 2,Ca4,Ci6
+
+Results
+ro3uurruruururr
+rrrrrrrrrrrrrrrurur
+ruruuuuuurrur
+rrruurruuurrrrrr
+

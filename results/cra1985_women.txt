@@ -1,0 +1,13 @@
+Set,CRA Bumps
+Short,CRA
+Gender,Women
+Year,1985
+
+Division,N,Ci,Darwin,N2,N3,Ci2,R,Ci3,Ca,Addenbrooke's,Ca2,Ca3,N4,Coopers & Lybrand,Ci4,N5,R2,Ca4,Ci5,N6,Ci6,Addenbrooke's 2
+
+Results
+rruruuurrrrruuu
+ururuurrrrruurrr
+rurruururruuurr
+uurrurrruuuurrr
+

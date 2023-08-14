@@ -1,0 +1,13 @@
+Set,CRA Bumps
+Short,CRA
+Gender,Women
+Year,1983
+
+Division,F,N,Ci,Darwin,Ct,N2,Ci2,N3,Macdonalds,Darwin 2,P,City/CCAT,Macdonalds 2,Ct2,N4,Telephones,R,Ci4
+
+Results
+rrrruurruurru
+ruuuuuuuur
+rururrrrrrrrrru
+uururrurrrurr
+
