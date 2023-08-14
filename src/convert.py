@@ -600,6 +600,12 @@ def convert_per_crew(source_directory, dest_directory, check_directory):
                 if cw in escapes.div_size:
                     ret['num_divisions'] = len(escapes.div_size[cw])
                     div_size = escapes.div_size[cw]
+                    if div_size[-1] == 0:
+                        total = 0
+                        for n in div_size[:-1]:
+                            total += n
+                        div_size[-1] = len(data['start'][0]) - total
+                        print(div_size)
 
                 curdiv = []
                 div_num = 0
