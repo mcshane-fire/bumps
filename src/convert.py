@@ -349,7 +349,6 @@ def create_short_name(name, abbrev):
                 out = "%s%s" % (pref, cand+1)
             elif dcand is not None:
                 prev = out[:(len(out) - len("%d" % dcand))]
-                print("Dcand: '%s' -> '%s' '%s'" % (out, prev, dcand))
                 if dcand > 1:
                     out = "%s%s" % (prev, dcand)
                 else:
@@ -624,7 +623,6 @@ def convert_per_crew(source_directory, dest_directory, check_directory):
                         for n in div_size[:-1]:
                             total += n
                         div_size[-1] = len(data['start'][0]) - total
-                        print(div_size)
 
                 curdiv = []
                 div_num = 0
