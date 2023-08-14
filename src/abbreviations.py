@@ -78,10 +78,30 @@ ocol = {"B" : {'name' : 'Balliol'},
         "Wf" : {'name' : 'Wolfson'},
         "Wt" : {'name' : 'Worcester'}}
 
+cra = {'Ca' : {'name' : 'Cantabs'},
+       'Ci' : {'name' : 'City'},
+       'N' : {'name' : '99'},
+       'R' : {'name' : 'Rob Roy'},
+       'Ch' : {'name' : 'Champs'},
+       'F' : {'name' : 'Free Press'},
+       'X' : {'name' : 'X-Press'},
+       'P' : {'name' : 'Pye'},
+       'SR' : {'name' : 'St Radegund'},
+       'Ct' : {'name' : 'Chesterton'},
+       'SN' : {'name' : 'St Neots'},
+       'S' : {'name' : 'Simoco'},
+       'SI' : {'name' : 'St Ives'},
+       'CV' : {'name' : 'Camb Veterans'},
+       'IE' : {'name' : 'Isle of Ely'},
+       'ME' : {'name' : 'Max Entropy'},
+       'CB' : {'name' : 'Camb Blue'},
+       'OC' : {'name' : 'Old Cantabs'}}
+
 sets = {'Summer Eights' : ocol,
         'Lent Bumps' : ccol,
         'May Bumps' : ccol,
-        'Torpids' : ocol}
+        'Torpids' : ocol,
+        'CRA Bumps' : cra}
 
 roman = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
          "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];

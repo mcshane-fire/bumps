@@ -325,6 +325,9 @@ def create_short_name(name, abbrev):
                     if rest == abbreviations.roman[i]:
                         num = i+1
                         break
+                    if rest == "%d" % (i+1):
+                        num = i+1
+                        break
 
             if num is not None:
                 out = "%s%s" % (cand, num)
@@ -696,12 +699,37 @@ def convert_per_crew(source_directory, dest_directory, check_directory):
                 
     mfp.close()
 
+def apply_abbreviations(infile, outfile):
+    ifp = open(infile, 'r')
+    ofp = open(outfile, 'w')
+    abbrev = None
+    
+    for line in ifp:
+        if line.startswith("Set,") and line[4:].strip() in abbreviations.sets:
+            abbrev = abbreviations.sets[line[4:].strip()]
+            ofp.write(line)
+        elif line.startswith("Division,") and abbrev != None:
+            p = line.strip().split(",")
+            for i in range(1, len(p)):
+                p[i] = create_short_name(p[i], abbrev)
+            ofp.write("%s\n" % (','.join(p)))
+        else:
+            ofp.write(line)
+
+    ifp.close()
+    ofp.close()
+                
+                    
+                        
+            
+
 cmd = sys.argv.pop(0)
 if len(sys.argv) == 0:
     print("%s   Usage notes" % cmd)
     print(" -c <src file> <dest file>              : Converts a start order file containing lists of divisions")
     print(" -ad <src file> <dest file>             : Converts an 'ad_format' bumps results file")
     print(" -pc <src dir> <dest dir> [<check dir>] : Reads a set of per-crew files and outputs all valid results files [not in <check dir>]")
+    print(" -aa <src file> <dest file>             : Re-write results file using abbreviations to shorten crew names")
     
 while len(sys.argv) > 0:
 
@@ -723,4 +751,7 @@ while len(sys.argv) > 0:
         else:
             cdir = None
         convert_per_crew(src, dest, cdir)
-        
+    elif arg == '-aa':
+        src = sys.argv.pop(0)
+        dest = sys.argv.pop(0)
+        apply_abbreviations(src, dest)
