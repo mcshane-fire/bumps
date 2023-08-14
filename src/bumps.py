@@ -367,6 +367,7 @@ def write_file(event, name):
         output.write("Division")
         for i in range(div_size):
             crew = event['crews'][crew_num+i]
+            found = False
             for p in abbrev:
                 if crew['start'].startswith(abbrev[p]['name']):
                     fin = p
@@ -377,7 +378,10 @@ def write_file(event, name):
                                 fin = fin + str(k+1)
                                 break
                     output.write(",%s" % fin)
+                    found = True
                     break
+            if not found:
+                output.write(",%s" % crew['start'])
         output.write("\n")
         crew_num += div_size
         
