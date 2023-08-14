@@ -330,15 +330,31 @@ def create_short_name(name, abbrev):
                         break
 
             if num is not None:
-                out = "%s%s" % (cand, num)
+                if num > 1:
+                    out = "%s%s" % (cand, num)
+                else:
+                    out = "%s" % (cand)
         else:
+            dcand = None
             for i in range(len(abbreviations.roman)):
                 if out.endswith(abbreviations.roman[i]):
                     if cand is None or len(abbreviations.roman[i]) > len(abbreviations.roman[cand]):
                         cand = i
+                if out.endswith("%d" % (i+1)):
+                    if dcand is None or i+1 > dcand:
+                        dcand = i+1
+                        
             if cand is not None:
                 pref = out[:(len(out) - len(abbreviations.roman[cand]))]
                 out = "%s%s" % (pref, cand+1)
+            elif dcand is not None:
+                prev = out[:(len(out) - len("%d" % dcand))]
+                print("Dcand: '%s' -> '%s' '%s'" % (out, prev, dcand))
+                if dcand > 1:
+                    out = "%s%s" % (prev, dcand)
+                else:
+                    out = prev.strip()
+
     return out
 
                         
