@@ -1,14 +1,5 @@
 #!/bin/python3
 
-# todo:
-#
-# check that crews from the same college appear in order
-# collect results/crews for each college for summary statistics
-#   most/least bumps in a division all week
-#   which day overbumps occur, etc
-# add cra club names
-# figure out how to tell how long a piece of text is
-
 import sys
 import bumps, stats, draw
 

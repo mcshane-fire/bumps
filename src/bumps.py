@@ -1,9 +1,5 @@
 #!/bin/python3
 
-# TODO
-# initialise move to None to help spot where results are missing
-# spot where two crews move to the same position for the next day and error
-
 import re
 import abbreviations
 
