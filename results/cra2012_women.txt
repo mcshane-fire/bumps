@@ -3,8 +3,8 @@ Short,CRA
 Gender,Women
 Year,2012
 
-Division,Ci1,N1,Ci2,CV1,Ci3,SN1,Ca1,Ca2,R1,X1,Ch1,N2,Ci4,Ch2,Ci5,Ct1,N3
-Division,Ch3,Ch4,Ch5,Ca3,SR1,IE1,Ch6,Ci6,X2,SR2,Ch7,Ca4,Ci7,Ct2,Ci8,SN2,Ca5,Ca6,N4
+Division,City 1,99 1,City 2,Camb Veterans 1,City 3,St Neots 1,Cantabs 1,Cantabs 2,Rob Roy 1,X-Press 1,Champs 1,99 2,City 4,Champs 2,City 5,Chesterton 1,99 3
+Division,Champs 3,Champs 4,Champs 5,Cantabs 3,St Radegund 1,Isle of Ely 1,Champs 6,City 6,X-Press 2,St Radegund 2,Champs 7,Cantabs 4,City 7,Chesterton 2,City 8,St Neots 2,Cantabs 5,Cantabs 6,99 4
 
 Results
 ruruo3urrururr uurrrrruurrrrr
