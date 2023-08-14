@@ -3,8 +3,8 @@ Short,CRA
 Gender,Women
 Year,2009
 
-Division,City 1,99 1,Camb Veterans 1,Rob Roy 1,99 2,Champs 1,Cantabs 1,Rob Roy 2,City 2,99 3,Cantabs 2,X-Press 1,City 3,Champs 2,Champs 3,City 4,Chesterton 1
-Division,Champs 4,City 5,X-Press 2,City 6,Cantabs 3,99 4,Champs 5,Champs 6,St Radegund 1,City 7,Champs 7,City 8,Chesterton 2,Cantabs 4,X-Press 3,Champs 8,Rob Roy 3,Champs 9,Champs 10
+Division,Ci1,N1,CV1,R1,N2,Ch1,Ca1,R2,Ci2,N3,Ca2,X1,Ci3,Ch2,Ch3,Ci4,Ct1
+Division,Ch4,Ci5,X2,Ci6,Ca3,N4,Ch5,Ch6,SR1,Ci7,Ch7,Ci8,Ct2,Ca4,X3,Ch8,R3,Ch9,Ch10
 
 Results
 rrruururruuru rruruuuurrrrr

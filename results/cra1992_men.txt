@@ -3,9 +3,9 @@ Short,CRA
 Gender,Men
 Year,1992
 
-Division,Rob Roy 1,99 1,Cantabs 1,City 1,99 2,Free Press 1,99 3,Cantabs 2,Rob Roy 2,99 4,City 2,City 3,Free Press 2,Cantabs 3,Rob Roy 3,Free Press 3
-Division,Red Lion Toft 1,99 5,Cantabs 4,Rob Roy 4,Maximum Entropy 1,Mott Macdonald 1,Wolfson 1,Univ Sports 1,City 4,Free Press 4,Cavendish Lab 1,99 6,Leckhampton 1,Barclays Bank 1,Cantabs 5
-Division,Cavendish Lab 1,Maximum Entropy 2,Rob Roy 5,Touche Ross 1,Free Press 5,Cantabs 6,Marshall 1,Cantabs 7,Cantabs 8,Univ Sports 2,Coopers & Lybrand 1,99 7,Cantabs 9,Red Lion Toft 2,Cantabs 10
+Division,R1,N1,Ca1,Ci1,N2,F1,N3,Ca2,R2,N4,Ci2,Ci3,F2,Ca3,R3,F3
+Division,Red Lion Toft 1,N5,Ca4,R4,Maximum Entropy 1,Mott Macdonald 1,Wolfson 1,Univ Sports 1,Ci4,F4,Cavendish Lab 1,N6,Leckhampton 1,Barclays Bank 1,Ca5
+Division,Cavendish Lab 1,Maximum Entropy 2,R5,Touche Ross 1,F5,Ca6,Marshall 1,Ca7,Ca8,Univ Sports 2,Coopers & Lybrand 1,N7,Ca9,Red Lion Toft 2,Ca10
 
 Results
 ruuuo3urru uruuuururr rrruruurrruu
