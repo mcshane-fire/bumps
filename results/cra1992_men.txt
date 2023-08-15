@@ -5,7 +5,7 @@ Year,1992
 
 Division,R,N,Ca,Ci,N2,F,N3,Ca2,R2,N4,Ci2,Ci3,F2,Ca3,R3,F3
 Division,Red Lion Toft,N5,Ca4,R4,Maximum Entropy,Mott Macdonald,Wolfson,Univ Sports,Ci4,F4,Cavendish Lab,N6,Leckhampton,Barclays Bank,Ca5
-Division,Cavendish Lab,Maximum Entropy 2,R5,Touche Ross,F5,Ca6,Marshall,Ca7,Ca8,Univ Sports 2,Coopers & Lybrand,N7,Ca9,Red Lion Toft 2,Ca10
+Division,Cavendish Lab 2,Maximum Entropy 2,R5,Touche Ross,F5,Ca6,Marshall,Ca7,Ca8,Univ Sports 2,Coopers & Lybrand,N7,Ca9,Red Lion Toft 2,Ca10
 
 Results
 ruuuo3urru uruuuururr rrruruurrruu

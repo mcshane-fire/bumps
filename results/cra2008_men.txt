@@ -3,7 +3,7 @@ Short,CRA
 Gender,Men
 Year,2008
 
-Division,Ca,R,N,R2,N2,Ci,S,Ca2,X,R3,N3,Ci2,Ch,SN,R4,Ca3,Ci3
+Division,Ca,R,N,R2,N2,Ci,Ct,Ca2,X,R3,N3,Ci2,Ch,SN,R4,Ca3,Ci3
 Division,Ca4,N4,Ch2,Ca5,X2,X3,Ch3,ME,R5,SR,Ca6,N5,SI,Ci4,Ca7,Ch4,X4
 Division,R6,Ca8,Ct2,Ci5,SR2,Ch5,CV,Ci6,Leys Lysander,Ci7,Ch6,SI2,Ch7,Ca9,Ch8,Ct3,X5
 Division,Ca10,N6,Ca11,Ca12,Ci8,Ch9,Ca13,Ca14,X6

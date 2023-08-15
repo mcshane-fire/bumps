@@ -3,7 +3,7 @@ Short,CRA
 Gender,Men
 Year,1972
 
-Division,R,N,R2,N2,ACUA,Ca,Ci,Scouts,Selwyn,N3,Grammar Sch,Ci2,Churchill,R3,N4
+Division,R,N,R2,N2,ACUA,Ca,Ci,Scouts,Selwyn,N3,Grammar School,Ci2,Churchill,R3,N4
 Division,Ca2,Cambs High School,R4,Leckhampton,King's,Churchill 2,RAF Brampton,R5,Ca3,Scouts 2,Ca4,Telephones,R6
 
 Results

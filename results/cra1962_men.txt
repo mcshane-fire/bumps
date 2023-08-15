@@ -4,7 +4,7 @@ Gender,Men
 Year,1962
 
 Division,Ci,Ca,N,R,Ci2,Scouts,Ca2,R2,P,Cambs High School,ACUA,Scouts 2,N2,Ci3,ACUA 2,Beehives,Scouts 3
-Division,Bridge,N3,Ci4,R3,Ci5,N4,Cam Grammar School,R4,Scouts 4,N5,Leys Sch,P2,Cam Grammar Sch 2,ACUA 3,ACUA 4
+Division,Bridge,N3,Ci4,R3,Ci5,N4,Cam Grammar School,R4,Scouts 4,N5,Leys School,P2,Cam Grammar School 2,ACUA 3,ACUA 4
 
 Results
 o3uo3uurrru urrruururuur

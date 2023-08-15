@@ -3,8 +3,8 @@ Short,CRA
 Gender,Men
 Year,1970
 
-Division,R,Ci,N,ACUA,Ca,R2,Ci2,N2,N3,Scouts,R3,Cam Grammar Sch,Ca2,ACUA 2,Cambs High School
-Division,Ci3,ACUA 3,Police,N4,Selwyn,R4,R5,Cam Grammar Sch 2,Churchill,King's,Cambs High Sch 2,Ca3,Ci4,ACUA 4,N5
+Division,R,Ci,N,ACUA,Ca,R2,Ci2,N2,N3,Scouts,R3,Cam Grammar School,Ca2,ACUA 2,Cambs High School
+Division,Ci3,ACUA 3,Police,N4,Selwyn,R4,R5,Cam Grammar School 2,Churchill,King's,Cambs High School 2,Ca3,Ci4,ACUA 4,N5
 
 Results
 rrurrurro3ur rrrrrruuurur

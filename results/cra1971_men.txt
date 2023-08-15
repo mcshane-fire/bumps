@@ -3,7 +3,7 @@ Short,CRA
 Gender,Men
 Year,1971
 
-Division,R,N,Rob Roy/City 1,N2,Rob Roy/City 2,ACUA,Ca,Scouts,Rob Roy/City 3,Rob Roy/City 4,N3,Ca2,Selwyn,Grammar Sch,Rob Roy/City 5,ACUA 2
+Division,R,N,Rob Roy/City 1,N2,Rob Roy/City 2,ACUA,Ca,Scouts,Rob Roy/City 3,Rob Roy/City 4,N3,Ca2,Selwyn,Grammar School,Rob Roy/City 5,ACUA 2
 Division,N4,Cambs High School,Rob Roy/City 6,Churchill,Police,Rob Roy/City 7,King's,Leckhampton,Magdalene,Darwin,Churchill 2,Ca3,Grammar School 2,N5,Telephones,Scouts 2,N6
 
 Results
