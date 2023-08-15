@@ -469,6 +469,12 @@ def add_crew_data(all, code, crew, p):
         print("Different number of days in %d:%d != %d" % (p[0], b['days'], p[1]))
         return False
 
+    # handle special case of Osler-Green vs Osler House
+    if crew.startswith("OH"):
+        year = int(p[0])
+        if year >= 1996 and year <= 2008:
+            crew = 'OG' + crew[2:]
+
     b['crew'][crew] = p[2:]
 
     withdrawn = False
@@ -517,7 +523,7 @@ def convert_per_crew(source_directory, dest_directory, check_directory):
             'mert' : 'Mt',
             'newc' : 'N',
             'orie' : 'O',
-            'osle' : 'OG',
+            'osle' : 'OH',
             'pemb' : 'P',
             'quee' : 'Q',
             'rege' : 'R',
