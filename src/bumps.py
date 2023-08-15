@@ -3,25 +3,64 @@
 import re
 import abbreviations
 
-def add_crew(crews, str, abbrev):
+# crew name syntax: (apologies for abuse of BNF)
+# <name> ::= <club><opt-suffix><opt-number>
+# <club> ::= <abbreviated code> | <full club name, any characters apart from parenthesis>
+# <opt-suffix> ::= "(" <suffix> ")" | ""
+# <opt-number> ::= <number> | ""
+# <suffix> ::= <any characters apart from parenthesis>
+# <number> ::= <number in decimal>
+
+def add_crew(crew_state, crews, str, abbrev):
     crew = {'gain' : 0, 'blades' : False, 'highlight' : False}
 
-    str = str.strip()
-    short = str.strip("0123456789")
-    if short in abbrev:
-        num = str.strip("abcdefghijklmnopqrtsuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-        if len(num) > 0:
-            str = "%s %s" % (abbrev[short]['name'], abbreviations.roman[int(num)-1])
-        else:
-            str = abbrev[short]['name']
-        crew['college'] = abbrev[short]
+    if 'pat' not in crew_state:
+        crew_state['pat'] = re.compile("^(.*?)(\([^\)]*\))?[ ]*([0-9]*)$")
 
-    crew['start'] = str
+    m = crew_state['pat'].match(str)
+    if m is None:
+        print("Can't understand crew name '%s'" % str)
+        return
+
+    club = m.group(1).strip()
+    extra = m.group(2)
+    number = m.group(3)
+
+    if club in abbrev:
+        club = abbrev[club]['name']
+
+    if number == "":
+        num = 1
+    else:
+        num = int(number)
+
+    if club not in crew_state:
+        crew_state[club] = 1
+
+    if num != crew_state[club]:
+        print("Club %s crews out of order (found %d, expecting %d)" % (club, num, crew_state[club]))
+
+    crew_state[club] = num+1
+
+    name = club
+    if extra is not None:
+        name += " " + extra
+    if num > 1:
+        if num < len(abbreviations.roman):
+            name += " " + abbreviations.roman[num-1]
+        else:
+            name += " %d" % num
+
+    #print("'%s' -> '%s' (club=%s)" % (str, name, club))
+            
+    crew['start'] = name
     crew['end'] = None
     crews.append(crew)
 
 def read_file(name, highlight = None):
     abbrev = {}
+
+    crew_state = {}
     
     if name != None:
         input = open(name, "r")
@@ -62,7 +101,7 @@ def read_file(name, highlight = None):
                 d.append(len(p)-1)
             if len(p) > 1:
                 for i in p[1:]:
-                    add_crew(ret['crews'], i, abbrev)
+                    add_crew(crew_state, ret['crews'], i, abbrev)
         elif p[0] == "Results":
             results = True
             p.pop(0)
@@ -80,6 +119,8 @@ def read_file(name, highlight = None):
         for crew in ret['crews']:
             if crew['start'].startswith(highlight):
                 crew['highlight'] = True
+
+    
                     
     return ret
 
