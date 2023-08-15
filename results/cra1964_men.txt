@@ -4,7 +4,7 @@ Gender,Men
 Year,1964
 
 Division,N,Ci,Ci2,Ca,R,Scouts,P,N2,R2,N3,ACUA,Scouts 2,Ci3,Bridge
-Division,Ca2,Leys Sch,Cambs High School,ACUA 2,R3,Scouts 3,Cam Grammar School,Beehives,Grammar School OB,N4,N5,Leys School 2,Ci4,P2
+Division,Ca2,Leys School,Cambs High School,ACUA 2,R3,Scouts 3,Cam Grammar School,Beehives,Grammar School OB,N4,N5,Leys School 2,Ci4,P2
 Division,Scouts 4,R4,P3,Ca3,Leys School 3,ACUA 3,Ci5,R5
 
 Results

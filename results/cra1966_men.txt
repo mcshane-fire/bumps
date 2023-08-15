@@ -4,7 +4,7 @@ Gender,Men
 Year,1966
 
 Division,N,Ca,N2,R,Scouts,Leys School,R2,Bridge,Ca2,ACUA,Scouts 2,Cambs High School,R3,N3,Leys School 2,Cam Grammar School,Scouts 3
-Division,ACUA 2,Leys School 3,Ca3,Leys School 4,Cam Grammar School 2,Leys Sch 5,Cambs High School 2,ACUA 3,Leys School 6,N4
+Division,ACUA 2,Leys School 3,Ca3,Leys School 4,Cam Grammar School 2,Leys School 5,Cambs High School 2,ACUA 3,Leys School 6,N4
 
 Results
 urururr urruuurruurr
