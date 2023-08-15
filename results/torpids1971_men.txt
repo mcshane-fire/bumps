@@ -6,7 +6,7 @@ Year,1971
 Division,B,O,Ch,N,SJ,U
 Division,SE,K,Wh,J,Q,SC,Lc,H,T
 Division,Wt,SJ2,Mt,Mg,Br,U2,Co,SP,E
-Division,P,Ch2,B2,Osler House,SE2,O2,Lc2,SP2,P2
+Division,P,Ch2,B2,OH,SE2,O2,Lc2,SP2,P2
 Division,Q2,SJ3,K2,Lc3,U3,Wh2,J2,SC2,Br2
 Division,E2,O3,Mg2,L,N2,Wt2,B3,SE3,P3
 

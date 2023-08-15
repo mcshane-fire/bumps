@@ -3,9 +3,9 @@ Short,Torpids
 Gender,Women
 Year,1993
 
-Division,S,N,Wh,Osler House,Wf,U,SC,P,SHi,LM,Br,Wt
+Division,S,N,Wh,OH,Wf,U,SC,P,SHi,LM,Br,Wt
 Division,SAn,Ch,T,K,O,SJ,H,B,SHu,E,J,S2
-Division,SE,Lc,L,Mt,Q,Mg,SP,N2,O2,Osler House 2,P2,Wh2,Mf
+Division,SE,Lc,L,Mt,Q,Mg,SP,N2,O2,OH2,P2,Wh2,Mf
 
 Results
 ruurrrw2u e2re2re-4rrruru e2re-2rrw3urr

@@ -4,7 +4,7 @@ Gender,Men
 Year,1987
 
 Division,O,K,Ch,P,O2,E,Br,Wt,Lc,N,Q,SC
-Division,SE,Wh,H,U,B,T,Mg,Wf,SJ,K2,Osler House,SP
+Division,SE,Wh,H,U,B,T,Mg,Wf,SJ,K2,OH,SP
 Division,J,Ch2,O3,E2,Co,Lc2,LM,Mt,Wt2,P2,Br2,SC2
 Division,U2,Mf,N2,SJ2,SAn,H2,Q2,B2,SE2,Wh2,J2,Wf2
 Division,Wt3,SJ3,R,E3,O4,O5,L,LM2,K3,T2,Wh3,J3

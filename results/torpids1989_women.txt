@@ -3,9 +3,9 @@ Short,Torpids
 Gender,Women
 Year,1989
 
-Division,Osler House,S,LM,SHu,Wh,U,SC,SHu2,N,Br,P,K
+Division,OH,S,LM,SHu,Wh,U,SC,SHu2,N,Br,P,K
 Division,SAn,J,Wt,SHi,Wf,B,Ch,T,Lc,Co,S2,H
-Division,Q,E,SJ,SE,SP,N2,Mg,SHu3,SHi2,O,Osler House 2,H2
+Division,Q,E,SJ,SE,SP,N2,Mg,SHu3,SHi2,O,OH2,H2
 Division,Wh2,L,Mf,T2,S3,Mt,LM2,Wf2,E2,Mg2,Wt2,SAn2
 Division,O2,SAn3,SHi3,SC2,K2,J2,Ch2,LM3,Q2,Wh3,B2,LM4,E3
 

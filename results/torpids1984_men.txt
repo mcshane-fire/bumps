@@ -4,7 +4,7 @@ Gender,Men
 Year,1984
 
 Division,O,K,Wt,E,Ch,B,P,O2,Lc,Q,SE,U
-Division,N,Br,H,Wh,SC,J,Osler House,Mg,SJ,T,K2,P2
+Division,N,Br,H,Wh,SC,J,OH,Mg,SJ,T,K2,P2
 Division,Co,Mt,Mf,SP,Wf,E2,O3,U2,Ch2,Wt2,Lc2,B2
 Division,Wh2,Q2,SJ2,J2,SE2,K3,SC2,Br2,Wf2,E3,N2,O4
 Division,R,O5,Q4,LM,H2,SP2,Wt3,SAn,Wh3,SJ3,K4,Co2

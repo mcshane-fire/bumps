@@ -3,7 +3,7 @@ Short,Eights
 Gender,Women
 Year,2011
 
-Division,B,SE,Wh,P,Osler House,Ch,Mg,SJ,H,U,O,N
+Division,B,SE,Wh,P,OH,Ch,Mg,SJ,H,U,O,N
 Division,S,Mt,K,SC,L,Wf,Wt,SHi,SAn,E,SHu,Q
 Division,Mf,T,Br,J,Lc,SP,Co,Ch2,LM,Wf2,SAt,SJ2
 Division,Wh2,L2,Mg2,H2,SHi2,P2,SE2,Mt2,SC2,Wt2,LM2,B2

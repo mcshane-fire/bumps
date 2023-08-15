@@ -5,7 +5,7 @@ Year,1975
 
 Division,O,U,Ch,B,Wt,J,N
 Division,SE,SC,K,O2,Lc,T,Mg,Wh,E,Q
-Division,SJ,P,SP,Osler House,Br,Mt,Co,U2,SE2,Ch2
+Division,SJ,P,SP,OH,Br,Mt,Co,U2,SE2,Ch2
 Division,Lc2,P2,SP2,J2,H,Wf,Q2,SJ2,SC2,Wh2
 Division,Br2,SE3,K2,O3,Wh3,Mf,B2,N2,T2,Mg2
 Division,E2,Mt2,H2,Wf2,E3,P3,SP3,O4,Wh4,O5

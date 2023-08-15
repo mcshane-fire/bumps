@@ -3,7 +3,7 @@ Short,Torpids
 Gender,Women
 Year,1983
 
-Division,J,S,LM,SC,Wf,SAn,Osler House,SHi,Br,H,Wt,E
+Division,J,S,LM,SC,Wf,SAn,OH,SHi,Br,H,Wt,E
 Division,SHu,P,Wh,T,K,L,S2,U,Co,LM2,B,SHu2
 Division,Lc,Mg,Lc2,Q,Mf,SJ,Co2,SE,Mt,J2,Ch,SAn2,SHi2
 

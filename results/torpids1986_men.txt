@@ -4,7 +4,7 @@ Gender,Men
 Year,1986
 
 Division,O,K,P,O2,Ch,E,Br,Lc,Q,Wt,J,SC
-Division,SE,N,U,Wh,B,Mg,H,SJ,T,Osler House,Wf,K2
+Division,SE,N,U,Wh,B,Mg,H,SJ,T,OH,Wf,K2
 Division,SP,E2,Ch2,Wt2,Lc2,O3,Co,LM,Mf,U2,Mt,P2
 Division,SAn,SE2,Br2,SC2,B2,N2,SJ2,Q2,H2,Wh2,Wt3,E3
 Division,SJ3,J2,O4,Wf2,R,J3,K3,O5,LM2,L,Wh3,SB

@@ -5,7 +5,7 @@ Year,1974
 
 Division,O,B,U,Ch,Wt,SC
 Division,J,Q,K,N,T,SE,SJ,Wh,O2
-Division,Lc,Mg,E,P,Br,SP,Osler House,Co,Mt
+Division,Lc,Mg,E,P,Br,SP,OH,Co,Mt
 Division,SE2,SJ2,U2,Q2,P2,SP2,Ch2,J2,SC2
 Division,Lc2,Wh2,H,O3,Wf,SE3,Br2,Wt2,P3
 Division,K2,Wh3,Mg2,Mf,B2,N2,E2,Co2,SP3

@@ -5,7 +5,7 @@ Year,1993
 
 Division,O,Br,Ch,P,N,U,Mg,O2,B,Wt,LM,H
 Division,SC,SE,K,Lc,Wh,Wf,SJ,SP,Q,E,J,T
-Division,Ch2,U2,Osler House,SHu,SAn,Mt,N2,O3,B2,Br2,Co,Wt2
+Division,Ch2,U2,OH,SHu,SAn,Mt,N2,O3,B2,Br2,Co,Wt2
 Division,SC2,Mf,P2,Lc2,SE2,L,SJ2,E2,K2,LM2,Q2,H2
 Division,Wh2,Wt3,Mg2,R,O4,J2,O5,SP2,Q3,SJ3,K3,SAn2,SB
 

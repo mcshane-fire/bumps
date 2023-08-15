@@ -5,7 +5,7 @@ Year,1989
 
 Division,O,Ch,O2,K,N,Br,H,P,SE,SC,B,Mg
 Division,Lc,T,Wf,U,Wt,SJ,Wh,LM,Q,J,Ch2,Mt
-Division,E,SP,O3,U2,K2,SC2,N2,Br2,Lc2,Mf,SAn,Osler House
+Division,E,SP,O3,U2,K2,SC2,N2,Br2,Lc2,Mf,SAn,OH
 Division,Wt2,B2,H2,Co,Wt3,P2,Wf2,SE2,E2,L,J2,SJ2
 Division,Q2,LM2,R,Wh2,O4,SJ3,Q3,O5,T2,H3,K3,E3
 Division,J3,N3,Mg2,Wh3,T3,SAn2,Br3,SP2,Ch3,SAn3,O6,Lc3

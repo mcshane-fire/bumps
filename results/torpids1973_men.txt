@@ -5,7 +5,7 @@ Year,1973
 
 Division,O,B,U,Ch,Q,SC
 Division,J,Wt,SJ,K,Wh,N,T,E,Mg
-Division,SE,Lc,SP,Osler House,Br,O2,U2,P,SJ2
+Division,SE,Lc,SP,OH,Br,O2,U2,P,SJ2
 Division,H,Mt,Co,SC2,SP2,Q2,SE2,Lc2,P2
 Division,Ch2,Wh2,Br2,J2,P3,Lc3,K2,Wf,O3
 Division,SE3,Wt2,Mg2,Mt2,SC3,J3,K3,Wh3,L

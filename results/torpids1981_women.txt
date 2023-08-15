@@ -4,7 +4,7 @@ Gender,Women
 Year,1981
 
 Division,J,S,H,LM,Wh,Br,SC,Wf,SAn,L,SHi,S2
-Division,SHu,LM2,SC2,Osler House,Wt,E,H2,J2,Co,K,P,L2
+Division,SHu,LM2,SC2,OH,Wt,E,H2,J2,Co,K,P,L2
 Division,T,Q,SHu2,B,SJ,N,B2,Mg,U,SAn2,LM3,SP
 
 Results

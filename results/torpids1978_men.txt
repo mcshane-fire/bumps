@@ -5,11 +5,11 @@ Year,1978
 
 Division,O,B,Ch,U,N,K,SE
 Division,Lc,O2,Wt,Mg,T,Wh,Q,E,Br,J
-Division,P,SJ,Mt,SC,Co,SP,H,Osler House,U2,P2
+Division,P,SJ,Mt,SC,Co,SP,H,OH,U2,P2
 Division,SE2,Lc2,Ch2,Wf,Q2,O3,K2,J2,Mf,Mt2
 Division,SP2,Wh2,N2,Q3,Co2,SC2,Co3,E2,T2,O4
 Division,SJ2,Mg2,O5,Br2,K3,R,H2,L,SJ3,Wt2
-Division,O.U.W.B.C.,Q4,Osler House 2,H3,Ch3,Q5,E3,K4,SB,SC3
+Division,O.U.W.B.C.,Q4,OH2,H3,Ch3,Q5,E3,K4,SB,SC3
 
 Results
 e2e2e-2e1e1e-4rru e2e-1e1e2e-3e3re-3e1e-2r e1e2e-2e2e-2e1e2re1e-5r ue1e1e3re3e3e-2e-1e-8 rurrurru ruw2ue2e-1e-1 uurrrr

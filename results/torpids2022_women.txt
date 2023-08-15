@@ -6,8 +6,8 @@ Year,2022
 Division,Wf,P,O,U,Ch,H,Wh,K,N,T,J,B
 Division,GT,SAn,Mg,S,LM,Lc,Br,SJ,SC,SE,Wf2,Mf
 Division,L,SP,Co,SHi,Mt,SHu,Q,SAt,E,Wt,N2,Wf3
-Division,S2,U2,R,O2,SJ2,Wh2,Mf2,Ch2,L2,P2,Wt2,Osler House
-Division,Lc2,Mg2,SE2,Ch3,Wf4,Osler House 2,Br2,SAt2,Wf5,Mt2,N3,GT2,K2
+Division,S2,U2,R,O2,SJ2,Wh2,Mf2,Ch2,L2,P2,Wt2,OH
+Division,Lc2,Mg2,SE2,Ch3,Wf4,OH2,Br2,SAt2,Wf5,Mt2,N3,GT2,K2
 
 Results
 rrrurrrrrur w3e1e2re-3ruu w6urur rrw3e2re1e-3ur w2urururr

@@ -4,7 +4,7 @@ Gender,Women
 Year,1980
 
 Division,Wh,J,H,LM,Wf,SHu,S,L,Br,SC,SAn,SC2
-Division,LM2,L2,SHi,H2,LM3,S2,E,Wt,Osler House,J2,Co,P
+Division,LM2,L2,SHi,H2,LM3,S2,E,Wt,OH,J2,Co,P
 Division,Q,K,Lc,SP,SHu2,B,S3,SHi2,SE,Br2
 
 Results
