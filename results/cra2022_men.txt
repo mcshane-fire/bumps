@@ -1,0 +1,14 @@
+Set,CRA Bumps
+Short,CRA
+Gender,Men
+Year,2022
+Days,3
+
+Division,N,Ca,R,Ca2,N2,Ci,X,Ca3,Ct,N3,Ci2,Ci3,Ch,Ca4,Ca5,N4,SN
+Division,Ci4,Ci5,Ct2,X2,SR,Ci6,Ci7,Ca6,Ci8,Ca7,X3,N5,Ca8,Ch2,N6,IE,SN2
+Division,Ch3,Ci9,Ca9,Ci10,X4,Ca10,Ca11,X5,Ci11,Ci12,Ch4,N7,Ch5,N8,N9,N10,N11,N12,CV
+
+Results
+rrrrruurruurru urururruuurr urrururrrurrrr
+ruruuuuuuru rurruurrrrrrru ruuururrrurrr
+uruuuuuurur uurururrruur uurrrrrurrrurr

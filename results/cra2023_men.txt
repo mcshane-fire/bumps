@@ -1,0 +1,15 @@
+Set,CRA Bumps
+Short,CRA
+Gender,Men
+Year,2023
+
+Division,N,Ca,Ci,R,Ca2,N2,X,Ci2,Ca3,Ct,N3,Ca4,R2,Ci3,Ca5,Ci4,Ch
+Division,Ci5,N4,X2,SN,Ci6,Ct2,SR,Ca6,Ci7,N5,Ci8,Ca7,X3,Ca8,N6,Ci9,Ch2
+Division,Ch3,IE,Ca9,SN2,Ca10,X4,Ci10,Ci11,X5,N7,Ca11,N8,Ci12,N9,Ct3,Ch4,N10
+Division,Ch5,SR2,N11,Ci13,Ct4,N12,Ci14,N13,Ch6,Camb Vets
+
+Results
+urrrruu rrrururuurrru uurrurrrurrru uuurruurrrur
+rrrururr rrurururrurur rrrurruruurru ruuuurrurrru
+rrrrurur rururururruu rurrruuruuur rrurrurrrrurrrr
+urrrurrr rrrurrrruuurrr rrrrrrrrrrrrrrurr ruuuurruurrr
