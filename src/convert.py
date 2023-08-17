@@ -318,9 +318,8 @@ def create_short_name(name, abbrev):
                     cand = k
         if cand is not None:
             rest = out[len(abbrev[cand]['name']):].strip()
-            num = ''
+            num = None
             if len(rest) > 0:
-                num = None
                 for i in range(len(abbreviations.roman)):
                     if rest == abbreviations.roman[i]:
                         num = i+1
@@ -328,6 +327,8 @@ def create_short_name(name, abbrev):
                     if rest == "%d" % (i+1):
                         num = i+1
                         break
+            else:
+                num = 1
 
             if num is not None:
                 if num > 1:
@@ -362,7 +363,7 @@ def convert_ad_format(name, outname):
     output = open(outname, 'w')
     debug = False
 
-    title_map = {'TOWN' : ['Town Bumps', 'Town', None],
+    title_map = {'TOWN' : ['CRA Bumps', 'CRA', abbreviations.cra],
                  'EIGHTS' : ['Summer Eights', 'Eights', abbreviations.ocol],
                  'TORPIDS' : ['Torpids', 'Torpids', abbreviations.ocol],
                  'MAYS' : ['May Bumps', 'Mays', abbreviations.ccol],
