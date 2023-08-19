@@ -124,45 +124,80 @@ def read_file(name, highlight = None):
                     
     return ret
 
-def find_sandwich_boat(move, position, start = None):
-    if start is None:
-        c = position
-    else:
-        c = start
-        
-    while c < len(move) and c - move[c] != position:
-        c += 1
+def swap_crews(move, back, pos_a, pos_b):
+    orig_a = back[pos_a]
+    if orig_a is None:
+        orig_a = pos_a
+        if move[orig_a] is not None:
+            print("Crew %d not expected to have a result" % orig_a)
+            return False
+        move[orig_a] = 0
 
-    if c == len(move):
-        return None
-    return c
-    
-def process_bump(move, crew_num, up, div_head):
+    orig_b = back[pos_b]
+    if orig_b is None:
+        orig_b = pos_b
+        if move[orig_b] is not None:
+            print("Crew %d not expecting to have a result" % orig_b)
+            return False
+        move[orig_b] = 0
+
+    #print("Swapping cur: %d,%d orig:%d,%d move:%d->%d,%d->%d" % (pos_a, pos_b, orig_a, orig_b, move[orig_a], move[orig_a] - pos_b + pos_a, move[orig_b], move[orig_b] + pos_b - pos_a))
+        
+    move[orig_a] -= pos_b - pos_a
+    move[orig_b] += pos_b - pos_a
+
+    back[pos_a] = orig_b
+    back[pos_b] = orig_a
+    return True
+
+def process_bump(move, back, crew_num, up, div_head):
     if crew_num - up < div_head:
         print("Bumping up above the top of the division: div_head %d, crew %d, up %d" % (div_head, crew_num, up))
         return False
-    if move[crew_num - up] != 0:
+    if move[crew_num - up] is not None:
         print("Bumping a crew that has already got a result")
         return False
-    move[crew_num - up] = -up
 
-    # find the boat that is currently pointing to this spot
-    # it might be a crew that has bumped already into the sandwich boat slot
-    c = find_sandwich_boat(move, crew_num)
-    if c is None:
-        return False
-    
-    move[c] += up
+    return swap_crews(move, back, crew_num, crew_num-up)
+
+def process_chain(move, back, crew_num, num):
+    for i in range(num):
+        if swap_crews(move, back, crew_num, crew_num+1) == False:
+            return False
+        crew_num += 1
     return True
+
+def check_results(event, move, back, debug):
+    results = []
+    ret = True
+    for i in range(len(event['crews'])):
+        if back[i] is None and i < len(event['crews']) - event['crews_withdrawn']:
+            print("Error: back[%d] is None" % i)
+            ret = False
+        else:
+            if back[i] in results and back[i] is not None:
+                print("Error: back[%d]=%s is already a back entry" % (i, back[i]))
+                ret = False
+            results.append(back[i])
+
+        if debug:
+            out = "%2d: %25s " % (i, event['crews'][i]['start'])
+            for j in range(event['days']):
+                out += "| %3s %3s " % (event['move'][j][i], event['back'][j][i])
+            print(out)
+
+    return ret
 
 def process_results(event):
     debug = False
 
     event['move'] = []
+    event['back'] = []
     event['completed'] = []
     event['skip'] = []
     for d in range(event['days']):
-        event['move'].append([0] * len(event['crews']))
+        event['move'].append([None] * len(event['crews']))
+        event['back'].append([None] * len(event['crews']))
         event['skip'].append([False] * len(event['crews']))
         event['completed'].append([False] * len(event['div_size'][0]))
     
@@ -176,11 +211,12 @@ def process_results(event):
     div_num = len(event['div_size'][day_num])-1                   # 0 is the first division
     crew_num = len(event['crews'])-1                              # 0 is the headship crew
     div_head = crew_num - event['div_size'][day_num][div_num] + 1 # index of the head crew in the current division
-    crews_withdrawn = 0
+    event['crews_withdrawn'] = 0
     penalty = 0
     
     for c in m:
         move = event['move'][day_num]
+        back = event['back'][day_num]
         
         if debug:
             print("\nNew command:%s (day:%d div:%d crew:%d div_head:%d)" % (c, day_num, div_num, crew_num, div_head))
@@ -197,13 +233,12 @@ def process_results(event):
                 num = 0
                 for s in sizes:
                     num += s
-                if num == len(event['crews']) - crews_withdrawn:
+                if num == len(event['crews']) - event['crews_withdrawn']:
                     for day in range(day_num+1, event['days'], 1):
                         event['div_size'][day] = sizes
 
-
         # if we've already got a result for this crew, then we can skip over it
-        while crew_num >= div_head and move[crew_num] != 0:
+        while crew_num >= div_head and move[crew_num] is not None:
             if debug:
                 print("Skipping crew:%d, got %s" % (crew_num, move[crew_num]))
             crew_num = crew_num - 1
@@ -219,9 +254,14 @@ def process_results(event):
 
                 if debug:
                     print("\nMoving to day %d" % day_num)
+
+                if check_results(event, move, back, debug) == False:
+                    return
+
                 move = event['move'][day_num]
+                back = event['back'][day_num]
                 div_num = len(event['div_size'][day_num])-1
-                crew_num = len(event['crews'])-1-crews_withdrawn
+                crew_num = len(event['crews']) - 1 - event['crews_withdrawn']
                 div_head = crew_num - event['div_size'][day_num][div_num] + 1
             else:
                 div_num -= 1
@@ -236,19 +276,22 @@ def process_results(event):
 
         if c == 'r':
             # row over, move to the next crew
+            if back[crew_num] is None:
+                back[crew_num] = crew_num
+                move[crew_num] = 0
             crew_num = crew_num - 1
             if debug:
                 print("Rowover, moving to crew %d" % crew_num)
         elif c == 'u':
             # up 1
-            if process_bump(move, crew_num, 1, div_head) == False:
+            if process_bump(move, back, crew_num, 1, div_head) == False:
                 return
             crew_num = crew_num - 2
             if debug:
                 print("Bumped up, moving to crew %d" % crew_num)
         elif c.startswith("o"):
             up = int(c[1:])
-            if process_bump(move, crew_num, up, div_head) == False:
+            if process_bump(move, back, crew_num, up, div_head) == False:
                 return
             crew_num = crew_num - 1
             if debug:
@@ -256,31 +299,20 @@ def process_results(event):
         elif c.startswith("e") or c.startswith("v"):
             up = int(c[1:])
 
-            # safe to call even if this isn't a sandwich crew position
-            p = find_sandwich_boat(move, crew_num)
-            if p is None:
-                return
+            if move[crew_num] is None:
+                p = crew_num
+                move[crew_num] = 0
+            else:
+                p = back[crew_num]
 
             move[p] += up
+            back[crew_num-up] = p
 
             if penalty != 0:
-                # figure out which crews benefitted from this move
-                benefit = []
-                for ep in range(1, penalty+1):
-                    p2 = find_sandwich_boat(move, p-move[p]+ep, crew_num)
-                    if p2 is None:
-                        print("Can't find source for crew %d" % (p-move[p]+ep))
-                        return
-                    benefit.append(p2)
-                    if debug:
-                        print("Found position %d:%d that ends is %d position, benefits by 1" % (ep, p2, p-move[p]+ep))
-                
-                move[p] -= penalty
-                for ep in benefit:
-                    move[ep] += 1
-
                 if debug:
-                    print("Applying penalty %d to crew %d, reverse penalty to crew %d" % (penalty, p, p2))
+                    print("Applying penalty %d to crew %d" % (penalty, crew_num-up))
+                if process_chain(move, back, crew_num-up, penalty) == False:
+                    return
                 penalty = 0
             
             crew_num = crew_num - 1
@@ -297,35 +329,28 @@ def process_results(event):
                 print("Washing machine size %d get above head of division %d" % (size, div_head))
                 return
 
-            # first crew going up might be a sandwich crew
-            p = find_sandwich_boat(move, crew_num)
-            if p is None:
+            if debug:
+                print("Washing machine, crew %d, size %d" % (crew_num, size))
+            if process_chain(move, back, crew_num-size, size) == False:
                 return
-
-            move[p] +=1
-            if debug:
-                print("Washing machine, crew %d up one" % p)
-
-            for j in range(crew_num-1, crew_num - size, -1):
-                if debug:
-                    print("Washing machine crew %d up one" % j)
-                move[j] = 1
-            if debug:
-                print("Washing machine crew %d down %d.  Moving to crew %d" % (crew_num-size, size, crew_num-size-1))
-            move[crew_num - size] = -size
             crew_num = crew_num - (size+1)
 
         elif c == 'x':
             if debug:
                 print("Crew %d withdrawn, moving to crew %d" % (crew_num, crew_num-1))
-            move[crew_num] = None
-            crews_withdrawn += 1
+            event['crews_withdrawn'] += 1
             crew_num -= 1
             event['div_size'][day_num][div_num] -= 1
             for day in range(day_num+1, event['days'], 1):
                 event['div_size'][day][div_num] = event['div_size'][day_num][div_num]
             
         elif c == 't':
+            for i in range(div_head, crew_num+1):
+                if move[i] is None:
+                    move[i] = 0
+                if back[i] is None:
+                    back[i] = i
+
             if debug:
                 print("Skipping division, setting crew from %d to div_head-1 %d" % (crew_num, div_head-1))
             crew_num = div_head-1
@@ -341,6 +366,9 @@ def process_results(event):
 
     full_set = False
     if day_num == event['days']-1 and crew_num == -1:
+        if check_results(event, move, back, debug) == False:
+            return
+
         if debug:
             print("Completed all divisions & days")
         full_set = True
