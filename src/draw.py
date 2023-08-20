@@ -28,27 +28,28 @@ def draw_divisions(svg_config, out, xoff, yoff, event, space, draw_colours = Fal
             t = event['move'][day]
             up = t[c]
 
-            if up is None:
-                out.add(out.circle(center=last, r=3, fill=colour))
-                break
-            
             tmp = c
             raceday = True
+            div_raced = True
             for d in range(len(event['div_size'][day])):
                 if tmp < event['div_size'][day][d]:
-                    if event['completed'][day][d] == False and up == 0:
-                        #print("Day %d, crew %d in div %d not raced" % (day, c, d))
-                        raceday = False
+                    if event['completed'][day][d] == False:
+                        div_raced = False
                     break
                 tmp -= event['div_size'][day][d]
 
             if event['skip'][day][c] == True:
                 raceday = False
                 
+            if up is None:
+                if div_raced:
+                    out.add(out.circle(center=last, r=3, fill=colour))
+                break
+
             xpos = xpos + svg_config['scale']
             ypos = ypos - (up*svg_config['scale'])
 
-            if raceday:
+            if div_raced and raceday:
                 if len(points) == 0:
                     points.append(last)
                 points.append([xpos, ypos])
