@@ -167,12 +167,15 @@ def process_chain(move, back, crew_num, num):
         crew_num += 1
     return True
 
-def check_results(event, move, back, debug):
+def check_results(event, move, back, head, debug):
     results = []
     ret = True
     for i in range(len(event['crews'])):
-        if back[i] is None and i < len(event['crews']) - event['crews_withdrawn']:
+        if back[i] is None and i < len(event['crews']) - event['crews_withdrawn'] and i >= head:
             print("Error: back[%d] is None" % i)
+            ret = False
+        elif back[i] is not None and (i < head or i >= len(event['crews']) - event['crews_withdrawn']):
+            print("Error: back[%d] from withdrawn/unraced division crew is not None" % i)
             ret = False
         else:
             if back[i] in results and back[i] is not None:
@@ -255,7 +258,7 @@ def process_results(event):
                 if debug:
                     print("\nMoving to day %d" % day_num)
 
-                if check_results(event, move, back, debug) == False:
+                if check_results(event, move, back, 0, debug) == False:
                     return
 
                 move = event['move'][day_num]
@@ -264,6 +267,13 @@ def process_results(event):
                 crew_num = len(event['crews']) - 1 - event['crews_withdrawn']
                 div_head = crew_num - event['div_size'][day_num][div_num] + 1
             else:
+                # not safe to call at the end of each division
+                # this division may have crews skipping over a withdrawn crew
+                # in the division above that hasn't been processed yet
+                # (see cra2004_men.txt)
+                #if check_results(event, move, back, div_head, debug) == False:
+                #    return
+
                 div_num -= 1
                 crew_num += 1
                 div_head -= event['div_size'][day_num][div_num]
@@ -364,15 +374,15 @@ def process_results(event):
         # if we've seen at least one result, mark this division as completed
         event['completed'][day_num][div_num] = True
 
+    if check_results(event, move, back, div_head, debug) == False:
+        return
+
     full_set = False
     if day_num == event['days']-1 and crew_num == -1:
-        if check_results(event, move, back, debug) == False:
-            return
-
         if debug:
             print("Completed all divisions & days")
         full_set = True
-        
+
     # work out finishing names and blades, etc
     for crew_num in range(len(event['crews'])):
         nc = crew_num;
