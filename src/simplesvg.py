@@ -131,10 +131,11 @@ class Line:
         return '<line %s />\n' % args
 
 class Text:
-    def __init__(self, label, insert, font_size, stroke_width, fill, text_anchor, mask, decoration, vertical_align):
+    def __init__(self, label, insert, font_size, stroke_width, fill, text_anchor, mask, decoration, vertical_align, font_family):
         self.defs = {'label':label,
                      'insert':insert,
                      'font_size':font_size,
+                     'font_family':font_family,
                      'stroke_width':stroke_width,
                      'fill':fill,
                      'text_anchor':text_anchor,
@@ -154,6 +155,8 @@ class Text:
         args += ' stroke-width="%g"' % self.defs['stroke_width']
         if self.defs['text_anchor'] is not None:
             args += ' text-anchor="%s"' % self.defs['text_anchor']
+        if self.defs['font_family'] is not None:
+            args += ' font-family="%s"' % self.defs['font_family']
         
         if 'degrees' in self.defs:
             args += ' transform="translate(%g,%g)rotate(%g)"' % (self.defs['center'][0],
@@ -312,8 +315,8 @@ class Drawing:
     def path(self, draw, fill, transform=None, name=None):
         return Path(draw, fill, transform, name)
     
-    def text(self, label, insert, font_size, stroke_width, fill, text_anchor=None, mask=None, decoration=None, vertical_align=None):
-        return Text(label, insert, font_size, stroke_width, fill, text_anchor, mask, decoration, vertical_align)
+    def text(self, label, insert, font_size, stroke_width, fill, text_anchor=None, mask=None, decoration=None, vertical_align=None, font_family=None):
+        return Text(label, insert, font_size, stroke_width, fill, text_anchor, mask, decoration, vertical_align, font_family)
 
     def rect(self, insert=None, size=None, fill=None, stroke_width=1, stroke=None, stroke_opacity=None, name=None, mask=None):
         return Rect(insert, size, fill, stroke, stroke_width, stroke_opacity, name, mask)

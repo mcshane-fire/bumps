@@ -10,7 +10,6 @@ state = {
     'output' : None,
     'stepon' : None,
     'svg_config' : {'scale' : 16,
-                    'right' : 128, #scale*8
                     'sep' : 32, #scale*2
                     'dash' : 6,
                     'colours' : False},

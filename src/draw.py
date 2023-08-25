@@ -1,6 +1,24 @@
 #!/bin/python3
 
 import simplesvg
+from arial_16_metrics import font_metrics
+
+def estimate_text_length(text, scale):
+    tot = 0.0
+    for c in text:
+        if c in font_metrics:
+            tot += font_metrics[c]
+    return tot * scale
+
+def estimate_max_length(crews, tag, scale):
+    mlen = 0.0
+    num = 1
+    for c in crews:
+        clen = estimate_text_length("%d %s" % (num, c[tag]), scale)
+        if clen > mlen:
+            mlen = clen
+        num += 1
+    return mlen
 
 def draw_divisions(svg_config, out, xoff, yoff, event, space, draw_colours = False):
     top = yoff
@@ -126,27 +144,28 @@ def draw_extra_text(svg_config, out, xoff, yoff, event, extra):
     top = yoff
     for div_num in range(len(event['div_size'][0])):
         label = None
-        fontsize = svg_config['scale'] * 1.5
-        colour = 'lightgray'
-        num = event['div_size'][0][div_num]
+        fontscale = 0.8
+        fontsize = svg_config['scale']*fontscale
+        colour = 'darkred'
+        height = event['div_size'][0][div_num] * svg_config['scale']
 
-        if extra == 'number' and num > 8:
-            label = "Division %d" % (div_num+1)
-        elif extra == 'title' and num > 12:
-            label = "%s %d - %s" % (event['short'], event['year'], event['gender'])
-        elif extra == 'both':
-            fontsize = svg_config['scale'] * 0.75
-            colour = 'darkred'
-            if num > 10:
-                label = "%s %d - %s, Division %d" % (event['short'], event['year'], event['gender'], div_num+1)
-            else:
+        label = "%s %d - %s, Division %d" % (event['short'], event['year'], event['gender'], div_num+1)
+        if estimate_text_length(label, fontscale) > height - svg_config['scale']:
+            label = "%s %d - %s, Div %d" % (event['short'], event['year'], event['gender'], div_num+1)
+            if estimate_text_length(label, fontscale) > height - svg_config['scale']:
                 label = "Division %d" % (div_num+1)
+                if estimate_text_length(label, fontscale) > height - svg_config['scale']:
+                    label = "Div %d" % (div_num+1)
+                    if estimate_text_length(label, fontscale) > height - svg_config['scale']:
+                        label = "%d" % (div_num+1)
+                        if estimate_text_length(label, fontscale) > height - svg_config['scale']:
+                            label = None
 
         if label != None:
-            text = out.add(out.text(label, insert=None, font_size=fontsize, stroke_width=0, fill=colour))
+            text = out.add(out.text(label, insert=None, font_size=fontsize, font_family='Arial', stroke_width=0, fill=colour))
             text.rotate(90, [xoff - fontsize - 2, top+5])
 
-        top = top + (svg_config['scale'] * num)
+        top = top + height
 
 
 def draw_numbers(svg_config, out, xoff, yoff, event, align, reset = False):
@@ -157,7 +176,7 @@ def draw_numbers(svg_config, out, xoff, yoff, event, align, reset = False):
     
     for crew in event['crews']:
         top = top + svg_config['scale']
-        out.add(out.text(str(number), insert=(xoff, top-3), font_size=fontsize, stroke_width=0, fill='gray', text_anchor=align))
+        out.add(out.text(str(number), insert=(xoff, top-3), font_size=fontsize, stroke_width=0, fill='gray', font_family='Arial', text_anchor=align))
         number = number + 1
         if reset and number-1 == event['div_size'][0][div_num]:
             number = 1
@@ -179,7 +198,7 @@ def draw_crews(svg_config, out, xoff, yoff, event, gain, align):
             colour = 'blue'
         elif crew['blades']:
             colour = 'red'
-        out.add(out.text(crew['start'], insert=(xoff,top-3-offset), font_size=fontsize, stroke_width=0, fill=colour, text_anchor=align))
+        out.add(out.text(crew['start'], insert=(xoff,top-3-offset), font_size=fontsize, font_family='Arial', stroke_width=0, fill=colour, text_anchor=align))
 
 def draw_stripes(svg_config, out, xoff, yoff, width, x2off, event, event2 = None, extra = 0):
     top = yoff
@@ -241,7 +260,7 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
     for crew in added:
         out.add(out.line(start=(xpos, crew['height']), end=(xpos, ynext), stroke = 'gray', stroke_width = 1))
         out.add(out.line(start=(xpos, crew['height']), end=(xoff + svg_config['sep'], crew['height']), stroke = 'gray', stroke_width = 1))
-        out.add(out.text(crew['crew']['start'], insert=(xpos, ynext+fontsize-1), font_size=fontsize, stroke_width=0, fill='black', text_anchor='end'))
+        out.add(out.text(crew['crew']['start'], insert=(xpos, ynext+fontsize-1), font_size=fontsize, font_family='Arial', stroke_width=0, fill='black', text_anchor='end'))
         xpos = xpos + xsep
         ynext = ynext + ysep
 
@@ -253,7 +272,9 @@ def write_svg(output, event, svg_config):
 
     # leave space for division titles down the left hand side
     left = svg_config['scale'] * 2
-    
+
+    svg_config['right'] = estimate_max_length(event['crews'], 'start', 0.8) + svg_config['scale']
+
     draw_stripes(svg_config, out, left, 0, (svg_config['right']*2) + (svg_config['scale'] * event['days']), left+svg_config['right'], event)
     draw_numbers(svg_config, out, left+3, 0, event, 'start', True)
     draw_numbers(svg_config, out, left + (2*svg_config['right']) + (svg_config['scale'] * event['days']) -3, 0, event, 'end', False)
@@ -284,6 +305,13 @@ def write_multi_svg(output, sets, svg_config):
     top = svg_config['scale'] * 1.25
     fontsize = svg_config['scale'] * 0.8
 
+    m1 = estimate_max_length(sets[0]['crews'], 'start', 0.8)
+    m2 = estimate_max_length(sets[-1]['crews'], 'end', 0.8)
+    if m2 > m1:
+        m1 = m2
+
+    svg_config['right'] = m1 + svg_config['scale']
+
     xpos = svg_config['right']
     eleft = svg_config['right']
     for event_num in range(0, len(sets)):
@@ -295,7 +323,7 @@ def write_multi_svg(output, sets, svg_config):
         else:
             extra = svg_config['right']
 
-        out.add(out.text(str(event['year']), insert=(xpos+(svg_config['scale'] * event['days'])/2, top-3), font_size=fontsize, stroke_width=0, fill='black', text_anchor='middle'))
+        out.add(out.text(str(event['year']), insert=(xpos+(svg_config['scale'] * event['days'])/2, top-3), font_size=fontsize, font_family='Arial', stroke_width=0, fill='black', text_anchor='middle'))
         draw_stripes(svg_config, out, xpos-eleft, top, eleft + (svg_config['scale'] * event['days']), xpos, event, event2, extra)
         eleft = 0
         xpos = xpos + (svg_config['scale'] * event['days']) + svg_config['sep']
