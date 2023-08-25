@@ -296,7 +296,7 @@ def generate_from_moves(output, ret, debug):
 
         output.write("%s\n" % results.strip())
 
-        if ret['div_size_change'] and day < ret['days']-1:
+        if ret['div_size_change'] and day < ret['days']-1 and len(next_day) > 1:
             line = "d<"
             for i in range(len(next_day)-1):
                 next_day[i].insert(-1, next_day[i+1].pop(0))
