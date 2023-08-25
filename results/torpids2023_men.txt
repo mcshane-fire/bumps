@@ -13,3 +13,5 @@ Division,SE3,N3,SJ2,GT2,Ch3,Wf4,SP3,Mf2,K3,OH,SHi2,L3,Wt2
 Results
 uurrrrw2u e1e1e2re1e1e-6urrrr rw3w2uur e2re1e2e-4e1e1e1e-4rw2 urrruw2rrr urw2uruu
 rururw5 rrururrrrrr w3uruuu uw4w2ru e1e2re1e1e1e2re1e1e1e1e-12 rruw2w2ur
+rre2e3e-1e2e-1e-5rrru ruruurrrrr e1pe-1w2ruurrr e1e1e1e2re-5uw2rr e1e2re1e-4rurrur ruuw2rrrrr
+rure2re1e1e1e1e1e-7r e2re1e2re1e-6rruu rurrrre1e2e2e-1e-4r rrrue2re2re-4ur rw2rurruu uuuw3rrr
