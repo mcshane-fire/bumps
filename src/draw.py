@@ -53,12 +53,15 @@ def draw_divisions(svg_config, out, xoff, yoff, event, space, draw_colours = Fal
                 if tmp < event['div_size'][day][d]:
                     if event['completed'][day][d] == False:
                         div_raced = False
+                    # cope with sandwich crews bumping up when their own division didn't race
+                    if div_raced == False and up is not None and up > 0:
+                        div_raced = True
                     break
                 tmp -= event['div_size'][day][d]
 
             if event['skip'][day][c] == True:
                 raceday = False
-                
+
             if up is None:
                 if div_raced:
                     out.add(out.circle(center=last, r=3, fill=colour))
