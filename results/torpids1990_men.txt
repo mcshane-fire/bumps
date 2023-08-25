@@ -7,7 +7,7 @@ Division,O,N,Ch,Br,H,O2,SC,K,B,U,Mg,SE
 Division,T,P,Wh,Lc,Wt,Wf,LM,J,Q,SJ,SP,Mt,E
 
 Results
-rrrrrrrrrrrrr rrrrrrrrrrrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr
+t t
+t t
 urururuu w5rurur
 rrurrrw2ur rurrurrurr

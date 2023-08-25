@@ -11,6 +11,6 @@ Division,SAn2,Mf2,H2,Mg2,Ch2,SHi2,Mt2,SHu2,Ch3,Co2,Br2,SC2,GT2
 
 Results
 uw2ue1e1e1e2re-5 w2e1e3e1e2e-2e-5uu ue2re-2w2w3r uurw6r e2e2e-1e-3uuurrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrw2rru ruure1e2re-3ru uw2uuurr
+t t t t t
+t t t t t
+t t v0v0v0v0v0v0w2rru ruure1e2re-3ru uw2uuurr

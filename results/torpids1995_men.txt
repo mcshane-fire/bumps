@@ -12,7 +12,7 @@ Division,H2,Ch3,N3,E3,U3,Mt2,OH2,Mg3,SP3,Mg4,Mt3,SAt
 Division,Q3,Mf2,SAn3,Wh3,L2,SE3,Templeton,Mf3,Mt4,LM3,Manchester,Lc3,Co2
 
 Results
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr uuuururr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr urw2w3ru rrrrurrrrrrr
+t t t t t t t
+t t t t t t t
+t t t t t t uuuururr
+t t t t t urw2w3ru rrrrurrrrrrr

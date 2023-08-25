@@ -12,6 +12,6 @@ Division,SAt2,J3,SHu2,SHu3,SHi2,SB,SP2,Wt2,U3,SE3,Mt3,P3,O3
 
 Results
 e2re2re2e2e-1e1e2re-10rr w3rurrw2r e1e2re-3w3ruu rw2w3urrr ue2re1e1e-4w2ru uuruurrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrruuu w2re3re-2e-1rrru w2uruuru
+t t t t t t
+t t t t t t
+t t t v0v0v0v0v0v0ruuu w2re3re-2e-1rrru w2uruuru

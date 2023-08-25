@@ -10,6 +10,6 @@ Division,LM2,Ch2,Co,Mf,U2,SJ3,LM3,OH3,J2,Mf2,SHi2,H2,SAn2
 
 Results
 rruuw2e2re-2r uw2ruuw2 w6w5 rrruuurur
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
+t t t t
+t t t t
+t t t t

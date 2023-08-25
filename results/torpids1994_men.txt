@@ -13,6 +13,6 @@ Division,SAt,Wh3,Mf2,SAn3,L2,SE3,Templeton,Mf3,Mt4,LM3,Manchester,Co2,Lc3
 
 Results
 urw3rrw2r e1e1e1e1e1e2re1e1e1e1e-11r e3e1e3e1e2e-4e-6e2re2re-4r re2e2e2e-2e-4rurw2 rue2re1e-3rurrr rurw3w3r e2re1e-3urrrurr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
-rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr rrrrrrrrrrrrr
+t t t t t t t
+t t t t t t t
+t t t t t t t
