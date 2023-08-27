@@ -1,5 +1,3 @@
-#!/bin/python3
-
 # Drawing class
 # out = svgwrite.Drawing(name, profile="tiny")
 # out.tostring() <- returns string

@@ -1,5 +1,3 @@
-#!/bin/python3
-
 def addn(d, k, n):
     if k in d:
         d[k] = d[k] + n

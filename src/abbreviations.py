@@ -1,5 +1,3 @@
-#!/bin/python3
-
 ccol = {"Ca" : {'name' : "Caius", 'colours' : ['black', 'lightgreen']},
         "T"  : {'name' : "1st and 3rd", 'colours' : ['darkblue']}, 
         "E"  : {'name' : "Emmanuel", 'colours' : ['blue', 'pink']},
