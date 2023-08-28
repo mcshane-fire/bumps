@@ -1,5 +1,3 @@
-#!/bin/python3
-
 import simplesvg
 from arial_16_metrics import font_metrics
 
