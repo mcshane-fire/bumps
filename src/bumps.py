@@ -35,8 +35,10 @@ def add_crew(crew_state, crews, str, abbrev):
     if club not in crew_state:
         crew_state[club] = 1
 
-    if num != crew_state[club]:
-        print("Club %s crews out of order (found %d, expecting %d)" % (club, num, crew_state[club]))
+    #XXX: need to add escaping when this is expected, so this can be turned into a fatal error
+    #XXX: See https://github.com/mcshane-fire/bumps/issues/14
+    #if num != crew_state[club]:
+    #    print("Club %s crews out of order (found %d, expecting %d)" % (club, num, crew_state[club]))
 
     crew_state[club] = num+1
 

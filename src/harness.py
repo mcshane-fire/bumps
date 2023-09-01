@@ -7,6 +7,7 @@ state = {
     'sets' : [],
     'highlight' : None,
     'readstdin' : False,
+    'web' : False,
     'output' : None,
     'stepon' : None,
     'svg_config' : {'scale' : 16,
@@ -16,7 +17,21 @@ state = {
     'stats' : False,
     'day_stats' : [],
 }
-    
+
+def output_web(state):
+    series = {}
+    for s in state['sets']:
+        name = "%s - %s" % (s['set'], s['gender'])
+        if name not in series:
+            series[name] = []
+        series[name].append(s['year'])
+        
+    print("# results currently available\n")
+    print("results = {")
+    for s in sorted(series.keys()):
+        print("    '%s' : %s," % (s, sorted(series[s])))
+    print("}")
+
 cmd = sys.argv.pop(0)
 if len(sys.argv) == 0:
     print("%s   Usage notes" % cmd)
@@ -26,6 +41,7 @@ if len(sys.argv) == 0:
     print(" -w <file>   : Writes svg output to <file>")
     print(" -s <file>   : Writes template for next year into <file>")
     print(" -stats      : Output statistics on position changes per divison, set & day")
+    print(" -web        : Output python summary of all results files")
     print(" Any additional arguments are treated as files containing results to be read in")
     sys.exit()
 
@@ -44,6 +60,8 @@ while len(sys.argv) > 0:
         state['stepon'] = sys.argv.pop(0)
     elif arg == '-stats':
         state['stats'] = True
+    elif arg == '-web':
+        state['web'] = True
     else:
         sys.argv.insert(0, arg)
         break
@@ -59,7 +77,9 @@ for s in state['sets']:
     if state['stats']:
         stats.get_stats(s, state['day_stats'])
 
-if len(state['sets']) == 1:
+if state['web']:
+    output_web(state)
+elif len(state['sets']) == 1:
     if state['stepon'] is None:
         draw.write_svg(state['output'], state['sets'][0], state['svg_config'])
     else:
