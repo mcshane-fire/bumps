@@ -21,7 +21,7 @@ state = {
 def output_web(state):
     series = {}
     for s in state['sets']:
-        name = "%s - %s" % (s['set'], s['gender'])
+        name = "%s - %s" % (s['short'], s['gender'])
         if name not in series:
             series[name] = []
         series[name].append(s['year'])
