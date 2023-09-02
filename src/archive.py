@@ -1,0 +1,115 @@
+#web interface to archive results
+
+import os, results, cgi
+
+args = {}
+if 'REQUEST_URI' in os.environ:
+    args = cgi.parse(os.environ['REQUEST_URI'])
+
+short = {}
+for s in results.results:
+	short[s] = s.replace(" ","").replace("-","")
+
+print("""Content-type: text/html
+
+<hmtl>
+<head>
+<title>bumps charts archive</title>
+<link rel="stylesheet" type="text/css" href="/mcshane.css">
+</head>
+<body>
+<div class="menu">
+<a href="/">Home</a>
+<a href="/rowing/">Rowing</a>
+<a href="/planes/">Planes</a>
+<a href="/bumps/">Bumps</a>
+</div>
+
+<div class="content">
+<h1>Bumps charts archive</h1>
+<form action="archive.py" method="get">
+<select id="set" name="set" onChange=onChangeHandler()>
+<option value="none">Select set of bumps</option>""")
+years = []
+for s in sorted(results.results.keys()):
+	extra = ""
+	if 'set' in args and args['set'][0] == short[s]:
+		extra = " selected"
+		years = results.results[s]
+	print('<option value="%s"%s>%s</option>' % (short[s], extra, s))
+print("""</select>
+<select id="start" name="start" onChange=selectStart()>
+<option value="none">Select year</option>""")
+for y in years:
+	extra = ""
+	if 'start' in args and args['start'][0] == str(y):
+		extra = " selected"
+	print('<option value="%s"%s>%s</option>' % (y, extra, y))
+print('''</select>
+<select id="stop" name="stop">
+<option value="none">Select finish year</option>''')
+for y in years:
+	extra = ""
+	if 'stop' in args and args['stop'][0] == str(y):
+		extra = " selected"
+	print('<option value="%s"%s>%s</option>' % (y, extra, y))
+print('''</selection>
+<input type="submit" value="Generate chart">
+</form>
+<script language="JavaScript">''')
+for s in results.results:
+	print('var %s = %s;' % (short[s], results.results[s]))
+print('var all = [')
+for s in sorted(results.results.keys()):
+	print('    "%s", %s,' % (short[s], short[s]))
+print("""];
+function onChangeHandler() {
+    set = document.getElementById("set").value;
+    for(var i = 0; i<all.length; i+=2) {
+        if(set === all[i]) {
+            var ys = all[i+1];
+            var stop = document.getElementById("stop");
+            for(var j = stop.options.length - 1; j > 0; j--) {
+                stop.remove(j);
+            }
+            for(var j = start.options.length - 1; j > 0; j--) {
+                start.remove(j);
+            }
+            for(var j = 0; j<ys.length; j++) {
+                var opt = document.createElement("option");
+                opt.innerHTML = ys[j];
+                opt.value = ys[j];
+                start.append(opt);
+            }
+        }
+     }
+}
+function selectStart() {
+    set = document.getElementById("set").value;
+    for(var i = 0; i<all.length; i+=2) {
+        if(set === all[i]) {
+            var ys = all[i+1];
+            var st = document.getElementById("start").value;
+            var stop = document.getElementById("stop");
+            for(var j = stop.options.length - 1; j > 0; j--) {
+                stop.remove(j);
+            }
+            var found = 0;
+            for(var j = 0; j<ys.length; j++) {
+                if(ys[j] == st) {
+                    found = 1;
+                }
+                if(found == 1) {
+                    var opt = document.createElement("option");
+                    opt.innerHTML = ys[j];
+                    opt.value = ys[j];
+                    stop.append(opt);
+                }
+            }
+            stop.value = st;
+        }
+    }
+}
+</script>
+</body>
+</html>""")
