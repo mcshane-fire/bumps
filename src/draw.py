@@ -259,9 +259,12 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
     ynext = yoff + (svg_config['scale'] * len(event['crews'])) - (svg_config['scale']/2) + 4
     ysep = svg_config['scale'] * 0.75
     for crew in added:
+        colour = 'black'
+        if 'highlight' in crew['crew'] and crew['crew']['highlight']:
+            colour = 'blue'
         out.add(out.line(start=(xpos, crew['height']), end=(xpos, ynext), stroke = 'gray', stroke_width = 1))
         out.add(out.line(start=(xpos, crew['height']), end=(xoff + svg_config['sep'], crew['height']), stroke = 'gray', stroke_width = 1))
-        out.add(out.text(crew['crew']['start'], insert=(xpos, ynext+fontsize-1), font_size=fontsize, font_family='Arial', stroke_width=0, fill='black', text_anchor='end'))
+        out.add(out.text(crew['crew']['start'], insert=(xpos, ynext+fontsize-1), font_size=fontsize, font_family='Arial', stroke_width=0, fill=colour, text_anchor='end'))
         xpos = xpos + xsep
         ynext = ynext + ysep
 
