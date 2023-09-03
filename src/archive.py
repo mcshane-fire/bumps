@@ -1,18 +1,21 @@
 #web interface to archive results
 
-import os, results, cgi
+import os, cgi
+import results, bumps, draw
 
 args = {}
 if 'REQUEST_URI' in os.environ:
     args = cgi.parse(os.environ['REQUEST_URI'])
 
 short = {}
+rshort = {}
 for s in results.results:
 	short[s] = s.replace(" ","").replace("-","")
+	rshort[short[s]] = s
 
 print("""Content-type: text/html
 
-<hmtl>
+<html>
 <head>
 <title>bumps charts archive</title>
 <link rel="stylesheet" type="text/css" href="/mcshane.css">
@@ -31,6 +34,9 @@ print("""Content-type: text/html
 <select id="set" name="set" onChange=onChangeHandler()>
 <option value="none">Select set of bumps</option>""")
 years = []
+first = None
+last = None
+highlight = None
 for s in sorted(results.results.keys()):
 	extra = ""
 	if 'set' in args and args['set'][0] == short[s]:
@@ -44,6 +50,7 @@ for y in years:
 	extra = ""
 	if 'start' in args and args['start'][0] == str(y):
 		extra = " selected"
+		first = y
 	print('<option value="%s"%s>%s</option>' % (y, extra, y))
 print('''</select>
 <select id="stop" name="stop">
@@ -52,11 +59,35 @@ for y in years:
 	extra = ""
 	if 'stop' in args and args['stop'][0] == str(y):
 		extra = " selected"
-	print('<option value="%s"%s>%s</option>' % (y, extra, y))
-print('''</selection>
+		last = y
+	if first is None or y >= first:
+		print('<option value="%s"%s>%s</option>' % (y, extra, y))
+print('''</selection>''')
+if 'highlight' in args and len(args['highlight'][0]) > 0:
+	highlight = args['highlight'][0]
+	hi_value = highlight
+else:
+	hi_value = "Highlight crews starting with"
+
+print('''<input type="text" id="highlight" name="highlight" value="%s">
 <input type="submit" value="Generate chart">
-</form>
-<script language="JavaScript">''')
+</form>''' % hi_value)
+
+
+if len(years) > 0 and first is not None and last is not None and last >= first:
+	sets = []
+	p = rshort[args['set'][0]].split("-")
+	fmt = "/home/mcshane/src/bumps/results/%s%%s_%s.txt" % (p[0].strip().lower(), p[1].strip().lower())
+	for i in range(years.index(first), years.index(last)+1):
+		sets.append(bumps.read_file(fmt % years[i], highlight))
+		bumps.process_results(sets[-1])
+	svg_config = {'scale' : 16, 'sep' : 32, 'dash' : 6, 'colours' : False}
+	if len(sets) == 1:
+		draw.write_svg(None, sets[0], svg_config)
+	else:
+		draw.write_multi_svg(None, sets, svg_config)				
+
+print('''<script language="JavaScript">''')
 for s in results.results:
 	print('var %s = %s;' % (short[s], results.results[s]))
 print('var all = [')
