@@ -154,13 +154,17 @@ def draw_extra_text(svg_config, out, xoff, yoff, event, extra):
         if estimate_text_length(label, fontscale) > height - svg_config['scale']:
             label = "%s %d - %s, Div %d" % (event['short'], event['year'], event['gender'], div_num+1)
             if estimate_text_length(label, fontscale) > height - svg_config['scale']:
-                label = "Division %d" % (div_num+1)
+                label = "%s %s,%s%s" % (event['short'], event['year'], event['gender'][0], div_num+1)
                 if estimate_text_length(label, fontscale) > height - svg_config['scale']:
-                    label = "Div %d" % (div_num+1)
+                    label = "%s%s, %s%s" % (event['short'][0], event['year'], event['gender'][0], div_num+1)
                     if estimate_text_length(label, fontscale) > height - svg_config['scale']:
-                        label = "%d" % (div_num+1)
+                        label = "Division %d" % (div_num+1)
                         if estimate_text_length(label, fontscale) > height - svg_config['scale']:
-                            label = None
+                            label = "Div %d" % (div_num+1)
+                            if estimate_text_length(label, fontscale) > height - svg_config['scale']:
+                                label = "%d" % (div_num+1)
+                                if estimate_text_length(label, fontscale) > height - svg_config['scale']:
+                                    label = None
 
         if label != None:
             text = out.add(out.text(label, insert=None, font_size=fontsize, font_family='Arial', stroke_width=0, fill=colour))
