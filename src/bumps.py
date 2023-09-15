@@ -216,6 +216,7 @@ def process_results(event):
     div_head = crew_num - event['div_size'][day_num][div_num] + 1 # index of the head crew in the current division
     event['crews_withdrawn'] = 0
     penalty = 0
+    move = None
     
     for c in m:
         move = event['move'][day_num]
@@ -373,6 +374,9 @@ def process_results(event):
                 
         # if we've seen at least one result, mark this division as completed
         event['completed'][day_num][div_num] = True
+
+    if move is None:
+        return
 
     if check_results(event, move, back, div_head, debug) == False:
         return
