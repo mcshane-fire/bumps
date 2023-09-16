@@ -5,7 +5,7 @@ Year,1984
 
 Division,R,Ci,N,N2,Ci2,Univ Sports,N3,F,Ca,Ci3,Addenbrooke's,F2,N4,Lady Somerset,Ci4,Churchill,R2
 Division,Ca2,Darwin,Macdonalds,Ci5,F3,Leckhampton,N5,F4,Ca3,Red Lion Toft,Metallurgy,N6,P,R3
-Division,F5,Ca4,R4,F6,Ci7,Hole in the Wall,Barclays Bank,Applied Biology,Ca5,F7,N7,R5,Ca6,Red Lion Toft 2,P2
+Division,F5,Ca4,R4,F6,Ci7*,Hole in the Wall,Barclays Bank,Applied Biology,Ca5,F7,N7,R5,Ca6,Red Lion Toft 2,P2
 
 Results
 rruuuruurr uuo3uurrur rruurrrrruurrr

@@ -3,7 +3,7 @@ Short,CRA
 Gender,Men
 Year,1982
 
-Division,Ci,N,Ci2,SI,N2,R,N3,Addenbrooke's,Churchill,Univ Sports,N4,Lady Somerset,Ca,F,Ci4
+Division,Ci,N,Ci2,SI,N2,R,N3,Addenbrooke's,Churchill,Univ Sports,N4,Lady Somerset,Ca,F,Ci4*
 Division,N5,Telephones,Univ Sports 2,Macdonalds,Leckhampton,N6,Darwin,N7,Ci5,R2,F2,Chemical Lab,Ca2,Telephones 2,N8,Univ Sports 3
 Division,Police,Darwin 2,Red Lion Toft,F3,N9,Ci6,P,Univ Sports 4,R3,Chemical Eng,Ci7,N10,Macdonalds 2,King's
 Division,Geography Department,Selwyn,F4,Telephones 3,Ci8,N11,Macdonalds 3,R4,F5,Ci9,N12,R5

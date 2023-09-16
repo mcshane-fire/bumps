@@ -4,7 +4,7 @@ Gender,Men
 Year,1988
 
 Division,R,N,Ca,R2,Ci,N2,N3,P,Ci2,F,F2,Ca2,N4,Churchill,F3,Wolfson
-Division,R3,N5,Ca3,N6,King's,F4,SI,Red Lion Toft,P2,Ca4,Macdonalds,Ci4,Leckhampton,Red Lion Toft 2,F5,Cherry Hinton
+Division,R3,N5,Ca3,N6,King's,F4,SI,Red Lion Toft,P2,Ca4,Macdonalds,Ci4*,Leckhampton,Red Lion Toft 2,F5,Cherry Hinton
 Division,SI2,R4,F6,N7,F7,Barclays Bank,Ca5,Cherry Hinton 2,Ca6,R5,N8,Ci5
 
 Results

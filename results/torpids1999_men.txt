@@ -6,7 +6,7 @@ Year,1999
 Division,O,P,N,Mg,Br,Ch,E,Lc,Wt,U,Q,O2
 Division,Wh,SC,T,SJ,Mt,SP,H,LM,K,B,SAn,J
 Division,Mf,OG,L,Co,Wf,K2,N2,P2,Ch2,Mg2,U2,B2
-Division,SHu,O3,S,Lc2,Br2,LM2,SJ2,SE2,SAn2,Wt2,Wf2,Wh2
+Division,SHu,O3,S,Lc2,Br2,LM2,SJ2,SE2*,SAn2,Wt2,Wf2,Wh2
 Division,J2,E2,SC2,Q2,SP2,Mt2,SB,H2,O4,Mg3,U3,U4
 Division,T2,R,Wf3,L2,P3,B3,SE3,Mf2,Ch3,S2,K3,E3,Ch4
 

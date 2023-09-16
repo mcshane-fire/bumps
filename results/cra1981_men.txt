@@ -5,7 +5,7 @@ Year,1981
 
 Division,Ci,N,Ci2,N2,N3,Ci3,SI,Peterborough,Churchill,Sidney Sussex,Christ's,Lady Somerset,Addenbrooke's,Ca,Univ Sports,N4,Telephones
 Division,MacDonalds,F,N5,Ci4,N6,Univ Sports 2,R,N7,Darwin,Leckhampton,N8,Chemical Lab,Univ Sports 3,Ci5,Ca2
-Division,Darwin 2,F2,Police,Telephones 3,Univ Sports 4,Red Lion Toft,F3,R2,MacDonalds Ladies,Ci6,N9,Ci7,N10,Ci8,R3,N11,Rob Roy Ladies 1
+Division,Darwin 2,F2,Police,Telephones 3*,Univ Sports 4,Red Lion Toft,F3,R2,MacDonalds Ladies,Ci6,N9,Ci7,N10,Ci8,R3,N11,Rob Roy Ladies 1
 
 Results
 urruo3uo3urrr uuuuuuuu uruuurrurrrrr

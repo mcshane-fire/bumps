@@ -4,7 +4,7 @@ Gender,Men
 Year,1985
 
 Division,R,Ci,N,Ci2,N2,N3,Ca,F,Ci3,Univ Sports,Addenbrooke's,F2,Lady Somerset,Ditton Dodgers,R2,N4,Ca2
-Division,Fitzwilliam,Clare,Churchill,Wolfson,Ci5,N5,Macdonalds,Metallurgy,P,F3,King's,Red Lion Toft,Ca3,Univ Sports 2,F4,Leckhampton
+Division,Fitzwilliam,Clare,Churchill,Wolfson,Ci5*,N5,Macdonalds,Metallurgy,P,F3,King's,Red Lion Toft,Ca3,Univ Sports 2,F4,Leckhampton
 Division,R3,F5,Univ Sports 3,Ca4,N6,The Mohos,R4,Barclays Bank,Lady Somerset 2,Ca5,Univ Sports 4,Leckhampton 2,Ca6,Applied Biology,Red Lion Toft 2,N7,P2,Ci6
 
 Results

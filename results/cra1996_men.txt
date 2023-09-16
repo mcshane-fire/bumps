@@ -5,7 +5,7 @@ Year,1996
 
 Division,R,N,R2,Ci,N2,Ci2,F,R3,N3,Ca,Ci3,F2,Trinity Hall,R4,Maximum Entropy,R5,Ca2
 Division,N4,Ca3,F3,N5,Ca4,N6,F4,Ca5,F5,R6,F6,Maximum Entropy 2,Ca6,Marshalls,Ch,F7,P
-Division,Ci5,Mott Macdonald,Ca7,F8,N7,Ca8,Cam Consultants,R7,P2,Ca9,Bullard Lab,F9,P3,F10,Ca10,Ca11,R9
+Division,Ci5*,Mott Macdonald,Ca7,F8,N7,Ca8,Cam Consultants,R7,P2,Ca9,Bullard Lab,F9,P3,F10,Ca10,Ca11,R9*
 
 Results
 rrururruurur rurrrurururrrr rrrrrurrrrurrru
