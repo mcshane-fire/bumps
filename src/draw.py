@@ -249,7 +249,10 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
                 break
 
         if found:
-            out.add(out.line(start=(xoff, yoff + (svg_config['scale']*crew_num)), end=(xoff + svg_config['sep'], yoff + (svg_config['scale']*crew_num2)), stroke = 'lightgray', stroke_width = 1))
+            colour = 'lightgray'
+            if 'highlight' in event2['crews'][crew_num2] and event2['crews'][crew_num2]['highlight']:
+                colour = 'blue'
+            out.add(out.line(start=(xoff, yoff + (svg_config['scale']*crew_num)), end=(xoff + svg_config['sep'], yoff + (svg_config['scale']*crew_num2)), stroke = colour, stroke_width = 1))
         else:
             added.append({'height' : (yoff + (svg_config['scale'] * crew_num2)), 'crew' : event2['crews'][crew_num2]})
 
@@ -264,10 +267,12 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
     ysep = svg_config['scale'] * 0.75
     for crew in added:
         colour = 'black'
+        linecolour = 'gray'
         if 'highlight' in crew['crew'] and crew['crew']['highlight']:
             colour = 'blue'
-        out.add(out.line(start=(xpos, crew['height']), end=(xpos, ynext), stroke = 'gray', stroke_width = 1))
-        out.add(out.line(start=(xpos, crew['height']), end=(xoff + svg_config['sep'], crew['height']), stroke = 'gray', stroke_width = 1))
+            linecolour = 'blue'
+        out.add(out.line(start=(xpos, crew['height']), end=(xpos, ynext), stroke = linecolour, stroke_width = 1))
+        out.add(out.line(start=(xpos, crew['height']), end=(xoff + svg_config['sep'], crew['height']), stroke = linecolour, stroke_width = 1))
         out.add(out.text(crew['crew']['start'], insert=(xpos, ynext+fontsize-1), font_size=fontsize, font_family='Arial', stroke_width=0, fill=colour, text_anchor='end'))
         xpos = xpos + xsep
         ynext = ynext + ysep
