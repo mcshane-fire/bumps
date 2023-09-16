@@ -56,6 +56,8 @@ def add_crew(crew_state, crews, str, abbrev):
     #print("'%s' -> '%s' (club=%s)" % (str, name, club))
             
     crew['start'] = name
+    crew['club'] = club
+    crew['number'] = num
     crew['end'] = None
     crews.append(crew)
     return True

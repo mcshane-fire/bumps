@@ -14,8 +14,7 @@ state = {
                     'sep' : 32, #scale*2
                     'dash' : 6,
                     'colours' : False},
-    'stats' : False,
-    'day_stats' : [],
+    'stats' : None,
 }
 
 def join_stats(event1, event2):
@@ -68,7 +67,7 @@ if len(sys.argv) == 0:
     print(" -h <prefix> : Enables highlights for crews with names starting with <prefix>")
     print(" -w <file>   : Writes svg output to <file>")
     print(" -s <file>   : Writes template for next year into <file>")
-    print(" -stats      : Output statistics on position changes per divison, set & day")
+    print(" -stats      : Output statistics")
     print(" -web        : Output python summary of all results files")
     print(" Any additional arguments are treated as files containing results to be read in")
     sys.exit()
@@ -87,7 +86,7 @@ while len(sys.argv) > 0:
     elif arg == '-s':
         state['stepon'] = sys.argv.pop(0)
     elif arg == '-stats':
-        state['stats'] = True
+        state['stats'] = {}
     elif arg == '-web':
         state['web'] = True
     else:
@@ -106,8 +105,8 @@ if state['readstdin']:
 
 for s in state['sets']:
     bumps.process_results(s)
-    if state['stats']:
-        stats.get_stats(s, state['day_stats'])
+    if state['stats'] is not None:
+        stats.get_stats(s, state['stats'])
 
 for i in range(len(state['sets'])-1):
     join_stats(state['sets'][i], state['sets'][i+1])
@@ -123,5 +122,5 @@ elif len(state['sets']) == 1:
 elif len(state['sets']) > 1:
     draw.write_multi_svg(state['output'], state['sets'], state['svg_config'])
 
-if state['stats']:
-    stats.output_days(state['day_stats'])
+if state['stats'] is not None:
+    stats.output_stats(state['stats'])
