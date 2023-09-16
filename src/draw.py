@@ -239,7 +239,10 @@ def draw_stripes(svg_config, out, xoff, yoff, width, x2off, event, event2 = None
 def draw_join(svg_config, out, xoff, yoff, event, event2):
     added = []
     yoff = yoff + (svg_config['scale']/2)
-    fontsize = svg_config['scale'] * 0.6   
+    fontsize = svg_config['scale'] * 0.6
+    ynext = yoff + (svg_config['scale'] * len(event['crews'])) - (svg_config['scale']/2) + 4
+    ysep = svg_config['scale'] * 0.75
+    verticals = 0
 
     for crew_num2 in range(len(event2['crews'])):
         found = False
@@ -254,28 +257,33 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
                 colour = 'blue'
             out.add(out.line(start=(xoff, yoff + (svg_config['scale']*crew_num)), end=(xoff + svg_config['sep'], yoff + (svg_config['scale']*crew_num2)), stroke = colour, stroke_width = 1))
         else:
-            added.append({'height' : (yoff + (svg_config['scale'] * crew_num2)), 'crew' : event2['crews'][crew_num2]})
+            height = yoff + (svg_config['scale'] * crew_num2)
+            adjacent = False
+            if ynext < height:
+                adjacent = True
+                ynext = height-(fontsize/2)
+            else:
+                verticals += 1
 
-            #print("Failed to find match for %s from:" % (event2['crews'][crew_num2]['start']))
-            #for crew_num in range(len(event['crews'])):
-            #    print("%d: %s -> %s" % (crew_num, event['crews'][crew_num]['start'], event['crews'][crew_num]['end']))
-            #return
+            added.append({'height' : height, 'adjacent' : adjacent, 'label' : ynext, 'crew' : event2['crews'][crew_num2]})
 
-    xsep = svg_config['sep'] / (len(added)+1)
+            ynext += ysep
+
+    xsep = (svg_config['sep'] - 4) / (verticals+1)
     xpos = xoff + xsep
-    ynext = yoff + (svg_config['scale'] * len(event['crews'])) - (svg_config['scale']/2) + 4
-    ysep = svg_config['scale'] * 0.75
     for crew in added:
         colour = 'black'
         linecolour = 'gray'
         if 'highlight' in crew['crew'] and crew['crew']['highlight']:
             colour = 'blue'
             linecolour = 'blue'
-        out.add(out.line(start=(xpos, crew['height']), end=(xpos, ynext), stroke = linecolour, stroke_width = 1))
-        out.add(out.line(start=(xpos, crew['height']), end=(xoff + svg_config['sep'], crew['height']), stroke = linecolour, stroke_width = 1))
-        out.add(out.text(crew['crew']['start'], insert=(xpos, ynext+fontsize-1), font_size=fontsize, font_family='Arial', stroke_width=0, fill=colour, text_anchor='end'))
-        xpos = xpos + xsep
-        ynext = ynext + ysep
+
+        out.add(out.text(crew['crew']['start'], insert=(xpos, crew['label']+fontsize-1), font_size=fontsize, font_family='Arial', stroke_width=0, fill=colour, text_anchor='end'))
+
+        if crew['adjacent'] == False:
+            out.add(out.line(start=(xpos, crew['height']), end=(xpos, crew['label']), stroke = linecolour, stroke_width = 1))
+            out.add(out.line(start=(xpos, crew['height']), end=(xoff + svg_config['sep'], crew['height']), stroke = linecolour, stroke_width = 1))
+            xpos = xpos + xsep
 
     return ynext
     
