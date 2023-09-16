@@ -67,10 +67,14 @@ while len(sys.argv) > 0:
         break
 
 while len(sys.argv) > 0:
-    state['sets'].append(bumps.read_file(sys.argv.pop(0), state['highlight']))
+    s = bumps.read_file(sys.argv.pop(0), state['highlight'])
+    if s is not None:
+        state['sets'].append(s)
 
 if state['readstdin']:
-    state['sets'].append(bumps.read_file(None, state['highlight']))
+    s = bumps.read_file(None, state['highlight'])
+    if s is not None:
+        state['sets'].append(s)
 
 for s in state['sets']:
     bumps.process_results(s)

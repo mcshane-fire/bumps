@@ -2,27 +2,30 @@ import re
 import abbreviations
 
 # crew name syntax: (apologies for abuse of BNF)
-# <name> ::= <club><opt-suffix><opt-number>
-# <club> ::= <abbreviated code> | <full club name, any characters apart from parenthesis>
+# <name> ::= <club><opt-suffix><opt-number><opt-escape>
+# <club> ::= <abbreviated code> | <full club name, any characters apart from parenthesis, trailing whitespace is trimmed>
 # <opt-suffix> ::= "(" <suffix> ")" | ""
 # <opt-number> ::= <number> | ""
+# <opt-escape> ::= "*"
 # <suffix> ::= <any characters apart from parenthesis>
 # <number> ::= <number in decimal>
+# If <opt-esacpe> is "*" any club crew numbering error is ignored
 
 def add_crew(crew_state, crews, str, abbrev):
     crew = {'gain' : 0, 'blades' : False, 'highlight' : False}
 
     if 'pat' not in crew_state:
-        crew_state['pat'] = re.compile("^(.*?)(\([^\)]*\))?[ ]*([0-9]*)$")
+        crew_state['pat'] = re.compile("^(.*?)(\([^\)]*\))?[ ]*([0-9]*)(\*)?$")
 
     m = crew_state['pat'].match(str)
     if m is None:
         print("Can't understand crew name '%s'" % str)
-        return
+        return False
 
     club = m.group(1).strip()
     extra = m.group(2)
     number = m.group(3)
+    escape = m.group(4)
 
     if club in abbrev:
         club = abbrev[club]['name']
@@ -35,10 +38,9 @@ def add_crew(crew_state, crews, str, abbrev):
     if club not in crew_state:
         crew_state[club] = 1
 
-    #XXX: need to add escaping when this is expected, so this can be turned into a fatal error
-    #XXX: See https://github.com/mcshane-fire/bumps/issues/14
-    #if num != crew_state[club]:
-    #    print("Club %s crews out of order (found %d, expecting %d)" % (club, num, crew_state[club]))
+    if num != crew_state[club] and escape != "*":
+        print("Club %s crews out of order (found %d, expecting %d)" % (club, num, crew_state[club]))
+        return False
 
     crew_state[club] = num+1
 
@@ -56,6 +58,7 @@ def add_crew(crew_state, crews, str, abbrev):
     crew['start'] = name
     crew['end'] = None
     crews.append(crew)
+    return True
 
 def read_file(name, highlight = None):
     abbrev = {}
@@ -101,7 +104,8 @@ def read_file(name, highlight = None):
                 d.append(len(p)-1)
             if len(p) > 1:
                 for i in p[1:]:
-                    add_crew(crew_state, ret['crews'], i, abbrev)
+                    if add_crew(crew_state, ret['crews'], i, abbrev) == False:
+                        return None
         elif p[0] == "Results":
             results = True
             p.pop(0)
