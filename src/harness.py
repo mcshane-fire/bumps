@@ -18,6 +18,34 @@ state = {
     'day_stats' : [],
 }
 
+def join_stats(event1, event2):
+    diffs = {}
+
+    for num2 in range(len(event2['crews'])):
+        found = False
+        for num1 in range(len(event1['crews'])):
+            if event2['crews'][num2]['start'] == event1['crews'][num1]['end']:
+                found = True
+                d = num1 - num2
+                if d < 0:
+                    d = -d
+
+                d = int(d / (int(num2/10)+1))
+
+                if d not in diffs:
+                    diffs[d] = 0
+                diffs[d] += 1
+                break
+
+    total = 0
+    count = 0
+    for d in diffs:
+        count += diffs[d]
+        total += d * diffs[d]
+
+    if count > 10 and total / count > 0.5:
+        print("Warning: %s->%s: %.3f %s" % (event1['year'], event2['year'], total / count, diffs))
+
 def output_web(state):
     series = {}
     for s in state['sets']:
@@ -80,6 +108,9 @@ for s in state['sets']:
     bumps.process_results(s)
     if state['stats']:
         stats.get_stats(s, state['day_stats'])
+
+for i in range(len(state['sets'])-1):
+    join_stats(state['sets'][i], state['sets'][i+1])
 
 if state['web']:
     output_web(state)
