@@ -43,6 +43,14 @@ for s in sorted(results.results.keys()):
 		extra = " selected"
 		years = results.results[s]
 	print('<option value="%s"%s>%s</option>' % (short[s], extra, s))
+
+if 'start' in args and args['start'][0] == '-1' and len(years) > 0:
+	if 'output' in args and args['output'][0] == 'Show statistics':
+		args['start'][0] = str(years[0])
+	else:
+		args['start'][0] = str(years[-1])
+	args['stop'] = [str(years[-1])]
+
 print("""</select>
 <select id="start" name="start" onChange=selectStart()>
 <option value="none">Select year</option>""")

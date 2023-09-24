@@ -201,26 +201,9 @@ def html_stats(stats):
 
     sclubs = sorted(stats['club'].keys(), reverse = True, key = lambda x : stats['club'][x]['count'])
 
-    print("""<html>
-<head>
-<title>bumps stats</title>
-<link rel="stylesheet" type="text/css" href="mcshane.css">
-</head>
-<body onload="showStats(null, 'all')">
-<div class="menu">
-<a href="/">Home</a>
-<a href="/rowing/">Rowing</a>
-<a href="/planes/">Planes</a>
-<a href="/bumps/">Bumps</a>
-</div>
-
-<div class="content">
-<h1>Bumps stats: %s</h1>
-</div>
-
-<div class="tab">
+    print("""<div class="tab">
   <button id="default" class="tablinks" onclick="showStats(event, 'all')">All</button>
-  <button class="tablinks" onclick="showStats(event, 'ranking')">Ranking</button>""" % stats['desc'])
+  <button class="tablinks" onclick="showStats(event, 'ranking')">Ranking</button>""")
 
     for club in sclubs:
         print("  <button class=\"tablinks\" onclick=\"showStats(event, '%s')\">%s</button>" % (stats['club'][club]['safename'], club))
@@ -306,6 +289,4 @@ function setRanking() {
     val = document.getElementById("rank");
     document.getElementById("order").innerHTML = ranks[val.selectedIndex];
 }
-</script>
-</body>
-</html>""")
+</script>""")
