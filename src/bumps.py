@@ -47,15 +47,20 @@ def add_crew(crew_state, crews, str, abbrev):
     name = club
     if extra is not None:
         name += " " + extra
+
     if num > 1:
         if num < len(abbreviations.roman):
             name += " " + abbreviations.roman[num-1]
         else:
             name += " %d" % num
+        num_name = name
+    else:
+        num_name = "%s I" % name
 
     #print("'%s' -> '%s' (club=%s)" % (str, name, club))
             
     crew['start'] = name
+    crew['num_name'] = num_name
     crew['club'] = club
     crew['number'] = num
     crew['end'] = None
