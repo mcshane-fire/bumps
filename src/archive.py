@@ -1,7 +1,7 @@
 #web interface to archive results
 
 import os, cgi
-import results, bumps, draw
+import results, bumps, draw, stats
 
 args = {}
 if 'REQUEST_URI' in os.environ:
@@ -19,15 +19,15 @@ print("""Content-type: text/html
 <head>
 <title>bumps charts archive</title>
 <link rel="stylesheet" type="text/css" href="/mcshane.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
+<body onload="showStats(null, 'all')">
 <div class="menu">
 <a href="/">Home</a>
 <a href="/rowing/">Rowing</a>
 <a href="/planes/">Planes</a>
 <a href="/bumps/">Bumps</a>
 </div>
-
 <div class="content">
 <h1>Bumps charts archive</h1>
 <form action="archive.py" method="get">
@@ -70,7 +70,7 @@ else:
 	hi_value = "Highlight crews starting with"
 
 print('''<input type="text" id="highlight" name="highlight" value="%s">
-<input type="submit" value="Generate chart">
+<input type="submit" name="output" value="Generate chart"><input type="submit" name="output" value="Show statistics">
 </form>''' % hi_value)
 
 
@@ -81,11 +81,18 @@ if len(years) > 0 and first is not None and last is not None and last >= first:
 	for i in range(years.index(first), years.index(last)+1):
 		sets.append(bumps.read_file(fmt % years[i], highlight))
 		bumps.process_results(sets[-1])
-	svg_config = {'scale' : 16, 'sep' : 32, 'dash' : 6, 'colours' : False}
-	if len(sets) == 1:
-		draw.write_svg(None, sets[0], svg_config)
+
+	if 'output' in args and args['output'][0] == 'Show statistics':
+		all = {}
+		for s in sets:
+			stats.get_stats(s, all)
+		stats.html_stats(all)
 	else:
-		draw.write_multi_svg(None, sets, svg_config)				
+		svg_config = {'scale' : 16, 'sep' : 32, 'dash' : 6, 'colours' : False}
+		if len(sets) == 1:
+			draw.write_svg(None, sets[0], svg_config)
+		else:
+			draw.write_multi_svg(None, sets, svg_config)
 
 print('''<script language="JavaScript">''')
 for s in results.results:
