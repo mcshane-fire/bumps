@@ -13,7 +13,12 @@ for s in results.results:
 	short[s] = s.replace(" ","").replace("-","")
 	rshort[short[s]] = s
 
-print("""Content-type: text/html
+fullpage = True
+if 'output' in args and args['output'][0] == 'Download':
+	fullpage = False
+
+if fullpage:
+	print("""Content-type: text/html
 
 <html>
 <head>
@@ -30,9 +35,10 @@ print("""Content-type: text/html
 </div>
 <div class="content">
 <h1>Bumps charts archive</h1>
-<form action="archive.py" method="get">
+<form action="archive2.py" method="get">
 <select id="set" name="set" onChange=onChangeHandler()>
 <option value="none">Select set of bumps</option>""")
+
 years = []
 first = None
 last = None
@@ -42,7 +48,8 @@ for s in sorted(results.results.keys()):
 	if 'set' in args and args['set'][0] == short[s]:
 		extra = " selected"
 		years = results.results[s]
-	print('<option value="%s"%s>%s</option>' % (short[s], extra, s))
+	if fullpage:
+		print('<option value="%s"%s>%s</option>' % (short[s], extra, s))
 
 if 'start' in args and args['start'][0] == '-1' and len(years) > 0:
 	if 'output' in args and args['output'][0] == 'Show statistics':
@@ -51,33 +58,40 @@ if 'start' in args and args['start'][0] == '-1' and len(years) > 0:
 		args['start'][0] = str(years[-1])
 	args['stop'] = [str(years[-1])]
 
-print("""</select>
+if fullpage:
+	print("""</select>
 <select id="start" name="start" onChange=selectStart()>
 <option value="none">Select year</option>""")
+
 for y in years:
 	extra = ""
 	if 'start' in args and args['start'][0] == str(y):
 		extra = " selected"
 		first = y
-	print('<option value="%s"%s>%s</option>' % (y, extra, y))
-print('''</select>
+	if fullpage:
+		print('<option value="%s"%s>%s</option>' % (y, extra, y))
+if fullpage:
+	print('''</select>
 <select id="stop" name="stop">
 <option value="none">Select finish year</option>''')
+
 for y in years:
 	extra = ""
 	if 'stop' in args and args['stop'][0] == str(y):
 		extra = " selected"
 		last = y
-	if first is None or y >= first:
+	if fullpage and (first is None or y >= first):
 		print('<option value="%s"%s>%s</option>' % (y, extra, y))
-print('''</selection>''')
+if fullpage:
+	print('''</selection>''')
 if 'highlight' in args and len(args['highlight'][0]) > 0:
 	highlight = args['highlight'][0]
 	hi_value = highlight
 else:
 	hi_value = "Highlight crews starting with"
 
-print('''<input type="text" id="highlight" name="highlight" value="%s">
+if fullpage:
+	print('''<input type="text" id="highlight" name="highlight" value="%s">
 <input type="submit" name="output" value="Generate chart"><input type="submit" name="output" value="Show statistics">
 </form>''' % hi_value)
 
@@ -96,19 +110,24 @@ if len(years) > 0 and first is not None and last is not None and last >= first:
 			stats.get_stats(s, all)
 		stats.html_stats(all)
 	else:
+		if fullpage:
+			print("<a download=\"chart.svg\" href=\"archive2.py?set=%s&start=%s&stop=%s&highlight=%s&output=Download\">Download this chart</a><p>" % (args['set'][0], first, last, hi_value))
+		else:
+			print("Content-type: svg+xml\n")
 		svg_config = {'scale' : 16, 'sep' : 32, 'dash' : 6, 'colours' : False}
 		if len(sets) == 1:
 			draw.write_svg(None, sets[0], svg_config)
 		else:
 			draw.write_multi_svg(None, sets, svg_config)
 
-print('''<script language="JavaScript">''')
-for s in results.results:
-	print('var %s = %s;' % (short[s], results.results[s]))
-print('var all = [')
-for s in sorted(results.results.keys()):
-	print('    "%s", %s,' % (short[s], short[s]))
-print("""];
+if fullpage:
+	print('''<script language="JavaScript">''')
+	for s in results.results:
+		print('var %s = %s;' % (short[s], results.results[s]))
+	print('var all = [')
+	for s in sorted(results.results.keys()):
+		print('    "%s", %s,' % (short[s], short[s]))
+	print("""];
 function onChangeHandler() {
     set = document.getElementById("set").value;
     for(var i = 0; i<all.length; i+=2) {
