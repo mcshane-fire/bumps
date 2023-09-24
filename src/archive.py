@@ -111,7 +111,7 @@ if len(years) > 0 and first is not None and last is not None and last >= first:
 		stats.html_stats(all)
 	else:
 		if fullpage:
-			print("<a download=\"chart.svg\" href=\"archive2.py?set=%s&start=%s&stop=%s&highlight=%s&output=Download\">Download this chart</a><p>" % (args['set'][0], first, last, hi_value))
+			print("<a download=\"chart.svg\" href=\"archive.py?set=%s&start=%s&stop=%s&highlight=%s&output=Download\">Download this chart</a><p>" % (args['set'][0], first, last, hi_value))
 		else:
 			print("Content-type: svg+xml\n")
 		svg_config = {'scale' : 16, 'sep' : 32, 'dash' : 6, 'colours' : False}
