@@ -35,7 +35,7 @@ if fullpage:
 </div>
 <div class="content">
 <h1>Bumps charts archive</h1>
-<form action="archive2.py" method="get">
+<form action="archive.py" method="get">
 <select id="set" name="set" onChange=onChangeHandler()>
 <option value="none">Select set of bumps</option>""")
 
