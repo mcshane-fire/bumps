@@ -123,4 +123,4 @@ elif len(state['sets']) > 1:
     draw.write_multi_svg(state['output'], state['sets'], state['svg_config'])
 
 if state['stats'] is not None:
-    stats.output_stats(state['stats'])
+    stats.html_stats(state['stats'])
