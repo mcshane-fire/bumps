@@ -56,7 +56,8 @@ def output_web(state):
         name = s['short']
         if name not in series:
             series[name] = []
-        series[name].append(s['year'])
+        if s['year'] not in series[name]:
+            series[name].append(s['year'])
         
     print("# results currently available\n")
     print("results = {")

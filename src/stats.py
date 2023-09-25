@@ -15,13 +15,19 @@ def get_stats(event, stats):
         addn(stats['all'], 'withdrew', 0)
     if 'club' not in stats:
         stats['club'] = {}
+    if 'gender' not in stats:
+        stats['gender'] = event['gender']
+    else:
+        if event['gender'] != stats['gender']:
+           stats['desc'] = "%s, %s" % (event['set'], event['year'])
     if 'desc' not in stats:
         stats['desc'] = "%s, %s" % (event['set'], event['gender'])
 
     sall = stats['all']
     club_count = {}
     headships = {}
-    stats['years'].append(event['year'])
+    if event['year'] not in stats['years']:
+        stats['years'].append(event['year'])
 
     for num in range(len(event['crews'])):
         pos = num
