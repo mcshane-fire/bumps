@@ -73,7 +73,10 @@ def read_file(name, highlight = None):
     crew_state = {}
     
     if name != None:
-        input = open(name, "r")
+        try:
+            input = open(name, "r")
+        except:
+            return None
     else:
         input = sys.stdin
     ret = {}
@@ -130,8 +133,6 @@ def read_file(name, highlight = None):
         for crew in ret['crews']:
             if crew['start'].startswith(highlight):
                 crew['highlight'] = True
-
-    
                     
     return ret
 
