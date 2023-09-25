@@ -119,6 +119,8 @@ elif len(state['sets']) == 1:
     else:
         bumps.step_on(state['sets'][0])
         bumps.write_file(state['sets'][0], state['stepon'])
+elif len(state['sets']) == 2 and state['sets'][0]['set'] == state['sets'][1]['set'] and state['sets'][0]['year'] == state['sets'][1]['year'] and state['sets'][0]['gender'] != state['sets'][1]['gender']:
+    draw.write_pair(state['output'], state['sets'], state['svg_config'])
 elif len(state['sets']) > 1:
     draw.write_multi_svg(state['output'], state['sets'], state['svg_config'])
 

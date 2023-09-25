@@ -288,11 +288,9 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
     return ynext
     
 
-def write_svg(output, event, svg_config):
-    out = simplesvg.Drawing()
-
+def draw_chart(out, event, svg_config, xoffset):
     # leave space for division titles down the left hand side
-    left = svg_config['scale'] * 2
+    left = xoffset + svg_config['scale'] * 2
 
     svg_config['right'] = estimate_max_length(event['crews'], 'start', 0.8) + svg_config['scale']
 
@@ -308,7 +306,13 @@ def write_svg(output, event, svg_config):
 
     h = draw_divisions(svg_config, out, left + svg_config['right'], 0, event, svg_config['right'], draw_colours = svg_config['colours'])
 
-    out.setsize(left + (svg_config['right']*2) + (svg_config['scale'] * event['days'])+1, h+1)
+    return (left + (svg_config['right']*2) + (svg_config['scale'] * event['days'])+1, h+1)
+
+def write_svg(output, event, svg_config):
+    out = simplesvg.Drawing()
+
+    size = draw_chart(out, event, svg_config, 0)
+    out.setsize(size[0], size[1])
 
     if output is None:
         print(out.tostring())
@@ -316,7 +320,20 @@ def write_svg(output, event, svg_config):
         fp = open(output, 'w')
         fp.write(out.tostring())
         fp.close()
-                    
+
+def write_pair(output, sets, svg_config):
+    out = simplesvg.Drawing()
+
+    sizeL = draw_chart(out, sets[0], svg_config, 0)
+    sizeR = draw_chart(out, sets[1], svg_config, sizeL[0])
+    out.setsize(sizeR[0], sizeL[1] if sizeL[1] > sizeR[1] else sizeR[1])
+
+    if output is None:
+        print(out.tostring())
+    else:
+        fp = open(output, 'w')
+        fp.write(out.tostring())
+        fp.close()
 
 def write_multi_svg(output, sets, svg_config):
     out = simplesvg.Drawing()
