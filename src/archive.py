@@ -54,12 +54,30 @@ for s in sorted(results.results.keys()):
     if fullpage:
         print('<option value="%s"%s>%s</option>' % (short[s], extra, s))
 
-if 'start' in args and args['start'][0] == '-1' and len(years) > 0:
-    if 'output' in args and args['output'][0] == 'Show statistics':
-        args['start'][0] = str(years[0])
-    else:
-        args['start'][0] = str(years[-1])
-    args['stop'] = [str(years[-1])]
+if 'start' in args and len(years) > 0:
+    try:
+        start_index = int(args['start'][0])
+        if start_index <= 0:
+            if start_index < -len(years):
+                start_index = -len(years)
+            args['start'][0] = str(years[start_index])
+        else:
+            start_index = years.index(start_index)
+
+        if 'stop' in args and pair is False:
+            stop_index = int(args['stop'][0])
+            if stop_index <= 0:
+                if start_index <= 0:
+                    if stop_index < start_index:
+                        stop_index = start_index
+                else:
+                    if stop_index < start_index-len(years):
+                        stop_index = start_index
+                args['stop'][0] = str(years[stop_index])
+        else:
+            args['stop'] = [str(years[-1])]
+    except ValueError:
+        pass
 
 if fullpage:
     print("""</select>
@@ -76,8 +94,8 @@ for y in years:
 
 if fullpage:
     print('''</select>
-<select id="stop" name="stop">
-<option value="none">%s</option>''' % ("Select finish year" if pair is False else "-"))
+<select id="stop" name="stop"%s>
+<option value="none">%s</option>''' % (" style=\"display:none\"" if pair is True else "", "Select finish year" if pair is False else "-"))
 
 for y in years:
     extra = ""
