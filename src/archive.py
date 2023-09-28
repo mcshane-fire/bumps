@@ -36,7 +36,7 @@ if fullpage:
 <div class="content">
 <h1>Bumps charts archive</h1>
 <form action="archive.py" method="get">
-<select id="set" name="set" onChange=onChangeHandler()>
+<select id="set" name="set" onChange=selectSet()>
 <option value="none">Select set of bumps</option>""")
 
 years = []
@@ -149,7 +149,7 @@ if fullpage:
     for s in sorted(results.results.keys()):
         print('    "%s", %d, %s,' % (short[s], 1 if len(s.split(" ")) > 1 else 0, short[s]))
     print("""];
-function onChangeHandler() {
+function selectSet() {
     set = document.getElementById("set").value;
     for(var i = 0; i<all.length; i+=3) {
         if(set === all[i]) {
@@ -167,15 +167,15 @@ function onChangeHandler() {
                 opt.value = ys[j];
                 start.append(opt);
             }
-            var opt = document.createElement("option");
             if(all[i+1] == 1) {
+                var opt = document.createElement("option");
                 opt.innerHTML = "Select finish year";
                 opt.value = "none";
+                stop.append(opt);
+                stop.style.display = "inline-block";
             } else {
-                opt.innerHTML = "-";
-                opt.value = "none";
+                stop.style.display = "none";
             }
-            stop.append(opt);
         }
      }
 }
