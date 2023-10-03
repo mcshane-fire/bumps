@@ -1,6 +1,6 @@
 #!/bin/python3
 
-import sys
+import sys, os
 import bumps, stats, draw
 
 state = {
@@ -123,8 +123,11 @@ elif len(state['sets']) == 1:
     if state['stepon'] is None:
         draw.write_svg(state['output'], state['sets'][0], state['svg_config'])
     else:
-        bumps.step_on(state['sets'][0])
-        bumps.write_file(state['sets'][0], state['stepon'])
+        if os.path.exists(state['stepon']):
+            print("File '%s' already exists, not overwriting" % state['stepon'])
+        else:
+            bumps.step_on(state['sets'][0])
+            bumps.write_file(state['sets'][0], state['stepon'])
 elif len(state['sets']) == 2 and state['sets'][0]['set'] == state['sets'][1]['set'] and state['sets'][0]['year'] == state['sets'][1]['year'] and state['sets'][0]['gender'] != state['sets'][1]['gender']:
     draw.write_pair(state['output'], state['sets'], state['svg_config'])
 elif len(state['sets']) > 1:
