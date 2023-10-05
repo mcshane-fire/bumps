@@ -7,7 +7,7 @@ state = {
     'sets' : [],
     'highlight' : None,
     'readstdin' : False,
-    'web' : False,
+    'web' : None,
     'output' : None,
     'stepon' : None,
     'svg_config' : {'scale' : 16,
@@ -45,7 +45,7 @@ def join_stats(event1, event2):
     if count > 10 and total / count > 0.5:
         print("Warning: %s->%s: %.3f %s" % (event1['year'], event2['year'], total / count, diffs))
 
-def output_web(state):
+def write_web(state):
     series = {}
     for s in state['sets']:
         name = "%s - %s" % (s['short'], s['gender'])
@@ -58,12 +58,14 @@ def output_web(state):
             series[name] = []
         if s['year'] not in series[name]:
             series[name].append(s['year'])
-        
-    print("# results currently available\n")
-    print("results = {")
+
+    fp = open(state['web'], 'w')
+    fp.write("# results currently available\n\n")
+    fp.write("results = {\n")
     for s in sorted(series.keys()):
-        print("    '%s' : %s," % (s, sorted(series[s])))
-    print("}")
+        fp.write("    '%s' : %s,\n" % (s, sorted(series[s])))
+    fp.write("}\n")
+    fp.close()
 
 cmd = sys.argv.pop(0)
 if len(sys.argv) == 0:
@@ -74,7 +76,7 @@ if len(sys.argv) == 0:
     print(" -w <file>   : Writes svg output to <file>")
     print(" -s <file>   : Writes template for next year into <file>")
     print(" -stats      : Output statistics")
-    print(" -web        : Output python summary of all results files")
+    print(" -web <file> : Write python summary of all results files into <file>")
     print(" Any additional arguments are treated as files containing results to be read in")
     sys.exit()
 
@@ -94,7 +96,7 @@ while len(sys.argv) > 0:
     elif arg == '-stats':
         state['stats'] = {}
     elif arg == '-web':
-        state['web'] = True
+        state['web'] = sys.argv.pop(0)
     else:
         sys.argv.insert(0, arg)
         break
@@ -114,11 +116,9 @@ for s in state['sets']:
     if state['stats'] is not None:
         stats.get_stats(s, state['stats'])
 
-for i in range(len(state['sets'])-1):
-    join_stats(state['sets'][i], state['sets'][i+1])
 
-if state['web']:
-    output_web(state)
+if state['web'] is not None:
+    write_web(state)
 elif len(state['sets']) == 1:
     if state['stepon'] is None:
         draw.write_svg(state['output'], state['sets'][0], state['svg_config'])
@@ -131,6 +131,8 @@ elif len(state['sets']) == 1:
 elif len(state['sets']) == 2 and state['sets'][0]['set'] == state['sets'][1]['set'] and state['sets'][0]['year'] == state['sets'][1]['year'] and state['sets'][0]['gender'] != state['sets'][1]['gender']:
     draw.write_pair(state['output'], state['sets'], state['svg_config'])
 elif len(state['sets']) > 1:
+    for i in range(len(state['sets'])-1):
+        join_stats(state['sets'][i], state['sets'][i+1])
     draw.write_multi_svg(state['output'], state['sets'], state['svg_config'])
 
 if state['stats'] is not None:
