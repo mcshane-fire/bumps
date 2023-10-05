@@ -427,11 +427,16 @@ def process_results(event):
             
 
 def step_on(event):
-    for crew in event['crews']:
-        crew['start'] = crew['end']
-        crew['gain'] = 0
-        crew['blades'] = False
+    newlist = [None] * len(event['crews'])
+    for i in range(len(event['crews'])):
+        crew = event['crews'][i]
+        ep = i - crew['gain']
+        if newlist[ep] is None:
+            crew['gain'] = 0
+            crew['blades'] = False
+            newlist[ep] = crew
 
+    event['crews'] = newlist
     event['year'] = event['year']+1
     del event['move']
     del event['completed']
@@ -472,7 +477,10 @@ def write_file(event, name):
                     found = True
                     break
             if not found:
-                output.write(",%s" % crew['start'])
+                if crew['number'] == 1:
+                    output.write(",%s" % crew['club'])
+                else:
+                    output.write(",%s %s" % (crew['club'], crew['number']))
         output.write("\n")
         crew_num += div_size
         
