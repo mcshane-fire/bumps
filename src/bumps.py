@@ -465,14 +465,10 @@ def write_file(event, name):
             crew = event['crews'][crew_num+i]
             found = False
             for p in abbrev:
-                if crew['start'].startswith(abbrev[p]['name']):
+                if crew['club'] == abbrev[p]['name']:
                     fin = p
-                    sh = crew['start'][len(abbrev[p]['name']):].strip()
-                    if len(sh) > 0:
-                        for k in range(0, len(abbreviations.roman)):
-                            if sh == abbreviations.roman[k]:
-                                fin = fin + str(k+1)
-                                break
+                    if crew['number'] > 1:
+                        fin += str(crew['number'])
                     output.write(",%s" % fin)
                     found = True
                     break
