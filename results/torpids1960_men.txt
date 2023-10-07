@@ -14,9 +14,9 @@ Division,Wt2,SC2,N3,Co2,Co3
 
 Results
 rrrrr ruurr rw2ru re1e2e-2e-1rr rurrrr rurur rre2e-1e-1rr rrrrw2
-d<7.6.6.6.6.6.6.4>
+d(7.6.6.6.6.6.6.4)
 urr re2e-1e1e-2rr re3e-1e-1e-1rr re3e1e2e-2e1e-5 rurrrr rurrrr rurru rurrru
-d<8.6.6.6.6.6.6.3>
+d(8.6.6.6.6.6.6.3)
 rrr re2re-2ru rurru rurru re2e-1e-1rrr re2re1e-3u rurrrr ruurrrr
-d<9.6.6.6.6.6.6.2>
+d(9.6.6.6.6.6.6.2)
 rr re2re-2ru ruurr re3e-1e-1e-1u re2e-1e-1rrr rw2ru ruuu rrrrre2e-1e-1u

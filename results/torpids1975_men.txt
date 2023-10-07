@@ -12,9 +12,9 @@ Division,E2,Mt2,H2,Wf2,E3,P3,SP3,O4,Wh4,O5
 
 Results
 rre2e-1e1e3e-3re1e-3 re4e2e3e-2e2e-5e3rre-7 rurrw2ur rrrrre1e2e-2e-1rr rurrrrw2r rurrur
-d<8.10.10.10.10.9>
+d(8.10.10.10.10.9)
 rrue1e2e-2e-1r re2re2e-3e-1rw3 re2e-1e1e-2urur rrrrrrrrru rurw4rr rurrurr
-d<9.10.10.10.10.8>
+d(9.10.10.10.10.8)
 rrrue2e-1e-1 re2e-1e-1rrw2rr re2e-1e-1w2rrrr rrrrrrrrrrr rw4ruu rw2rrrur
-d<10.10.10.10.10.7>
+d(10.10.10.10.10.7)
 rw2ur re2e-1e-1o3uur re2e-1e-1urrru rrrrrrrrrrr rue2e-1e-1rrru rrw2rrrrrr

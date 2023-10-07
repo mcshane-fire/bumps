@@ -12,9 +12,9 @@ Division,K2,Wh3,Mg2,Mf,B2,N2,E2,Co2,SP3
 
 Results
 e1e2re1e-4uu rrrre1e2e-2e1e-2r rrro3re2e1e-3r rururrrr rw2e2e-1e1e1e-3r rrrrur
-d<7.9.9.9.9.8>
+d(7.9.9.9.9.8)
 rrrrrrrr re2e-1e-1w3rr re3e-1re-2urrr rrrrurrrr rue2re1e-3w2 rurrrrr
-d<8.9.9.9.9.7>
+d(8.9.9.9.9.7)
 urrrrr re2re-2re1e2e-2e-1r re2e-1e-1e1e2e-2e-1u rrrrrrrrrr re2e-1e1e-2rurr rurrurr
-d<9.9.9.9.9.6>
+d(9.9.9.9.9.6)
 rrrrrr w3e2e-1e-1e2e-1e-1 re3e-1re1e-3rru rrurrrrrr re2e-1e-1e1e2e-2e-1rr rurrrrrrr

@@ -39,7 +39,7 @@ def add_crew(crew_state, crews, str, abbrev):
         crew_state[club] = 1
 
     if num != crew_state[club] and escape != "*":
-        print("Club %s crews out of order (found %d, expecting %d)" % (club, num, crew_state[club]))
+        print("Club %s crews out of order (found %d, expecting %d)<br>" % (club, num, crew_state[club]))
         return False
 
     crew_state[club] = num+1
@@ -67,7 +67,7 @@ def add_crew(crew_state, crews, str, abbrev):
     crews.append(crew)
     return True
 
-def read_file(name, highlight = None):
+def read_file(name, highlight = None, data = None):
     abbrev = {}
 
     crew_state = {}
@@ -77,6 +77,8 @@ def read_file(name, highlight = None):
             input = open(name, "r")
         except:
             return None
+    elif data != None:
+        input = data.splitlines()
     else:
         input = sys.stdin
     ret = {}
@@ -141,7 +143,7 @@ def swap_crews(move, back, pos_a, pos_b):
     if orig_a is None:
         orig_a = pos_a
         if move[orig_a] is not None:
-            print("Crew %d not expected to have a result" % orig_a)
+            print("Crew %d not expected to have a result<br>" % (orig_a+1))
             return False
         move[orig_a] = 0
 
@@ -149,7 +151,7 @@ def swap_crews(move, back, pos_a, pos_b):
     if orig_b is None:
         orig_b = pos_b
         if move[orig_b] is not None:
-            print("Crew %d not expecting to have a result" % orig_b)
+            print("Crew %d not expecting to have a result<br>" % (orig_b+1))
             return False
         move[orig_b] = 0
 
@@ -164,10 +166,10 @@ def swap_crews(move, back, pos_a, pos_b):
 
 def process_bump(move, back, crew_num, up, div_head):
     if crew_num - up < div_head:
-        print("Bumping up above the top of the division: div_head %d, crew %d, up %d" % (div_head, crew_num, up))
+        print("Crew %d bumps up above the top of the division at position %d<br>" % (crew_num+1, div_head+1))
         return False
     if move[crew_num - up] is not None:
-        print("Bumping a crew that has already got a result")
+        print("Crew %d is bumping a crew at position %d that has already got a result<br>" % (crew_num+1, crew_num-up+1))
         return False
 
     return swap_crews(move, back, crew_num, crew_num-up)
@@ -184,14 +186,14 @@ def check_results(event, move, back, head, debug):
     ret = True
     for i in range(len(event['crews'])):
         if back[i] is None and i < len(event['crews']) - event['crews_withdrawn'] and i >= head:
-            print("Error: back[%d] is None" % i)
+            print("Error: no crew finishes in position %d<br>" % (i+1))
             ret = False
         elif back[i] is not None and (i < head or i >= len(event['crews']) - event['crews_withdrawn']):
-            print("Error: back[%d] from withdrawn/unraced division crew is not None" % i)
+            print("Error: a crew finishes in position %d where none was expected<br>" % (i+1))
             ret = False
         else:
             if back[i] in results and back[i] is not None:
-                print("Error: back[%d]=%s is already a back entry" % (i, back[i]))
+                print("Error: got two crews both finishing in position %d<br>" % (i+1))
                 ret = False
             results.append(back[i])
 
@@ -220,7 +222,7 @@ def process_results(event):
     for r in event['results']:
         all = all + r
 
-    pat = re.compile('r|t|u|o[0-9]+|e-?[0-9]+|v-?[0-9]+|w[0-9]+|x|d<[^>]*>|p')
+    pat = re.compile('r|t|u|o[0-9]+|e-?[0-9]+|v-?[0-9]+|w[0-9]+|x|d\([^\)]*\)|p')
     m = pat.findall(all)
     day_num = 0                                                   # 0 is the first day
     div_num = len(event['div_size'][day_num])-1                   # 0 is the first division
@@ -240,7 +242,7 @@ def process_results(event):
         # only allow division size changes between full days of racing, and not before the first day
         if c[0] == 'd' and crew_num == -1 and day_num < event['days']-1:
             # division size change
-            sizes = c.replace("<"," ").replace(">"," ").replace("."," ").split()[1:]
+            sizes = c.replace("("," ").replace(")"," ").replace("."," ").split()[1:]
             sizes = [ int(x) for x in sizes ]
 
             if debug:
@@ -265,7 +267,7 @@ def process_results(event):
                 # move to the next day
                 day_num += 1
                 if day_num == event['days']:
-                    print("Run out of days of racing with more results still to go")
+                    print("Run out of days of racing with more results still to go<br>")
                     return
 
                 if debug:

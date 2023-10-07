@@ -11,9 +11,9 @@ Division,E2,H2,P2,SC2,Mg2,Mf,SJ3
 
 Results
 ue3e-1e2e-2e-2 ruurw3 rrrrurrrr rrruurrr rrrurr
-d<7.9.9.9.6>
+d(7.9.9.9.6)
 re2e-1e-1rr re2re-2rw2rr ruururr rrrrrurrr rurrrrr
-d<8.9.9.9.5>
+d(8.9.9.9.5)
 rrrrr re2e-1e-1rrrrrr rrrrrrrrrr rurw2ur rrrurrrr
-d<9.9.9.9.4>
+d(9.9.9.9.4)
 rrrr rrrrrrrrrr rrrrrrrrrr rrrrrrurr rrrrrrrrrr

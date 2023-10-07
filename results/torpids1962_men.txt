@@ -12,9 +12,9 @@ Division,P2,SJ3,Wh2,SC2,U3,Mt2,Lc3,T2,E3,Br3
 
 Results
 rrururu ruuuru ruurur rrurrrrr rrrrurrr rrrurrrr
-d<9.8.8.8.9.9>
+d(9.8.8.8.9.9)
 ruuuu ruuurrr rrururr rrurrru rrrrrrur rrrrrrrru
-d<10.8.8.8.9.8>
+d(10.8.8.8.9.8)
 urruu rrruuur rruruu rrrrurrr rrrruur urrrrrrur
-d<11.8.8.8.9.7>
+d(11.8.8.8.9.7)
 rrrrru rurruur urrrurr ruurur rrrrrrur rruurrurr

@@ -13,9 +13,9 @@ Division,J2,Wh2,Mt2,Lc3,Wt3,Wt4
 
 Results
 re2e-1e1e1e-3 rrre1e2e-2e1e1e-3 re2e2e2e-2e-4w2 rrrruur re2e-1e-1w2rr ruruur rrrrrrr
-d<7.8.8.8.8.8.5>
+d(7.8.8.8.8.8.5)
 rrru rrrrw2rr re2e-1e-1rrrrr rw2rrrrr ruruw2 rurrrur rrrrrur
-d<8.8.8.8.8.8.4>
+d(8.8.8.8.8.8.4)
 rur rw5u re2e-1e-1rrrrr re2re-2e2re1e1e-4 ruurur re2e-1e-1rrrrr rrrrrrrrr
-d<9.8.8.8.8.8.3>
+d(9.8.8.8.8.8.3)
 ur rrw3ru rurrrur rw2w2rr rrrurrrr re3rre1e-4rrr rre2e-1e-1rrru
