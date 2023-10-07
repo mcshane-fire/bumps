@@ -185,10 +185,10 @@ def generate_ranks(stats):
 
     crews = sorted(stats['all']['clubs'].keys())
     for i in crews[1:]:
-        add_rank(rank, stats, '1%d_head' % i, '%s crew headships' % ord(i), 'Number', lambda x : None if i not in x['headships'] else x['headships'][i]['total'])
+        add_rank(rank, stats, '1%02d_head' % i, '%s crew headships' % ord(i), 'Number', lambda x : None if i not in x['headships'] else x['headships'][i]['total'])
 
     for i in crews:
-        add_rank(rank, stats, '2%d_high' % i, '%s crew highest position' % ord(i), 'Position', lambda x : None if i not in x['highest'] else x['highest'][i]['high']+1, False)
+        add_rank(rank, stats, '2%02d_high' % i, '%s crew highest position' % ord(i), 'Position', lambda x : None if i not in x['highest'] else x['highest'][i]['high']+1, False)
 
     return rank
 
