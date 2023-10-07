@@ -208,6 +208,9 @@ def check_results(event, move, back, head, debug):
 def process_results(event):
     debug = False
 
+    if event['div_size'] is None or len(event['crews']) == 0:
+        return
+
     event['move'] = []
     event['back'] = []
     event['completed'] = []

@@ -309,6 +309,9 @@ def draw_chart(out, event, svg_config, xoffset):
     return (left + (svg_config['right']*2) + (svg_config['scale'] * event['days'])+1, h+1)
 
 def write_svg(output, event, svg_config):
+    if len(event['crews']) == 0:
+        return
+
     out = simplesvg.Drawing()
 
     size = draw_chart(out, event, svg_config, 0)
