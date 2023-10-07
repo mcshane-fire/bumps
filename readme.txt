@@ -25,14 +25,14 @@ Results file format
 ===================
 
 The results file format has three sections:
-1) metadata about the racin
+1) metadata about the racing
 2) list of crews in each division
 3) results from racing
 
 Section 1
 ---------
 A set <keyword>,<value> pairs, one per line.
-Of these only Days is optional, it will default to 4 if omitted.
+Of the keywords listed below only Days is optional, it will default to 4 if omitted.
 
 Set,<description of the name of the series of bumps racing>
 Short,<short version of the name above>
@@ -43,10 +43,12 @@ Days,<days of racing>
 Section 2
 ---------
 
-One line per division, starting with the word Division, followed by a comma separated list of crew names.
+One line per division, starting with "Division," followed by a comma separated list of crew names.
 Crew names can be fully written out, or can be short codes.  The relevant short codes are defined in abbreviations.py
 There are different sets of abbreviations available depending on the 'Set' name from the metadata.
 A short code is the club name, followed by an optional number (if the number is omitted it defaults to 1).
+Crews from the same club must appear in the correct numerical order.  If a crew doesn't follow this
+ordering it can have a '*' character after the number, which disables the numbering error for this crew.
 
 Section 3
 ---------
@@ -57,7 +59,7 @@ The strings contain a set of codes, which are results applied to crews.  Any unr
 Results are given for each day in order.
 Results for each division are given in reverse order, the lowest division first.
 Results for a single division are listed starting with the bottom crew in that division, then proceeding towards the top.
-For each division apart from the bottom division, the first result code for that division will be for the sandwich crew.
+For every division apart from the bottom division, the first result code for that division will be for the sandwich crew.
 If there are not enough results for all days of racing then all subsequent divisions are assumed not to have been raced.
 
 Valid result codes:
@@ -69,8 +71,8 @@ Valid result codes:
   e<num>   This crew goes up <num> places, <num> can be negative for a crew going down.
   v<num>   Similar to above, but that crew will be shown with a lighter line to indicate they didn't race that day.
   w<num>   The next <num> crews all went up by one, the next crew went down <num> places.
-  d<1.2.3> The division sizes change for the next day.  Inside literal <> brackets is a dot separated list of division sizes.
+  d(1.2.3) The division sizes change for the next day.  Inside literal () parentheses is a dot separated list of division sizes.
   p        The next crew with an e or v code receives a penalty bump after the e/v code has been applied.
 
 For codes u, o & w that indicate the results for multiple crews no codes are included for any of the crews specified.
-For ease of reading, codes from each division are typically seperated by a space, results from each day occur on a newline.
+For ease of reading, codes from each division are typically seperated by a space, results from each day occur on a separate line.
