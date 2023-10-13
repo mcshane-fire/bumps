@@ -76,6 +76,10 @@ for s in sorted(results.results.keys()):
     if fullpage:
         print('<option value="%s"%s>%s</option>' % (short[s], extra, s))
 
+if fullpage:
+    print("""</select>""")
+
+
 if 'start' in args and len(years) > 0:
     first_index = get_index(years, args['start'][0])
 
@@ -86,8 +90,7 @@ if first_index is not None and last_index is not None and last_index < first_ind
     last_index = first_index
 
 if fullpage:
-    print("""</select>
-<select id="start" name="start" onChange=selectStart()>
+    print("""<select id="start" name="start" onChange=selectStart()>
 <option value="none">Select year</option>""")
 
 for i in range(len(years)):
@@ -128,7 +131,7 @@ if not pair and len(years) > 0 and first_index is not None and last_index is not
     valid = True
 if pair and len(years) > 0 and first_index is not None:
     valid = True
-        
+       
 if valid:
     sets = []
     if pair:
@@ -148,11 +151,14 @@ if valid:
     if 'output' in args and args['output'][0] == 'Show statistics':
         all = {}
         for s in sets:
-                stats.get_stats(s, all)
+            stats.get_stats(s, all)
         stats.html_stats(all)
     else:
         if fullpage:
-            print("<a download=\"chart.svg\" href=\"archive.py?set=%s&start=%s&stop=%s&highlight=%s&output=Download\">Download this chart</a><p>" % (args['set'][0], years[first_index], years[last_index], hi_value))
+            if pair:
+                print("<a download=\"chart.svg\" href=\"archive.py?set=%s&start=%s&highlight=%s&output=Download\">Download this chart</a><p>" % (args['set'][0], years[first_index], hi_value))
+            else:
+                print("<a download=\"chart.svg\" href=\"archive.py?set=%s&start=%s&stop=%s&highlight=%s&output=Download\">Download this chart</a><p>" % (args['set'][0], years[first_index], years[last_index], hi_value))
         else:
             print("Content-type: svg+xml\n")
         svg_config = {'scale' : 16, 'sep' : 32, 'dash' : 6, 'colours' : False}
