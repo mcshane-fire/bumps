@@ -3,6 +3,28 @@
 import os, cgi
 import results, bumps, draw, stats
 
+# return index of arg within years array
+# supports exact match
+#  or number equal to 0 (meaning first on the list)
+#  or negative index (meaning backwards from the end of the list)
+def get_index(years, arg):
+    index = None
+    try:
+        index = years.index(arg)
+    except:
+        try:
+            index = int(arg)
+            if index < 0:
+                if index < -len(years):
+                    index = 0
+                else:
+                    index += len(years)
+            elif index != 0:
+                index = None
+        except:
+            index = None
+    return index
+
 args = {}
 if 'REQUEST_URI' in os.environ:
     args = cgi.parse(os.environ['REQUEST_URI'])
@@ -41,8 +63,8 @@ if fullpage:
 
 years = []
 pair = False
-first = None
-last = None
+first_index = None
+last_index = None
 highlight = None
 for s in sorted(results.results.keys()):
     extra = ""
@@ -55,55 +77,37 @@ for s in sorted(results.results.keys()):
         print('<option value="%s"%s>%s</option>' % (short[s], extra, s))
 
 if 'start' in args and len(years) > 0:
-    try:
-        start_index = int(args['start'][0])
-        if start_index <= 0:
-            if start_index < -len(years):
-                start_index = -len(years)
-            args['start'][0] = str(years[start_index])
-        else:
-            start_index = years.index(start_index)
+    first_index = get_index(years, args['start'][0])
 
-        if 'stop' in args and pair is False:
-            stop_index = int(args['stop'][0])
-            if stop_index <= 0:
-                if start_index <= 0:
-                    if stop_index < start_index:
-                        stop_index = start_index
-                else:
-                    if stop_index < start_index-len(years):
-                        stop_index = start_index
-                args['stop'][0] = str(years[stop_index])
-        else:
-            args['stop'] = [str(years[-1])]
-    except ValueError:
-        pass
+if 'stop' in args and len(years) > 0:
+    last_index = get_index(years, args['stop'][0])
+
+if first_index is not None and last_index is not None and last_index < first_index:
+    last_index = first_index
 
 if fullpage:
     print("""</select>
 <select id="start" name="start" onChange=selectStart()>
 <option value="none">Select year</option>""")
 
-for y in years:
+for i in range(len(years)):
     extra = ""
-    if 'start' in args and args['start'][0] == str(y):
+    if first_index is not None and first_index == i:
         extra = " selected"
-        first = y
     if fullpage:
-        print('<option value="%s"%s>%s</option>' % (y, extra, y))
+        print('<option value="%s"%s>%s</option>' % (years[i], extra, years[i]))
 
 if fullpage:
     print('''</select>
 <select id="stop" name="stop"%s>
 <option value="none">%s</option>''' % (" style=\"display:none\"" if pair is True else "", "Select finish year" if pair is False else "-"))
 
-for y in years:
+for i in range(len(years)):
     extra = ""
-    if 'stop' in args and args['stop'][0] == str(y):
+    if last_index is not None and last_index == i:
         extra = " selected"
-        last = y
-    if fullpage and (first is None or y >= first) and not pair:
-        print('<option value="%s"%s>%s</option>' % (y, extra, y))
+    if fullpage and (first_index is None or i >= first_index) and not pair:
+        print('<option value="%s"%s>%s</option>' % (years[i], extra, years[i]))
 
 if fullpage:
     print('''</selection>''')
@@ -120,15 +124,15 @@ if fullpage:
 
 
 valid = False
-if not pair and len(years) > 0 and first is not None and last is not None and last >= first:
+if not pair and len(years) > 0 and first_index is not None and last_index is not None:
     valid = True
-if pair and len(years) > 0 and first is not None:
+if pair and len(years) > 0 and first_index is not None:
     valid = True
         
 if valid:
     sets = []
     if pair:
-        fmt = "/home/mcshane/src/bumps/results/%s%s_%%s.txt" % (rshort[args['set'][0]].lower(), first)
+        fmt = "/home/mcshane/src/bumps/results/%s%s_%%s.txt" % (rshort[args['set'][0]].lower(), years[first_index])
         for gender in ["women", "men"]:
             set = bumps.read_file(fmt % gender, highlight)
             if set is not None:
@@ -137,7 +141,7 @@ if valid:
     else:
         p = rshort[args['set'][0]].split("-")
         fmt = "/home/mcshane/src/bumps/results/%s%%s_%s.txt" % (p[0].strip().lower(), p[1].strip().lower())
-        for i in range(years.index(first), years.index(last)+1):
+        for i in range(first_index, last_index+1):
             sets.append(bumps.read_file(fmt % years[i], highlight))
             bumps.process_results(sets[-1])
 
@@ -148,7 +152,7 @@ if valid:
         stats.html_stats(all)
     else:
         if fullpage:
-            print("<a download=\"chart.svg\" href=\"archive.py?set=%s&start=%s&stop=%s&highlight=%s&output=Download\">Download this chart</a><p>" % (args['set'][0], first, last, hi_value))
+            print("<a download=\"chart.svg\" href=\"archive.py?set=%s&start=%s&stop=%s&highlight=%s&output=Download\">Download this chart</a><p>" % (args['set'][0], years[first_index], years[last_index], hi_value))
         else:
             print("Content-type: svg+xml\n")
         svg_config = {'scale' : 16, 'sep' : 32, 'dash' : 6, 'colours' : False}

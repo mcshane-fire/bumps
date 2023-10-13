@@ -38,7 +38,7 @@ def add_crew(crew_state, crews, str, abbrev):
     if club not in crew_state:
         crew_state[club] = 1
 
-    if num != crew_state[club] and escape != "*":
+    if num != crew_state[club] and escape != "*" and len(club) > 0:
         print("Club %s crews out of order (found %d, expecting %d)<br>" % (club, num, crew_state[club]))
         return False
 
@@ -76,6 +76,7 @@ def read_file(name, highlight = None, data = None):
         try:
             input = open(name, "r")
         except:
+            print("Failed to open file<br>")
             return None
     elif data != None:
         input = data.splitlines()
@@ -104,7 +105,7 @@ def read_file(name, highlight = None, data = None):
         elif p[0] == "Gender":
             ret['gender'] = p[1]
         elif p[0] == "Year":
-            ret['year'] = int(p[1])
+            ret['year'] = p[1]
         elif p[0] == "Days":
             ret['days'] = int(p[1])
         elif p[0] == "Division":
@@ -435,14 +436,20 @@ def step_on(event):
     newlist = [None] * len(event['crews'])
     for i in range(len(event['crews'])):
         crew = event['crews'][i]
-        ep = i - crew['gain']
-        if newlist[ep] is None:
-            crew['gain'] = 0
-            crew['blades'] = False
-            newlist[ep] = crew
+        if crew['gain'] is not None:
+            ep = i - crew['gain']
+            if newlist[ep] is None:
+                crew['gain'] = 0
+                crew['blades'] = False
+                newlist[ep] = crew
 
     event['crews'] = newlist
-    event['year'] = event['year']+1
+    try:
+        year = int(event['year'])
+        event['year'] = str(year+1)
+    except:
+        event['year'] = event['year']+".next"
+
     del event['move']
     del event['completed']
     del event['skip']

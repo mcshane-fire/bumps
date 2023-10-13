@@ -150,9 +150,9 @@ def draw_extra_text(svg_config, out, xoff, yoff, event, extra):
         colour = 'darkred'
         height = event['div_size'][0][div_num] * svg_config['scale']
 
-        label = "%s %d - %s, Division %d" % (event['short'], event['year'], event['gender'], div_num+1)
+        label = "%s %s - %s, Division %d" % (event['short'], event['year'], event['gender'], div_num+1)
         if estimate_text_length(label, fontscale) > height - svg_config['scale']:
-            label = "%s %d - %s, Div %d" % (event['short'], event['year'], event['gender'], div_num+1)
+            label = "%s %s - %s, Div %d" % (event['short'], event['year'], event['gender'], div_num+1)
             if estimate_text_length(label, fontscale) > height - svg_config['scale']:
                 label = "%s %s,%s%s" % (event['short'], event['year'], event['gender'][0], div_num+1)
                 if estimate_text_length(label, fontscale) > height - svg_config['scale']:
@@ -238,6 +238,7 @@ def draw_stripes(svg_config, out, xoff, yoff, width, x2off, event, event2 = None
 
 def draw_join(svg_config, out, xoff, yoff, event, event2):
     added = []
+    used = [False] * len(event['crews'])
     yoff = yoff + (svg_config['scale']/2)
     fontsize = svg_config['scale'] * 0.6
     ynext = yoff + (svg_config['scale'] * len(event['crews'])) - (svg_config['scale']/2) + 4
@@ -245,10 +246,13 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
     verticals = 0
 
     for crew_num2 in range(len(event2['crews'])):
+        if len(event2['crews'][crew_num2]['start']) == 0:
+            continue
         found = False
         for crew_num in range(len(event['crews'])):
-            if event2['crews'][crew_num2]['start'] == event['crews'][crew_num]['end']:
+            if used[crew_num] == False and event2['crews'][crew_num2]['start'] == event['crews'][crew_num]['end']:
                 found = True
+                used[crew_num] = True
                 break
 
         if found:
