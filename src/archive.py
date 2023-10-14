@@ -88,6 +88,9 @@ if 'stop' in args and len(years) > 0:
 
 if first_index is not None and last_index is not None and last_index < first_index:
     last_index = first_index
+elif first_index is not None and 'stop' not in args and pair is False:
+    last_index = len(years)-1
+
 
 if fullpage:
     print("""<select id="start" name="start" onChange=selectStart()>
