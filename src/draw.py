@@ -350,15 +350,11 @@ def write_multi_svg(output, sets, svg_config):
     top = svg_config['scale'] * 1.25
     fontsize = svg_config['scale'] * 0.8
 
-    m1 = estimate_max_length(sets[0]['crews'], 'start', 0.8)
-    m2 = estimate_max_length(sets[-1]['crews'], 'end', 0.8)
-    if m2 > m1:
-        m1 = m2
+    left = estimate_max_length(sets[0]['crews'], 'start', 0.8) + svg_config['scale']
+    right = estimate_max_length(sets[-1]['crews'], 'end', 0.8) + svg_config['scale']
 
-    svg_config['right'] = m1 + svg_config['scale']
-
-    xpos = svg_config['right']
-    eleft = svg_config['right']
+    xpos = left
+    eleft = left
     for event_num in range(0, len(sets)):
         event = sets[event_num]
         event2 = event
@@ -366,7 +362,7 @@ def write_multi_svg(output, sets, svg_config):
         if event_num < len(sets)-1:
             event2 = sets[event_num+1]
         else:
-            extra = svg_config['right']
+            extra = right
 
         out.add(out.text(str(event['year']), insert=(xpos+(svg_config['scale'] * event['days'])/2, top-3), font_size=fontsize, font_family='Arial', stroke_width=0, fill='black', text_anchor='middle'))
         draw_stripes(svg_config, out, xpos-eleft, top, eleft + (svg_config['scale'] * event['days']), xpos, event, event2, extra)
@@ -378,14 +374,14 @@ def write_multi_svg(output, sets, svg_config):
             if h > height:
                 height = h
 
-    width = xpos - svg_config['sep'] + svg_config['right']
+    width = xpos - svg_config['sep'] + right
     draw_numbers(svg_config, out, 3, top, sets[0], 'start', False)
-    draw_numbers(svg_config, out, xpos - svg_config['sep'] + svg_config['right'] - 3, top, sets[-1], 'end', False)
+    draw_numbers(svg_config, out, xpos - svg_config['sep'] + right - 3, top, sets[-1], 'end', False)
 
-    draw_crews(svg_config, out, svg_config['right']-3, top, sets[0], 0, 'end')
+    draw_crews(svg_config, out, left-3, top, sets[0], 0, 'end')
     draw_crews(svg_config, out, xpos - svg_config['sep'] + 3, top, sets[-1], 1, 'start')
 
-    xpos = svg_config['right']
+    xpos = left
     for event in sets:
         h = draw_divisions(svg_config, out, xpos, top, event, 0, draw_colours = svg_config['colours'])
         if h > height:
