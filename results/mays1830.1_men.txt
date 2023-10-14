@@ -1,0 +1,16 @@
+Set,May Bumps
+Short,Mays
+Gender,Men
+Year,1830.1
+Days,7
+
+Division,L,2nd Trinity,Trinity Monarch,CC,M,J,,L2,
+
+Results
+v0v0v0v0rrru
+v1v1v1v1xrur
+v0v0urur
+rrruru
+e1e1e1e1xur
+rruur
+e1e1xrrrr

@@ -1,0 +1,20 @@
+Set,May Bumps
+Short,Mays
+Gender,Men
+Year,1828.2
+Days,8
+
+Division,Trinity Monarch,L,J,,,Ca,TH,CC
+
+Results
+rrrrrru
+ruuru
+rrurru
+rururr
+rruurr
+uruur
+rruurr
+rrrrrur
+
+
+

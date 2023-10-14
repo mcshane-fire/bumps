@@ -1,0 +1,14 @@
+Set,May Bumps
+Short,Mays
+Gender,Men
+Year,1831.1
+Days,5
+
+Division,Trinity Monarch,L,St John's Corsair,J,L2,Ph,,,,,,
+
+Results
+v0v0v0v0v0v0rrrrrr
+v0v0v0v0v0v0urrrr
+v0v0v0v0v0uruu
+v0v0v0ruuuu
+urrrrruru
