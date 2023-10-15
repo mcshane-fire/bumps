@@ -1,6 +1,6 @@
 #!/bin/python3
 
-import sys, os
+import sys, os, pprint
 import bumps, stats, draw
 
 state = {
@@ -48,22 +48,22 @@ def join_stats(event1, event2):
 def write_web(state):
     series = {}
     for s in state['sets']:
-        name = "%s - %s" % (s['short'], s['gender'])
-        if name not in series:
-            series[name] = []
-        series[name].append(s['year'])
-
-        name = s['short']
-        if name not in series:
-            series[name] = []
-        if s['year'] not in series[name]:
-            series[name].append(s['year'])
+        if s['short'] not in series:
+            series[s['short']] = {'all' : []}
+        if s['gender'] not in series[s['short']]:
+            series[s['short']][s['gender']] = []
+        series[s['short']][s['gender']].append(s['year'])
+        if s['year'] not in series[s['short']]['all']:
+            series[s['short']]['all'].append(s['year'])
 
     fp = open(state['web'], 'w')
     fp.write("# results currently available\n\n")
     fp.write("results = {\n")
     for s in sorted(series.keys()):
-        fp.write("    '%s' : %s,\n" % (s, sorted(series[s])))
+        fp.write("    '%s' : {\n" % s)
+        for g in sorted(series[s].keys()):
+            fp.write("        '%s' : %s,\n" % (g, series[s][g]))
+        fp.write("        },\n")
     fp.write("}\n")
     fp.close()
 
