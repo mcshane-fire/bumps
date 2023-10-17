@@ -32,6 +32,8 @@ def get_stats(event, stats):
     for num in range(len(event['crews'])):
         pos = num
         crew = event['crews'][num]
+        if len(crew['club']) == 0:
+            continue
         if crew['club'] not in stats['club']:
             stats['club'][crew['club']] = {'day' : {}, 'set' : {}, 'blades' : [], 'crews' : {}, 'headships' : {}, 'highest' : {}, 'years' : [], 'points' : 0, 'count' : 0}
             stats['club'][crew['club']]['safename'] = ''.join(ch for ch in crew['club'] if ch.isalnum())
