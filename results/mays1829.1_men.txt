@@ -12,6 +12,7 @@ v0v0v0v0v0v0rrrr
 v0v0v0v0v0urrr
 v1v1v1v1v1e1e2re1x
 v0v0v0v0rrrrr
+#XXX ambiguous results at bottom of division
 v0v0v0v0uur
 v0v0ururr
 v0uuurr

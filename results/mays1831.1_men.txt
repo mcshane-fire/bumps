@@ -4,11 +4,11 @@ Gender,Men
 Year,1831.1
 Days,5
 
-Division,Trinity Monarch,L,St John's Corsair,J,L2,Ph,,,,,,
+Division,Trinity Monarch,L,St John's Corsair,J,L2,Ph,,Cr,,SC,E,,Cl
 
 Results
-v0v0v0v0v0v0rrrrrr
-v0v0v0v0v0v0urrrr
-v0v0v0v0v0uruu
+v0v0v0v0v0v0v0rrrrrr
+v0v0v0v0v0uurrrr
+v1v1v1v1v1xuruu
 v0v0v0ruuuu
 urrrrruru

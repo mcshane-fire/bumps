@@ -11,6 +11,7 @@ v0rrrururru
 v0ruruurrrr
 v0uururrru
 v0ruururrrr
+#XXX ambiguous results with bottom 4 crews
 v1e1e2rxruuur
 v0re2e-1e-1rurur
 ruuuuru

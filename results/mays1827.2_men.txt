@@ -8,6 +8,7 @@ Division,Trinity King Edward,L,J,Trinity Westminster,Ca,Trinity Eton
 
 Results
 re2e-1e-1rr
+#XXX ambiguous results bottom crew
 rrrrrr
 urrrr
 rurrr
@@ -20,6 +21,7 @@ v0urrr
 rruu
 xxrru
 rrrr
+#XXX ambiguous result bottom crew
 urr
 rrrr
 rrrr

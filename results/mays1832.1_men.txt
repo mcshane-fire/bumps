@@ -11,6 +11,7 @@ v0v0v0uuururr
 v0v0v0rrurruur
 v0v0e2e-1e-1urrrrrrr
 v0v0urrruuur
+#XXX ambigous results near bottom with Q/St Johns Tally-Ho
 v1v1e1e1xuururr
 v0uuururrr
 urruuo3ur
