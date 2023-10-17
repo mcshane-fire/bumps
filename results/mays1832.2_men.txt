@@ -4,7 +4,7 @@ Gender,Men
 Year,1832.2
 Days,6
 
-Division,1st Trinity Black Prince,2nd Trinity Queen Bess,J,St John's Corsair,L,Cl,SC,,Cr,St. John's 'Tally-Ho',,Q,Trinity Tobacco Pipes and Punch Bowls,L2,Cr2
+Division,1st Trinity (Black Prince),2nd Trinity (Queen Bess),J,St John's Corsair,L,Cl,SC,,Cr,St. John's 'Tally-Ho',,Q,Trinity Tobacco Pipes and Punch Bowls,L2,Cr2
 
 Results
 v0v0ruruo3uur
