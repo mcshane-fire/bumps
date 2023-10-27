@@ -29,6 +29,28 @@ def get_stats(event, stats):
     if event['year'] not in stats['years']:
         stats['years'].append(event['year'])
 
+    # to get the correct stats when crews withdraw or don't race that day
+    # we can't just take the individual move array
+    # work out which crews withdraw on each day
+    # - all crews below wihtdrawing crews are assumed to actually go up
+    #   one less than the move array (or n less for n withdrawn crews above)
+    # - all crews crossing over a virtual moving crew need to go up or down
+    #   less than the number of virtual crews crossed
+    missing = []
+    skip = 0
+    for day in range(event['days']):
+        withdrawn = []
+        virtual = []
+        for num in range(len(event['crews'])-skip):
+            if event['move'][day][num] is None:
+                #print("Day %d crew %d withdraws" % (day, num))
+                withdrawn.append(num)
+                skip += 1
+            if event['skip'][day][num] is True:
+                #print("Day %d crew %d-%d virtual" % (day, num, num-event['move'][day][num]))
+                virtual.append((num, num-event['move'][day][num]))
+        missing.append({'withdrawn' : withdrawn, 'virtual' : virtual})
+
     for num in range(len(event['crews'])):
         pos = num
         crew = event['crews'][num]
@@ -44,6 +66,7 @@ def get_stats(event, stats):
         if event['year'] not in club['years']:
             club['years'].append(event['year'])
 
+        gained = 0
         for day in range(event['days']):
             m = event['move'][day][pos]
             if m == None:
@@ -51,31 +74,54 @@ def get_stats(event, stats):
                 addn(club, 'withdrew', 1, "%s (%s)" % (crew['num_name'], event['year']))
                 break
 
-            club['points'] += m
-            if m == 0 and pos == 0:
-                club['points'] += 1
+            # add stats if the crew didn't skip this day
+            if event['skip'][day][pos] == False:
+                # work out the actual number of places gained, taking into account crews withdrawing or not racing that day
+                adjust = 0
+                for n in missing[day]['withdrawn']:
+                    # a crew higher up withdraws, so discount one place gained
+                    if n < pos:
+                        adjust -= 1
+                for (s,e) in missing[day]['virtual']:
+                    # going up but crossing a virtual crew, so discount one place gained
+                    if s < pos and e > pos-m:
+                        adjust -= 1
+                    # going down but crossing a virtual crew, so add one place gained
+                    if s > pos and e < pos-m:
+                        adjust += 1
 
-            addn(sall['day'], m, 1, "%s (%s) day %s" % (crew['num_name'], event['year'], day+1))
-            addn(club['day'], m, 1, "%s (%s) day %s" % (crew['num_name'], event['year'], day+1))
+                club['points'] += m + adjust
+                if m == 0 and pos == 0:
+                    club['points'] += 1
+
+                addn(sall['day'], m + adjust, 1, "%s (%s) day %s" % (crew['num_name'], event['year'], day+1))
+                addn(club['day'], m + adjust, 1, "%s (%s) day %s" % (crew['num_name'], event['year'], day+1))
+                gained += m+adjust
+
             pos -= m
 
-            if crew['number'] not in club['highest']:
-                club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : event['year']}
-            else:
-                rec = club['highest'][crew['number']]
-                if pos < rec['high']:
+            if event['skip'][day][pos] == False:
+                if crew['number'] not in club['highest']:
                     club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : event['year']}
-                elif pos == rec['high']:
-                    rec['days'] += 1
-                    rec['run'] += 1
-                    if rec['run'] > rec['longest']:
-                        rec['longest'] = rec['run']
-                        rec['end'] = event['year']
                 else:
-                    rec['run'] = 0
+                    rec = club['highest'][crew['number']]
+                    if pos < rec['high']:
+                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : event['year']}
+                    elif pos == rec['high']:
+                        rec['days'] += 1
+                        rec['run'] += 1
+                        if rec['run'] > rec['longest']:
+                            rec['longest'] = rec['run']
+                            rec['end'] = event['year']
+                    else:
+                        rec['run'] = 0
+            else:
+                # if the crew didn't race thie day then just stop any run that was previously ongoing
+                if crew['number'] in club['highest']:
+                    club['highest'][crew['number']]['run'] = 0
 
-        addn(sall['set'], num-pos, 1, "%s (%s)" % (crew['num_name'], event['year']))
-        addn(club['set'], num-pos, 1, "%s (%s)" % (crew['num_name'], event['year']))
+        addn(sall['set'], gained, 1, "%s (%s)" % (crew['num_name'], event['year']))
+        addn(club['set'], gained, 1, "%s (%s)" % (crew['num_name'], event['year']))
 
         if crew['number'] not in headships:
             headships[crew['number']] = {'club' : crew['club'], 'num' : pos}

@@ -414,16 +414,30 @@ def process_results(event):
         gain = 0
         blades = True
         finished = True
-        for m in event['move']:
-            if m[nc] == None:
+        for day in range(event['days']):
+            m = event['move'][day][nc]
+            if m == None:
                 event['crews'][crew_num]['gain'] = None
                 finished = False
                 break
             
-            gain = gain + m[nc]
-            if m[nc] <= 0:
+            gain = gain + m
+
+            if m <= 0 or event['skip'][day][nc] == True:
                 blades = False
-            nc = nc - m[nc]
+            else:
+                # in case this crew went up because of crews withdrawing or not racing that day
+                # we need to check that we actually swapped places with another crew
+                found = False
+                for swap in range(nc-1,-1,-1):
+                    if event['skip'][day][swap] == False and event['move'][day][swap] is not None and swap - event['move'][day][swap] > nc - m:
+                        # found a crew starting ahead of this crew that crosses over
+                        found = True
+                        break
+                if found is False:
+                    blades = False
+
+            nc = nc - m
 
         if finished:
             # only award headship blades if we've completed all the racing
