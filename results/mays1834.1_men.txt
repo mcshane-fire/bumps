@@ -3,6 +3,7 @@ Short,Mays
 Gender,Men
 Year,1834.1
 Days,5
+Flags,skip_headship
 
 Division,Cr,Q,1st Trinity (Black Prince),Ca,2nd Trinity (Queen Bess),M,L,J
 Division,3rd Trinity (Dolphin),SC,L2,Cl,CC,TH,,1st Trinity 2

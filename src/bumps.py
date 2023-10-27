@@ -85,6 +85,7 @@ def read_file(name, highlight = None, data = None):
     ret = {}
     ret['title'] = "Set name"
     ret['days'] = 4
+    ret['flags'] = []
     ret['crews'] = []
     ret['div_size'] = None
     ret['results'] = []
@@ -108,6 +109,8 @@ def read_file(name, highlight = None, data = None):
             ret['year'] = p[1]
         elif p[0] == "Days":
             ret['days'] = int(p[1])
+        elif p[0] == "Flags":
+            ret['flags'] += p[1:]
         elif p[0] == "Division":
             if ret['div_size'] is None:
                 ret['div_size'] = []
@@ -424,7 +427,7 @@ def process_results(event):
 
         if finished:
             # only award headship blades if we've completed all the racing
-            if nc == 0 and full_set == True:
+            if nc == 0 and full_set == True and 'skip_headship' not in event['flags']:
                 blades = True
 
             event['crews'][crew_num]['gain'] = gain

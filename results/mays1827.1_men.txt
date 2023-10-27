@@ -3,6 +3,7 @@ Short,Mays
 Gender,Men
 Year,1827.1
 Days,15
+Flags,skip_headship
 
 Division,Trinity Monarch,Trinity King Edward,L,J,Ca,,,Trinity Westminster
 

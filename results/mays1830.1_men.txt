@@ -3,6 +3,7 @@ Short,Mays
 Gender,Men
 Year,1830.1
 Days,7
+Flags,skip_headship
 
 Division,L,2nd Trinity,Trinity Monarch,CC,M,J,,L2,
 

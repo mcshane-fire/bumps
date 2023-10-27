@@ -3,6 +3,7 @@ Short,Mays
 Gender,Men
 Year,1828.1
 Days,9
+Flags,skip_headship
 
 Division,Trinity Monarch,L,Ca,J,CC
 

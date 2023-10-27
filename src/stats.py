@@ -92,8 +92,9 @@ def get_stats(event, stats):
         addn(stats['club'][club]['crews'], club_count[club]['total'], 1, event['year'])
         addn(sall['clubs'], club_count[club]['total'], 1, "%s (%s)" % (club, event['year']))
 
-    for num in headships:
-        addn(stats['club'][headships[num]['club']]['headships'], num, 1, event['year'])
+    if 'skip_headship' not in event['flags']:
+        for num in headships:
+            addn(stats['club'][headships[num]['club']]['headships'], num, 1, event['year'])
 
 def print_k(d, k, club=None, fmt="%s"):
     out = "<tr><td>"
