@@ -12,7 +12,7 @@ import abbreviations
 # If <opt-esacpe> is "*" any club crew numbering error is ignored
 
 def add_crew(crew_state, crews, str, abbrev):
-    crew = {'gain' : 0, 'blades' : False, 'highlight' : False}
+    crew = {'gain' : None, 'blades' : False, 'highlight' : False}
 
     if 'pat' not in crew_state:
         crew_state['pat'] = re.compile("^(.*?)(\([^\)]*\))?[ ]*([0-9]*)(\*)?$")
@@ -197,14 +197,14 @@ def check_results(event, move, back, head, debug):
             ret = False
         else:
             if back[i] in results and back[i] is not None:
-                print("Error: got two crews both finishing in position %d<br>" % (i+1))
+                print("Error: got two crews starting from position %d, second ending position %d<br>" % (back[i]+1, i+1))
                 ret = False
             results.append(back[i])
 
         if debug:
             out = "%2d: %25s " % (i, event['crews'][i]['start'])
             for j in range(event['days']):
-                out += "| %3s %3s " % (event['move'][j][i], event['back'][j][i])
+                out += "|%s%3s%s%3s " % ('(' if event['skip'][j][i] else " ", event['move'][j][i], ')' if event['skip'][j][i] else ' ', event['back'][j][i])
             print(out)
 
     return ret
@@ -261,6 +261,7 @@ def process_results(event):
                 if num == len(event['crews']) - event['crews_withdrawn']:
                     for day in range(day_num+1, event['days'], 1):
                         event['div_size'][day] = sizes
+            continue
 
         # if we've already got a result for this crew, then we can skip over it
         while crew_num >= div_head and move[crew_num] is not None:
@@ -330,12 +331,15 @@ def process_results(event):
                 print("Overbumped %d, moving to crew %d" % (up, crew_num))
         elif c.startswith("e") or c.startswith("v"):
             up = int(c[1:])
-
             if move[crew_num] is None:
                 p = crew_num
                 move[crew_num] = 0
             else:
                 p = back[crew_num]
+
+            if p is None:
+                print("Result %s applied to crew that can't be found in position %d" % (c, crew_num+1))
+                return
 
             move[p] += up
             back[crew_num-up] = p
@@ -394,6 +398,8 @@ def process_results(event):
                 print("Storing %d penalty bump to apply to crew %d" % (penalty, crew_num))
                 
         # if we've seen at least one result, mark this division as completed
+        if debug:
+            print("Marking day %d division %d has completed" % (day_num, div_num))
         event['completed'][day_num][div_num] = True
 
     if move is None:
