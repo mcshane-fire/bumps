@@ -227,8 +227,8 @@ def generate_ranks(stats):
     add_rank(rank, stats, '01_crews', 'Crews entered', 'Crews', lambda x : x['count'])
     add_rank(rank, stats, '02_points', 'Pegasus Cup score', 'Score', lambda x : int(12 * x['points'] / x['count']))
     add_rank(rank, stats, '03_headships', 'Headships', 'Number', lambda x : None if 1 not in x['headships'] else x['headships'][1]['total'])
-    add_rank(rank, stats, '04_headdays', 'Total days at headship', 'Days', lambda x : None if 1 not in x['headships'] else x['highest'][1]['days'])
-    add_rank(rank, stats, '05_headlong', 'Continuous days at headship', 'Days', lambda x : None if 1 not in x['headships'] else x['highest'][1]['longest'])
+    add_rank(rank, stats, '04_headdays', 'Total days at headship', 'Days', lambda x : None if x['highest'][1]['high'] > 0 else x['highest'][1]['days'])
+    add_rank(rank, stats, '05_headlong', 'Continuous days at headship', 'Days', lambda x : None if x['highest'][1]['high'] > 0 else x['highest'][1]['longest'])
     add_rank(rank, stats, '06_blades', 'Blades awarded', 'Number', lambda x : None if len(x['blades']) == 0 else len(x['blades']))
     add_rank(rank, stats, '07_blades_crew', 'Blades per 1000 crews', 'Score', lambda x : None if len(x['blades']) == 0 else int(1000 * len(x['blades']) / x['count']))
 
