@@ -58,6 +58,7 @@ if fullpage:
 set = None
 gender = None
 years = []
+split = []
 first_index = None
 last_index = None
 highlight = None
@@ -85,11 +86,12 @@ if set is not None:
             extra = " selected"
             gender = g
             years = results.results[set][gender]
+            split = results.results[set]['split']
         if fullpage:
             text = g
             if g in gdisp:
                 text = gdisp[g]
-            print('<option value="%s"%s>%s</option>' % (g, extra, text))
+                print('<option value="%s"%s>%s</option>' % (g, extra, text))
 
 if fullpage:
     print("""</select>""")
@@ -151,19 +153,29 @@ if fullpage:
 if valid:
     sets = []
     if gender == 'all':
-        fmt = "/home/mcshane/src/bumps/results/%s%s_%%s.txt" % (set.lower(), years[first_index])
-        for g in ["women", "men"]:
+        if years[first_index] in split:
+            fmt = "/home/mcshane/src/bumps/results/%s%s.%%s_men.txt" % (set.lower(), years[first_index])
+            types = ['1', '2']
+        else:
+            fmt = "/home/mcshane/src/bumps/results/%s%s_%%s.txt" % (set.lower(), years[first_index])
+            types = ['women', 'men']
+        for g in types:
             s = bumps.read_file(fmt % g, highlight)
             if s is not None:
                 bumps.process_results(s)
                 sets.append(s)
     else:
-        fmt = "/home/mcshane/src/bumps/results/%s%%s_%s.txt" % (set.lower(), gender.lower())
+        fmt = "/home/mcshane/src/bumps/results/%s%%s%%s_%s.txt" % (set.lower(), gender.lower())
         for i in range(first_index, last_index+1):
-            s = bumps.read_file(fmt % years[i], highlight)
-            if s is not None:
-                bumps.process_results(s)
-                sets.append(s)
+            if years[i] in split:
+                types = ['.1', '.2']
+            else:
+                types = ['']
+            for g in types:
+                s = bumps.read_file(fmt % (years[i], g), highlight)
+                if s is not None:
+                    bumps.process_results(s)
+                    sets.append(s)
 
     if 'output' in args and args['output'][0] == 'Show statistics':
         all = {}
@@ -181,7 +193,7 @@ if valid:
         svg_config = {'scale' : 16, 'sep' : 32, 'dash' : 6, 'colours' : False}
         if len(sets) == 1:
             draw.write_svg(None, sets[0], svg_config)
-        elif gender == 'all':
+        elif gender == 'all' and years[first_index] not in split:
             draw.write_pair(None, sets, svg_config)
         else:
             draw.write_multi_svg(None, sets, svg_config)
@@ -194,7 +206,8 @@ if fullpage:
     print('var all = [')
     for s in sorted(results.results.keys()):
         for g in sorted(results.results[s].keys()):
-            print('    "%s", "%s", %s_%s,' % (s, g, s, g))
+            if g != 'split':
+                print('    "%s", "%s", %s_%s,' % (s, g, s, g))
     print("""];
 function clearHide(name) {
     var input = document.getElementById(name);

@@ -242,10 +242,15 @@ def generate_ranks(stats):
     return rank
 
 def output_span(years):
-    if len(years) == 1:
-        return "for %s" % years[0]
+    uniq = []
+    for y in years:
+        p = y.split('.')
+        if p[0] not in uniq:
+            uniq.append(p[0])
+    if len(uniq) == 1:
+        return "for %s" % uniq[0]
     else:
-        return "across %d years, %s to %s</h3>" % (len(years), years[0], years[-1])
+        return "across %d years, %s to %s</h3>" % (len(uniq), uniq[0], uniq[-1])
 
 def html_stats(stats):
 

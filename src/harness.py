@@ -49,12 +49,21 @@ def write_web(state):
     series = {}
     for s in state['sets']:
         if s['short'] not in series:
-            series[s['short']] = {'all' : []}
+            series[s['short']] = {'all' : [], 'split' : []}
         if s['gender'] not in series[s['short']]:
             series[s['short']][s['gender']] = []
-        series[s['short']][s['gender']].append(s['year'])
-        if s['year'] not in series[s['short']]['all']:
-            series[s['short']]['all'].append(s['year'])
+
+        year = s['year']
+        p = year.split(".")
+        if len(p) == 2:
+            year = p[0]
+            if year not in series[s['short']]['split']:
+                series[s['short']]['split'].append(year)
+
+        if year not in series[s['short']][s['gender']]:
+            series[s['short']][s['gender']].append(year)
+        if year not in series[s['short']]['all']:
+            series[s['short']]['all'].append(year)
 
     fp = open(state['web'], 'w')
     fp.write("# results currently available\n\n")
