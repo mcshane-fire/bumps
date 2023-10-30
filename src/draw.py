@@ -273,7 +273,7 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
 
             ynext += ysep
 
-    xsep = (svg_config['sep'] - 4) / (verticals+1)
+    xsep = (svg_config['sep'] - 4.0) / (verticals+1)
     xpos = xoff + xsep
     for crew in added:
         colour = 'black'
@@ -288,6 +288,7 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
             out.add(out.line(start=(xpos, crew['height']), end=(xpos, crew['label']), stroke = linecolour, stroke_width = 1))
             out.add(out.line(start=(xpos, crew['height']), end=(xoff + svg_config['sep'], crew['height']), stroke = linecolour, stroke_width = 1))
             xpos = xpos + xsep
+
 
     return ynext
     
