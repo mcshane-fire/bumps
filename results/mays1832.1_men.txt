@@ -1,7 +1,7 @@
 Set,May Bumps
 Short,Mays
 Gender,Men
-Year,1832.1
+Year,1832 February March
 Days,7
 Flags,skip_headship
 

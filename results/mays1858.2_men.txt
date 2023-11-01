@@ -1,7 +1,7 @@
 Set,May Bumps
 Short,Mays
 Gender,Men
-Year,1858.2
+Year,1858 May
 Days,8
 
 Division,L,1st Trinity,2nd Trinity,TH,E,3rd Trinity,SS,1st Trinity 2,M,Ca

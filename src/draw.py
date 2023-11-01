@@ -348,9 +348,15 @@ def write_multi_svg(output, sets, svg_config):
     
     width = 0
     height = 0
-    top = svg_config['scale'] * 1.25
     fontsize = svg_config['scale'] * 0.8
 
+    textlines = 1
+    for event in sets:
+        if len(str(event['year']).split(" ", maxsplit=1)) > 1:
+            textlines = 2
+            break
+
+    top = svg_config['scale'] * (textlines + 0.25)
     left = estimate_max_length(sets[0]['crews'], 'start', 0.8) + svg_config['scale']
     right = estimate_max_length(sets[-1]['crews'], 'end', 0.8) + svg_config['scale']
 
@@ -365,7 +371,12 @@ def write_multi_svg(output, sets, svg_config):
         else:
             extra = right
 
-        out.add(out.text(str(event['year']), insert=(xpos+(svg_config['scale'] * event['days'])/2, top-3), font_size=fontsize, font_family='Arial', stroke_width=0, fill='black', text_anchor='middle'))
+        p = str(event['year']).split(" ", maxsplit=1)
+        h = top-5-((len(p)-1)*fontsize)
+        for i in range(len(p)):
+            out.add(out.text(p[i], insert=(xpos+(svg_config['scale'] * event['days'])/2, h), font_size=fontsize, font_family='Arial', stroke_width=0, fill='black', text_anchor='middle'))
+            h += fontsize
+
         draw_stripes(svg_config, out, xpos-eleft, top, eleft + (svg_config['scale'] * event['days']), xpos, event, event2, extra)
         eleft = 0
         xpos = xpos + (svg_config['scale'] * event['days']) + svg_config['sep']

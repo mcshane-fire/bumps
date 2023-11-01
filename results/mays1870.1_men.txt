@@ -1,7 +1,7 @@
 Set,May Bumps
 Short,Mays
 Gender,Men
-Year,1870.1
+Year,1870 March
 Flags,skip_headship
 
 Division,1st Trinity,L,3rd Trinity,TH,Cr,1st Trinity 2,SS,CC,E,J,TH2,Cl,K,M
