@@ -352,7 +352,7 @@ def write_multi_svg(output, sets, svg_config):
 
     textlines = 1
     for event in sets:
-        if len(str(event['year']).split(" ", maxsplit=1)) > 1:
+        if len(str(event['year']).split(" ")) > 1:
             textlines = 2
             break
 
@@ -371,10 +371,14 @@ def write_multi_svg(output, sets, svg_config):
         else:
             extra = right
 
-        p = str(event['year']).split(" ", maxsplit=1)
-        h = top-5-((len(p)-1)*fontsize)
-        for i in range(len(p)):
-            out.add(out.text(p[i], insert=(xpos+(svg_config['scale'] * event['days'])/2, h), font_size=fontsize, font_family='Arial', stroke_width=0, fill='black', text_anchor='middle'))
+        p = str(event['year']).split(" ")
+        p2 = [p[0]]
+        if len(p) > 1:
+            p2.append(" ".join(p[1:]))
+
+        h = top-5-((len(p2)-1)*fontsize)
+        for i in range(len(p2)):
+            out.add(out.text(p2[i], insert=(xpos+(svg_config['scale'] * event['days'])/2, h), font_size=fontsize, font_family='Arial', stroke_width=0, fill='black', text_anchor='middle'))
             h += fontsize
 
         draw_stripes(svg_config, out, xpos-eleft, top, eleft + (svg_config['scale'] * event['days']), xpos, event, event2, extra)
