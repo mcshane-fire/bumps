@@ -244,7 +244,7 @@ def generate_ranks(stats):
 def output_span(years):
     uniq = []
     for y in years:
-        p = y.split('.')
+        p = y.split(' ')
         if p[0] not in uniq:
             uniq.append(p[0])
     if len(uniq) == 1:
