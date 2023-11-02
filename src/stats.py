@@ -135,9 +135,6 @@ def get_stats(event, stats):
                 if crew['number'] in club['highest']:
                     club['highest'][crew['number']]['run'] = 0
 
-            if crew['club'] == 'Jesus' and pos == 0:
-                print(event['skip'][day][pos], div_raced, club['highest'][1])
-                    
         addn(sall['set'], gained, 1, "%s (%s)" % (crew['num_name'], event['year']))
         addn(club['set'], gained, 1, "%s (%s)" % (crew['num_name'], event['year']))
 
