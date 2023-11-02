@@ -54,8 +54,8 @@ def write_web(state):
             series[s['short']][s['gender']] = []
 
         year = s['year']
-        p = year.split(".")
-        if len(p) == 2:
+        p = year.split(" ")
+        if len(p) > 1:
             year = p[0]
             if year not in series[s['short']]['split']:
                 series[s['short']]['split'].append(year)
