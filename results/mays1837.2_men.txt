@@ -4,7 +4,7 @@ Gender,Men
 Year,1837 April May
 Days,7
 
-Division,L,CC,1st Trinity (Black Prince),Ca,2nd Trinity (Queen Bess),Q,J,3rd Trinity (Dolphin),TH,1st Trinity 2,L2,Cl,Cr,E,CC2,Pb,Ca2,M,3rd Trinity 2,2nd Trinity 2,SC,,Q2,,SS,2nd St John's
+Division,L,CC,1st Trinity (Black Prince),Ca,2nd Trinity (Queen Bess),Q,J,3rd Trinity (Dolphin),TH,1st Trinity 2,L2,Cl,Cr,E,CC2,Pb,Ca2,M,3rd Trinity 2,2nd Trinity 2,SC,,Q2,,SS,2nd St. John's
 
 Results
 v0v0rrrrrruue2e-1e-1w2urrrrrr

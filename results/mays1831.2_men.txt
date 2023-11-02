@@ -4,7 +4,7 @@ Gender,Men
 Year,1831 April May
 Days,9
 
-Division,L,Trinity Monarch,St John's Corsair,Cr,J,Ph,,SC,E,Cl,Ca,Trinty Nautilus,Q
+Division,L,Trinity Monarch,St. John's Corsair,Cr,J,Ph,,SC,E,Cl,Ca,Trinty Nautilus,Q
 
 Results
 v0rrrururru

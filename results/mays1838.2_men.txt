@@ -4,7 +4,7 @@ Gender,Men
 Year,1838 May
 Days,8
 
-Division,L,Ca,1st Trinity (Black Prince),3rd Trinity (Dolphin),L2,CC,2nd Trinity (Queen Bess),1st Trinity 2,J,Cl,Q,Cr,3rd Trinity 2,M,Ca2,2nd St John's,E,SC,2nd Trinity 2,K,Ph
+Division,L,Ca,1st Trinity (Black Prince),3rd Trinity (Dolphin),L2,CC,2nd Trinity (Queen Bess),1st Trinity 2,J,Cl,Q,Cr,3rd Trinity 2,M,Ca2,2nd St. John's,E,SC,2nd Trinity 2,K,Ph
 
 Results
 ruuuuururrrrrrr

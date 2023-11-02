@@ -5,7 +5,7 @@ Year,1832 February March
 Days,7
 Flags,skip_headship
 
-Division,Trinity Monarch,L,St John's Corsair,Trinty Nautilus,J,Ca,E,Cl,Cr,SC,Q,,,
+Division,Trinity Monarch,L,St. John's Corsair,Trinty Nautilus,J,Ca,E,Cl,Cr,SC,Q,,,
 
 Results
 v0v0v0uuururr
