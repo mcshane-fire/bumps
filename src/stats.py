@@ -23,6 +23,7 @@ def get_stats(event, stats):
     if 'desc' not in stats:
         stats['desc'] = "%s, %s" % (event['set'], event['gender'])
 
+    year = "%s%c" % (event['year'], event['gender'][0])
     sall = stats['all']
     club_count = {}
     headships = {}
@@ -70,8 +71,8 @@ def get_stats(event, stats):
         for day in range(event['days']):
             m = event['move'][day][pos]
             if m == None:
-                addn(sall, 'withdrew', 1, "%s (%s)" % (crew['num_name'], event['year']))
-                addn(club, 'withdrew', 1, "%s (%s)" % (crew['num_name'], event['year']))
+                addn(sall, 'withdrew', 1, "%s (%s)" % (crew['num_name'], year))
+                addn(club, 'withdrew', 1, "%s (%s)" % (crew['num_name'], year))
                 break
 
             # work out which division this crew was in and whether that division raced
@@ -107,8 +108,8 @@ def get_stats(event, stats):
                 if m == 0 and pos == 0:
                     club['points'] += 1
 
-                addn(sall['day'], m + adjust, 1, "%s (%s) day %s" % (crew['num_name'], event['year'], day+1))
-                addn(club['day'], m + adjust, 1, "%s (%s) day %s" % (crew['num_name'], event['year'], day+1))
+                addn(sall['day'], m + adjust, 1, "%s (%s) day %s" % (crew['num_name'], year, day+1))
+                addn(club['day'], m + adjust, 1, "%s (%s) day %s" % (crew['num_name'], year, day+1))
                 gained += m+adjust
 
             pos -= m
@@ -117,17 +118,17 @@ def get_stats(event, stats):
                 # if the division didn't race, then just skip this code, but don't reset any current run
                 if div_raced:
                     if crew['number'] not in club['highest']:
-                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : event['year']}
+                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : year}
                     else:
                         rec = club['highest'][crew['number']]
                         if pos < rec['high']:
-                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : event['year']}
+                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : year}
                         elif pos == rec['high']:
                             rec['days'] += 1
                             rec['run'] += 1
                             if rec['run'] > rec['longest']:
                                 rec['longest'] = rec['run']
-                                rec['end'] = event['year']
+                                rec['end'] = year
                         else:
                             rec['run'] = 0
             else:
@@ -135,8 +136,8 @@ def get_stats(event, stats):
                 if crew['number'] in club['highest']:
                     club['highest'][crew['number']]['run'] = 0
 
-        addn(sall['set'], gained, 1, "%s (%s)" % (crew['num_name'], event['year']))
-        addn(club['set'], gained, 1, "%s (%s)" % (crew['num_name'], event['year']))
+        addn(sall['set'], gained, 1, "%s (%s)" % (crew['num_name'], year))
+        addn(club['set'], gained, 1, "%s (%s)" % (crew['num_name'], year))
 
         if crew['number'] not in headships:
             headships[crew['number']] = {'club' : crew['club'], 'num' : pos}
@@ -145,17 +146,17 @@ def get_stats(event, stats):
             headships[crew['number']]['num'] = pos
 
         if crew['blades']:
-            sall['blades'].append("%s (%s)" % (crew['num_name'], event['year']))
-            club['blades'].append("%s (%s)" % (crew['num_name'], event['year']))
+            sall['blades'].append("%s (%s)" % (crew['num_name'], year))
+            club['blades'].append("%s (%s)" % (crew['num_name'], year))
 
-    addn(sall['crews'], len(event['crews']), 1, event['year'])
+    addn(sall['crews'], len(event['crews']), 1, year)
     for club in club_count:
-        addn(stats['club'][club]['crews'], club_count[club]['total'], 1, event['year'])
-        addn(sall['clubs'], club_count[club]['total'], 1, "%s (%s)" % (club, event['year']))
+        addn(stats['club'][club]['crews'], club_count[club]['total'], 1, year)
+        addn(sall['clubs'], club_count[club]['total'], 1, "%s (%s)" % (club, year))
 
     if 'skip_headship' not in event['flags']:
         for num in headships:
-            addn(stats['club'][headships[num]['club']]['headships'], num, 1, event['year'])
+            addn(stats['club'][headships[num]['club']]['headships'], num, 1, year)
 
 def print_k(d, k, club=None, fmt="%s"):
     out = "<tr><td>"
