@@ -8,6 +8,8 @@ def addn(d, k, n, label = None):
         d[k]['labels'].append(label)
 
 def get_stats(event, stats):
+    if 'set' not in stats:
+        stats['set'] = event['set']
     if 'years' not in stats:
         stats['years'] = []
     if 'all' not in stats:
@@ -15,15 +17,13 @@ def get_stats(event, stats):
         addn(stats['all'], 'withdrew', 0)
     if 'club' not in stats:
         stats['club'] = {}
-    if 'gender' not in stats:
-        stats['gender'] = event['gender']
+    if 'genders' not in stats:
+        stats['genders'] = [event['gender']]
     else:
-        if event['gender'] != stats['gender']:
-           stats['desc'] = "%s, %s" % (event['set'], event['year'])
-    if 'desc' not in stats:
-        stats['desc'] = "%s, %s" % (event['set'], event['gender'])
+        if event['gender'] not in stats['genders']:
+            stats['genders'].append(event['gender'])
 
-    year = "%s%c" % (event['year'], event['gender'][0])
+    erec = {'gender' : event['gender'], 'year' : event['year']}
     sall = stats['all']
     club_count = {}
     headships = {}
@@ -67,12 +67,14 @@ def get_stats(event, stats):
         if event['year'] not in club['years']:
             club['years'].append(event['year'])
 
+
         gained = 0
         for day in range(event['days']):
+            crec = {'club' : crew['club'], 'number' : crew['number'], 'gender' : event['gender'], 'day' : day, 'year' : event['year']}
             m = event['move'][day][pos]
             if m == None:
-                addn(sall, 'withdrew', 1, "%s (%s)" % (crew['num_name'], year))
-                addn(club, 'withdrew', 1, "%s (%s)" % (crew['num_name'], year))
+                addn(sall, 'withdrew', 1, crec)
+                addn(club, 'withdrew', 1, crec)
                 break
 
             # work out which division this crew was in and whether that division raced
@@ -108,8 +110,8 @@ def get_stats(event, stats):
                 if m == 0 and pos == 0:
                     club['points'] += 1
 
-                addn(sall['day'], m + adjust, 1, "%s (%s) day %s" % (crew['num_name'], year, day+1))
-                addn(club['day'], m + adjust, 1, "%s (%s) day %s" % (crew['num_name'], year, day+1))
+                addn(sall['day'], m + adjust, 1, crec)
+                addn(club['day'], m + adjust, 1, crec)
                 gained += m+adjust
 
             pos -= m
@@ -118,17 +120,17 @@ def get_stats(event, stats):
                 # if the division didn't race, then just skip this code, but don't reset any current run
                 if div_raced:
                     if crew['number'] not in club['highest']:
-                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : year}
+                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : event['year']}
                     else:
                         rec = club['highest'][crew['number']]
                         if pos < rec['high']:
-                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : year}
+                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : event['year']}
                         elif pos == rec['high']:
                             rec['days'] += 1
                             rec['run'] += 1
                             if rec['run'] > rec['longest']:
                                 rec['longest'] = rec['run']
-                                rec['end'] = year
+                                rec['end'] = event['year']
                         else:
                             rec['run'] = 0
             else:
@@ -136,8 +138,9 @@ def get_stats(event, stats):
                 if crew['number'] in club['highest']:
                     club['highest'][crew['number']]['run'] = 0
 
-        addn(sall['set'], gained, 1, "%s (%s)" % (crew['num_name'], year))
-        addn(club['set'], gained, 1, "%s (%s)" % (crew['num_name'], year))
+        crec = {'club' : crew['club'], 'number' : crew['number'], 'gender' : event['gender'], 'year' : event['year']}
+        addn(sall['set'], gained, 1, crec)
+        addn(club['set'], gained, 1, crec)
 
         if crew['number'] not in headships:
             headships[crew['number']] = {'club' : crew['club'], 'num' : pos}
@@ -146,32 +149,45 @@ def get_stats(event, stats):
             headships[crew['number']]['num'] = pos
 
         if crew['blades']:
-            sall['blades'].append("%s (%s)" % (crew['num_name'], year))
-            club['blades'].append("%s (%s)" % (crew['num_name'], year))
+            sall['blades'].append(crec)
+            club['blades'].append(crec)
 
-    addn(sall['crews'], len(event['crews']), 1, year)
+    addn(sall['crews'], len(event['crews']), 1, erec)
     for club in club_count:
-        addn(stats['club'][club]['crews'], club_count[club]['total'], 1, year)
-        addn(sall['clubs'], club_count[club]['total'], 1, "%s (%s)" % (club, year))
+        addn(stats['club'][club]['crews'], club_count[club]['total'], 1, erec)
+        addn(sall['clubs'], club_count[club]['total'], 1, {'club' : club, 'year' : event['year'], 'gender' : event['gender']})
 
     if 'skip_headship' not in event['flags']:
         for num in headships:
-            addn(stats['club'][headships[num]['club']]['headships'], num, 1, year)
+            addn(stats['club'][headships[num]['club']]['headships'], num, 1, erec)
 
-def print_k(d, k, club=None, fmt="%s"):
+def print_k(conf, d, k, club=None, fmt="%s"):
     out = "<tr><td>"
     out += fmt % k
     out += "<td>%s<td>" % d[k]['total']
     if len(d[k]['labels']) < 10:
         sep = ""
         for i in d[k]['labels']:
+            yr = "" if not conf['years'] or 'year' not in i else " (%s)" % i['year']
+            dy = "" if 'day' not in i else " day %d" % (i['day']+1)
+            gs = "" if 'gender' not in i or not conf['genders'] else " - %s" % i['gender']
+            #cl = "%s " % i['club'] if club is None else ""
+
             if club is not None:
-                i = i.replace(club, "")
-            out += "%s%s" % (sep, i)
+                out += "%s%c%d%s%s" % (sep, i['gender'][0], i['number'], yr, dy)
+            else:
+                if 'number' in i:
+                    out += "%s%s %c%d%s%s" % (sep, i['club'], i['gender'][0], i['number'], yr, dy)
+                elif 'club' in i:
+                    out += "%s%s%s%s" % (sep, i['club'], gs, yr)
+                elif conf['genders'] and not conf['years']:
+                    out += "%s%s" % (sep, i['gender'])
+                else:
+                    out += "%s%s%s" % (sep, i['year'], gs)
             sep = ", "
     print(out)
 
-def print_d(d, label, rev=True, club=None, fmt="%s", col=[]):
+def print_d(conf, d, label, rev=True, club=None, fmt="%s", col=[]):
     if len(d.keys()) == 0:
         return
 
@@ -186,31 +202,31 @@ def print_d(d, label, rev=True, club=None, fmt="%s", col=[]):
     print("<table>")
     print("<tr><th>%s<th>%s<th>%s" % (col[0], col[1], col[2]))
     for k in sorted(d.keys(), reverse=rev):
-        print_k(d, k, club=club, fmt=fmt)
+        print_k(conf, d, k, club=club, fmt=fmt)
     print("</table>")
 
-def print_l(arr, label, club = None):
+def print_l(conf, arr, label, club = None):
     if len(arr) == 0:
         return
 
     print("<h4>%s: %d</h4>" % (label, len(arr)))
 
-    if len(arr) < 20:
+    if len(arr) < 25:
         out = ""
         sep = ""
         for i in arr:
-            if club is not None:
-                i = i.replace(club, "")
-            out += "%s%s" % (sep, i)
+            yr = " (%s)" % i['year'] if conf['years'] else ""
+            cl = "%s " % i['club'] if club is None else ""
+            out += "%s%s%c%d%s" % (sep, cl, i['gender'][0], i['number'], yr)
             sep = ", "
         print(out)
 
-def print_s(s, club = None):
-    print_l(s['blades'], "Blades awarded", club=club)
-    print_l(s['withdrew']['labels'], "Crews withdrawn", club=club)
-    print_d(s['crews'], "Number of crews:", col=["Crews"])
-    print_d(s['set'], "Each set outcome:", club=club, fmt="%+d")
-    print_d(s['day'], "Each day outcome:", club=club, fmt="%+d")
+def print_s(conf, s, club = None):
+    print_l(conf, s['blades'], "Blades awarded", club=club)
+    print_l(conf, s['withdrew']['labels'], "Crews withdrawn", club=club)
+    print_d(conf, s['crews'], "Number of crews:", col=["Crews"])
+    print_d(conf, s['set'], "Each set outcome:", club=club, fmt="%+d")
+    print_d(conf, s['day'], "Each day outcome:", club=club, fmt="%+d")
 
 def add_rank(rank, stats, name, description, title, val, rev = True):
     rank[name] = {'description' : description}
@@ -257,23 +273,32 @@ def generate_ranks(stats):
 
     return rank
 
-def output_span(years):
+def output_span(stats, years):
+    desc = "%s, " % stats['set']
+    if len(stats['genders']) == 1:
+        desc += "%s, " % stats['genders'][0]
+
     uniq = []
     for y in years:
         p = y.split(' ')
         if p[0] not in uniq:
             uniq.append(p[0])
     if len(uniq) == 1:
-        return "for %s" % uniq[0]
+        return "%s%s" % (desc, uniq[0])
     else:
-        return "across %d years, %s to %s</h3>" % (len(uniq), uniq[0], uniq[-1])
+        return "%sacross %d years: %s to %s</h3>" % (desc, len(uniq), uniq[0], uniq[-1])
 
 def html_stats(stats):
+    conf = {'years' : False, 'genders' : False}
+    if len(stats['years']) > 1:
+        conf['years'] = True
+    if len(stats['genders']) > 1:
+        conf['genders'] = True
 
     headships = {}
     for club in stats['club']:
         if 1 in stats['club'][club]['headships']:
-            addn(headships, stats['club'][club]['headships'][1]['total'], 1, club)
+            addn(headships, stats['club'][club]['headships'][1]['total'], 1, {'club' : club})
 
     sclubs = sorted(stats['club'].keys(), reverse = True, key = lambda x : stats['club'][x]['count'])
 
@@ -288,14 +313,14 @@ def html_stats(stats):
 
     print("<div id=\"all\" class=\"tabcontent\">")
     ys = sorted(stats['years'])
-    print("<h3>Stats for %s</h3>" % output_span(ys))
-    print_d(headships, "Number of headships:", col=["Headships","Clubs"])
-    print_d(stats['all']['clubs'], "Crews from each club:", col=["Crews","Clubs"])
-    print_s(stats['all'])
+    print("<h3>Stats for %s</h3>" % output_span(stats, ys))
+    print_d(conf, headships, "Number of headships:", col=["Headships","Clubs"])
+    print_d(conf, stats['all']['clubs'], "Crews from each club:", col=["Crews","Clubs"])
+    print_s(conf, stats['all'])
     print("</div>")
 
     print("<div id=\"ranking\" class=\"tabcontent\">")
-    print("<h3>Club rankings %s</h3>" % output_span(ys))
+    print("<h3>Club rankings for %s</h3>" % output_span(stats, ys))
     print("<select id=\"rank\" name=\"rank\" onChange=setRanking()>")
     rank = generate_ranks(stats)
     for r in sorted(rank.keys()):
@@ -309,15 +334,15 @@ def html_stats(stats):
         cs = stats['club'][club]
         print("<div id=\"%s\" class=\"tabcontent\">" % cs['safename'])
         ys = sorted(cs['years'])
-        print("<h3>%s stats %s</h3>" % (club, output_span(ys)))
-        print_d(cs['headships'], "Headships:", False, col=["Crew"])
+        print("<h3>%s stats for %s</h3>" % (club, output_span(stats, ys)))
+        print_d(conf, cs['headships'], "Headships:", False, col=["Crew"])
         print("<h4>Highest position for each crew:</h4>")
         print("<table>\n<tr><th>Crew<th>Highest position<th>Total days<th>Longest run")
         for num in sorted(cs['highest'].keys()):
             n = cs['highest'][num]
             print("<tr><td>%s<td>%d<td>%d<td>%d days to %s" % (num, n['high']+1, n['days'], n['longest'], n['end']))
         print("</table>")
-        print_s(cs, club)
+        print_s(conf, cs, club)
         print("</div>")
 
 
