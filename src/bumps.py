@@ -12,7 +12,7 @@ import abbreviations
 # If <opt-esacpe> is "*" any club crew numbering error is ignored
 
 def add_crew(crew_state, crews, str, abbrev):
-    crew = {'gain' : None, 'blades' : False, 'highlight' : False}
+    crew = {'gain' : None, 'blades' : False, 'highlight' : False, 'withdrawn' : False}
 
     if 'pat' not in crew_state:
         crew_state['pat'] = re.compile("^(.*?)(\([^\)]*\))?[ ]*([0-9]*)(\*)?$")
@@ -375,6 +375,13 @@ def process_results(event):
             if debug:
                 print("Crew %d withdrawn, moving to crew %d" % (crew_num, crew_num-1))
             event['crews_withdrawn'] += 1
+            # work out the original crew number
+            cn = crew_num
+            dn = day_num-1
+            while dn >= 0:
+                cn = event['back'][dn][cn]
+                dn -= 1
+            event['crews'][cn]['withdrawn'] = True
             crew_num -= 1
             event['div_size'][day_num][div_num] -= 1
             for day in range(day_num+1, event['days'], 1):
@@ -446,10 +453,13 @@ def process_results(event):
             nc = nc - m
 
         if finished:
-            # only award headship blades if we've completed all the racing
+            # award headship blades to the top crew if we've completed all the racing
             if nc == 0 and full_set == True and 'skip_headship' not in event['flags']:
                 blades = True
+        else:
+            blades = False
 
+        if event['crews'][crew_num]['withdrawn'] == False:
             event['crews'][crew_num]['gain'] = gain
             event['crews'][crew_num]['blades'] = blades
             event['crews'][nc]['end'] = event['crews'][crew_num]['start']

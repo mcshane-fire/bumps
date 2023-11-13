@@ -18,7 +18,7 @@ def estimate_max_length(crews, tag, scale):
         num += 1
     return mlen
 
-def draw_divisions(svg_config, out, xoff, yoff, event, space, draw_colours = False):
+def draw_divisions(svg_config, out, xoff, yoff, event, space_left, space_right, draw_colours = False):
     top = yoff
     for crew_num in range(len(event['crews'])):
         ypos = top + (svg_config['scale']/2)
@@ -116,17 +116,17 @@ def draw_divisions(svg_config, out, xoff, yoff, event, space, draw_colours = Fal
 
     #top = yoff
     # box around all divisions
-    out.add(out.rect(insert=(xoff-space,yoff), size=((event['days'] * svg_config['scale'])+(space*2), len(event['crews']) * svg_config['scale']), stroke='black', fill='none'))
+    out.add(out.rect(insert=(xoff-space_left,yoff), size=((event['days'] * svg_config['scale'])+(space_left+space_right), len(event['crews']) * svg_config['scale']), stroke='black', fill='none'))
 
     # draw in lines between divisions
-    left = xoff-space
-    right = left + space + svg_config['scale']
+    left = xoff-space_left
+    right = left + space_left + svg_config['scale']
     prev_div_height = None
     for day in range(event['days']):
         div_height = []
         top = yoff
         if day == event['days']-1:
-            right += space
+            right += space_right
         for div in range(len(event['div_size'][day])-1):
             top += event['div_size'][day][div] * svg_config['scale']
             div_height.append(top)
@@ -186,6 +186,8 @@ def draw_numbers(svg_config, out, xoff, yoff, event, align, reset = False):
         if reset and number-1 == event['div_size'][0][div_num]:
             number = 1
             div_num += 1
+            if div_num >= len(event['div_size'][0]):
+                break
 
 def draw_crews(svg_config, out, xoff, yoff, event, gain, align):
     top = yoff
@@ -297,21 +299,22 @@ def draw_chart(out, event, svg_config, xoffset):
     # leave space for division titles down the left hand side
     left = xoffset + svg_config['scale'] * 2
 
-    svg_config['right'] = estimate_max_length(event['crews'], 'start', 0.8) + svg_config['scale']
+    tleft = estimate_max_length(event['crews'], 'start', 0.8) + svg_config['scale']
+    tright = estimate_max_length(event['crews'], 'end', 0.8) + svg_config['scale']
 
-    draw_stripes(svg_config, out, left, 0, (svg_config['right']*2) + (svg_config['scale'] * event['days']), left+svg_config['right'], event)
+    draw_stripes(svg_config, out, left, 0, tleft + tright + (svg_config['scale'] * event['days']), left+tleft, event)
     draw_numbers(svg_config, out, left+3, 0, event, 'start', True)
-    draw_numbers(svg_config, out, left + (2*svg_config['right']) + (svg_config['scale'] * event['days']) -3, 0, event, 'end', False)
+    draw_numbers(svg_config, out, left + tleft + tright + (svg_config['scale'] * event['days']) -3, 0, event, 'end', False)
     #draw_extra_text(svg_config, out, left+20, 0, event, 'number')
-    #draw_extra_text(svg_config, out, left + (2*svg_config['right']) + (svg_config['scale'] * event['days']) -40, 0, event, 'name') 
+    #draw_extra_text(svg_config, out, left + tleft + tright + (svg_config['scale'] * event['days']) -40, 0, event, 'name')
     draw_extra_text(svg_config, out, left, 0, event, 'both')
 
-    draw_crews(svg_config, out, left + svg_config['right']-3, 0, event, 0, 'end')
-    draw_crews(svg_config, out, left + svg_config['right'] + (svg_config['scale'] * event['days']) + 3, 0, event, 1, 'start')
+    draw_crews(svg_config, out, left + tleft-3, 0, event, 0, 'end')
+    draw_crews(svg_config, out, left + tleft + (svg_config['scale'] * event['days']) + 3, 0, event, 1, 'start')
 
-    h = draw_divisions(svg_config, out, left + svg_config['right'], 0, event, svg_config['right'], draw_colours = svg_config['colours'])
+    h = draw_divisions(svg_config, out, left + tleft, 0, event, tleft, tright, draw_colours = svg_config['colours'])
 
-    return (left + (svg_config['right']*2) + (svg_config['scale'] * event['days'])+1, h+1)
+    return (left + tleft + tright + (svg_config['scale'] * event['days'])+1, h+1)
 
 def write_svg(output, event, svg_config):
     if len(event['crews']) == 0:
@@ -399,7 +402,7 @@ def write_multi_svg(output, sets, svg_config):
 
     xpos = left
     for event in sets:
-        h = draw_divisions(svg_config, out, xpos, top, event, 0, draw_colours = svg_config['colours'])
+        h = draw_divisions(svg_config, out, xpos, top, event, 0, 0, draw_colours = svg_config['colours'])
         if h > height:
             height = h
         xpos = xpos + (svg_config['scale'] * event['days']) + svg_config['sep']
