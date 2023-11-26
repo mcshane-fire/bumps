@@ -33,6 +33,10 @@ fullpage = True
 if 'output' in args and args['output'][0] == 'Download':
     fullpage = False
 
+load_stats = 'all'
+if 'stats' in args and len(args['stats'][0]) > 0:
+    load_stats = args['stats'][0]
+
 if fullpage:
     print("""Content-type: text/html
 
@@ -42,7 +46,7 @@ if fullpage:
 <link rel="stylesheet" type="text/css" href="/mcshane.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body onload="showStats(null, 'all')">
+<body onload="showStats(null, '%s')">
 <div class="menu">
 <a href="/">Home</a>
 <a href="/rowing/">Rowing</a>
@@ -53,7 +57,7 @@ if fullpage:
 <h1>Bumps charts archive</h1>
 <form action="archive.py" method="get">
 <select id="set" name="set" onChange=selectSet()>
-<option value="none">Select set of bumps</option>""")
+<option value="none">Select set of bumps</option>""" % load_stats)
 
 set = None
 gender = None
@@ -178,10 +182,18 @@ if valid:
                     sets.append(s)
 
     if 'output' in args and args['output'][0] == 'Show statistics':
+        rank = None
+        rtext = ""
+        if 'rank' in args and len(args['rank'][0]) > 0:
+            rank = args['rank'][0]
+            rtext = "&rank=%s" % rank
+
+        print("<a id=\"direct\" href=\"archive.py?set=%s&gender=%s&start=%s&stop=%s&output=Show+statistics&stats=%s%s\">Direct link to the selected statistics</a><p>" % (set, gender, years[first_index], years[last_index], load_stats, rtext))
+
         all = {}
         for s in sets:
             stats.get_stats(s, all)
-        stats.html_stats(all)
+        stats.html_stats(all, initial_tab = load_stats, initial_rank = rank)
     else:
         if fullpage:
             if gender == 'all':
@@ -336,5 +348,6 @@ function selectStop() {
     }
 }
 </script>
+</div>
 </body>
 </html>""")

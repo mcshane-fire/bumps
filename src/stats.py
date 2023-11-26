@@ -288,7 +288,7 @@ def output_span(stats, years):
     else:
         return "%sacross %d years: %s to %s</h3>" % (desc, len(uniq), uniq[0], uniq[-1])
 
-def html_stats(stats):
+def html_stats(stats, initial_tab = None, initial_rank = None):
     conf = {'years' : False, 'genders' : False}
     if len(stats['years']) > 1:
         conf['years'] = True
@@ -303,11 +303,14 @@ def html_stats(stats):
     sclubs = sorted(stats['club'].keys(), reverse = True, key = lambda x : stats['club'][x]['count'])
 
     print("""<div class="tab">
-  <button id="default" class="tablinks" onclick="showStats(event, 'all')">All</button>
-  <button class="tablinks" onclick="showStats(event, 'ranking')">Ranking</button>""")
+  <button %s class="tablinks" onclick="showStats(event, 'all')">All</button>
+  <button %s class="tablinks" onclick="showStats(event, 'ranking')">Ranking</button>""" % ("id=\"default\"" if initial_tab is None or initial_tab == 'all' else "", "id=\"default\"" if initial_tab is not None and initial_tab == 'ranking' else ""))
 
     for club in sclubs:
-        print("  <button class=\"tablinks\" onclick=\"showStats(event, '%s')\">%s</button>" % (stats['club'][club]['safename'], club))
+        extra = ""
+        if initial_tab is not None and initial_tab == stats['club'][club]['safename']:
+            extra = "id=\"default\""
+        print("  <button %s class=\"tablinks\" onclick=\"showStats(event, '%s')\">%s</button>" % (extra, stats['club'][club]['safename'], club))
 
     print("</div>")
 
@@ -324,7 +327,10 @@ def html_stats(stats):
     print("<select id=\"rank\" name=\"rank\" onChange=setRanking()>")
     rank = generate_ranks(stats)
     for r in sorted(rank.keys()):
-        print("<option value=\"%s\">%s</option>" % (r, rank[r]['description']))
+        extra = ""
+        if initial_rank == r:
+            extra = " selected"
+        print("<option value=\"%s\"%s>%s</option>" % (r, extra, rank[r]['description']))
     print("</select><p>")
     print("<div id=\"order\">")
     print("</div>")
@@ -372,6 +378,13 @@ function showStats(event, name) {
         event.currentTarget.className += " active";
     }
 
+    // Update the direct link
+    link = document.getElementById("direct");
+    const s_regex = /&stats=[^&]*/i;
+    link.href = link.href.replace(s_regex, "&stats=" + name);
+    const r_regex = /&rank=[^&]*/i;
+    link.href = link.href.replace(r_regex, "");
+
     if (name == 'ranking') {
         setRanking();
     }
@@ -389,5 +402,14 @@ function showStats(event, name) {
 function setRanking() {
     val = document.getElementById("rank");
     document.getElementById("order").innerHTML = ranks[val.selectedIndex];
+
+    // Update the direct link
+    link = document.getElementById("direct");
+    const regex = /&rank=[^&]*/i;
+    if (link.href.match(regex) == null) {
+        link.href = link.href + "&rank=" + val.value;
+    } else {
+        link.href = link.href.replace(regex, "&rank=" + val.value);
+    }
 }
 </script>""")
