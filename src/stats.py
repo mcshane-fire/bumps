@@ -120,11 +120,11 @@ def get_stats(event, stats):
                 # if the division didn't race, then just skip this code, but don't reset any current run
                 if div_raced:
                     if crew['number'] not in club['highest']:
-                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : event['year']}
+                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
                     else:
                         rec = club['highest'][crew['number']]
                         if pos < rec['high']:
-                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : event['year']}
+                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
                         elif pos == rec['high']:
                             rec['days'] += 1
                             rec['run'] += 1
@@ -158,6 +158,7 @@ def get_stats(event, stats):
         addn(sall['clubs'], club_count[club]['total'], 1, {'club' : club, 'year' : event['year'], 'gender' : event['gender']})
 
     if 'skip_headship' not in event['flags']:
+        erec['year'] = erec['year'].split(" ")[0]
         for num in headships:
             addn(stats['club'][headships[num]['club']]['headships'], num, 1, erec)
 
@@ -369,7 +370,7 @@ def html_stats(stats, initial_tab = None, initial_rank = None):
         print("<table>\n<tr><th>Crew<th>Highest position<th>Total days<th>Longest run")
         for num in sorted(cs['highest'].keys()):
             n = cs['highest'][num]
-            print("<tr><td>%s<td>%d<td>%d<td>%d days to %s" % (num, n['high']+1, n['days'], n['longest'], n['end']))
+            print("<tr><td>%s<td>%d<td>%d<td>%d days from %s to %s" % (num, n['high']+1, n['days'], n['longest'], n['start'], n['end']))
         print("</table>")
         print_s(conf, cs, club)
         print("</div>")
