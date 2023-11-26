@@ -165,26 +165,31 @@ def print_k(conf, d, k, club=None, fmt="%s"):
     out = "<tr><td>"
     out += fmt % k
     out += "<td>%s<td>" % d[k]['total']
-    if len(d[k]['labels']) < 10:
-        sep = ""
-        for i in d[k]['labels']:
-            yr = "" if not conf['years'] or 'year' not in i else " (%s)" % i['year']
-            dy = "" if 'day' not in i else " day %d" % (i['day']+1)
-            gs = "" if 'gender' not in i or not conf['genders'] else " - %s" % i['gender']
-            #cl = "%s " % i['club'] if club is None else ""
+    sep = ""
+    labels = d[k]['labels']
+    if len(labels) > 10:
+        sep = "... , "
+        labels = labels[-10:]
 
-            if club is not None:
-                out += "%s%c%d%s%s" % (sep, i['gender'][0], i['number'], yr, dy)
+    for i in labels:
+        yr = "" if not conf['years'] or 'year' not in i else " (%s)" % i['year']
+        dy = "" if 'day' not in i else " day %d" % (i['day']+1)
+        gs = "" if 'gender' not in i or not conf['genders'] else " - %s" % i['gender']
+        #cl = "%s " % i['club'] if club is None else ""
+
+        if club is not None:
+            out += "%s%c%d%s%s" % (sep, i['gender'][0], i['number'], yr, dy)
+        else:
+            if 'number' in i:
+                out += "%s%s %c%d%s%s" % (sep, i['club'], i['gender'][0], i['number'], yr, dy)
+            elif 'club' in i:
+                out += "%s%s%s%s" % (sep, i['club'], gs, yr)
+            elif conf['genders'] and not conf['years']:
+                out += "%s%s" % (sep, i['gender'])
             else:
-                if 'number' in i:
-                    out += "%s%s %c%d%s%s" % (sep, i['club'], i['gender'][0], i['number'], yr, dy)
-                elif 'club' in i:
-                    out += "%s%s%s%s" % (sep, i['club'], gs, yr)
-                elif conf['genders'] and not conf['years']:
-                    out += "%s%s" % (sep, i['gender'])
-                else:
-                    out += "%s%s%s" % (sep, i['year'], gs)
-            sep = ", "
+                out += "%s%s%s" % (sep, i['year'], gs)
+        sep = ", "
+
     print(out)
 
 def print_d(conf, d, label, rev=True, club=None, fmt="%s", col=[]):
@@ -211,15 +216,19 @@ def print_l(conf, arr, label, club = None):
 
     print("<h4>%s: %d</h4>" % (label, len(arr)))
 
-    if len(arr) < 25:
-        out = ""
-        sep = ""
-        for i in arr:
-            yr = " (%s)" % i['year'] if conf['years'] else ""
-            cl = "%s " % i['club'] if club is None else ""
-            out += "%s%s%c%d%s" % (sep, cl, i['gender'][0], i['number'], yr)
-            sep = ", "
-        print(out)
+    sep = ""
+    out = ""
+    if len(arr) > 25:
+        arr = arr[-25:]
+        sep = "... , "
+
+    for i in arr:
+        yr = " (%s)" % i['year'] if conf['years'] else ""
+        cl = "%s " % i['club'] if club is None else ""
+        out += "%s%s%c%d%s" % (sep, cl, i['gender'][0], i['number'], yr)
+        sep = ", "
+
+    print(out)
 
 def print_s(conf, s, club = None):
     print_l(conf, s['blades'], "Blades awarded", club=club)
