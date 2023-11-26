@@ -365,6 +365,7 @@ def write_multi_svg(output, sets, svg_config):
 
     xpos = left
     eleft = left
+    skip_first = False
     for event_num in range(0, len(sets)):
         event = sets[event_num]
         event2 = event
@@ -378,6 +379,25 @@ def write_multi_svg(output, sets, svg_config):
         p2 = [p[0]]
         if len(p) > 1:
             p2.append(" ".join(p[1:]))
+
+        if skip_first:
+            p2 = p2[1:]
+            skip_first = False
+        elif event_num < len(sets)-1:
+            nyear = event2['year'].split(" ")[0]
+            if nyear == p[0]:
+                skip_first = True
+                h = top-5-((len(p2)-1)*fontsize)
+                mid1 = xpos+(svg_config['scale'] * event['days'])/2
+                mid2 = xpos+(svg_config['scale'] * event['days']) + svg_config['sep'] + (svg_config['scale'] * event2['days'])/2
+                midp = (mid1 + mid2) / 2
+                twidth = estimate_text_length(nyear, 1.0)
+                out.add(out.line(start=(mid1, h-(fontsize/2)), end=(midp-(twidth/2), h-(fontsize/2)), stroke='black', stroke_width=1))
+                out.add(out.line(start=(midp+(twidth/2), h-(fontsize/2)), end=(mid2, h-(fontsize/2)), stroke='black', stroke_width=1))
+                out.add(out.line(start=(mid1, h-(fontsize/2)), end=(mid1, h), stroke='black', stroke_width=1))
+                out.add(out.line(start=(mid2, h-(fontsize/2)), end=(mid2, h), stroke='black', stroke_width=1))
+                out.add(out.text(nyear, insert=(midp, h), font_size=fontsize, font_family='Arial', stroke_width=0, fill='black', text_anchor='middle'))
+                p2 = p2[1:]
 
         h = top-5-((len(p2)-1)*fontsize)
         for i in range(len(p2)):
