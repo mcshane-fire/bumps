@@ -250,10 +250,16 @@ def add_rank(rank, stats, name, description, title, val, rev = True):
     pr = 1
     prev = None
     for club in sclubs:
-        if prev is None or prev != rclubs[club]:
+        comp = rclubs[club]
+        outp = comp
+        if type(comp) is tuple:
+            comp = comp[0]
+            outp = "%s (%s)" % (rclubs[club][0], rclubs[club][1])
+
+        if prev is None or prev != comp:
             pr = i
-        out += "<tr><td>%d<td>%s<td>%s\\\n" % (pr, club, rclubs[club])
-        prev = rclubs[club]
+        out += "<tr><td>%d<td>%s<td>%s\\\n" % (pr, club, outp)
+        prev = comp
         i += 1
 
     out += "</table>"
@@ -261,6 +267,11 @@ def add_rank(rank, stats, name, description, title, val, rev = True):
 
 def ord(n):
     return str(n) + {1: 'st', 2: 'nd', 3: 'rd'}.get(4 if 10 <= n % 100 < 20 else n % 10, "th")
+
+def best_result(s, ref):
+    best = sorted(s[ref].keys())[-1]
+    crew = sorted(s[ref][best]['labels'], key = lambda x : (x['year'],-x['number'],0 if 'day' not in x else x['day']))[-1]
+    return (best, '%s%d %s' % (crew['gender'][0], crew['number'], crew['year']))
 
 def generate_ranks(stats):
     rank = {}
@@ -279,6 +290,9 @@ def generate_ranks(stats):
 
     for i in crews:
         add_rank(rank, stats, '2%02d_high' % i, '%s crew highest position' % ord(i), 'Position', lambda x : None if i not in x['highest'] else x['highest'][i]['high']+1, False)
+
+    add_rank(rank, stats, '30_set_result', 'Best year result', 'Gained', lambda x : best_result(x, 'set'))
+    add_rank(rank, stats, '31_day_result', 'Best day result', 'Gained', lambda x : best_result(x, 'day'))
 
     return rank
 
