@@ -1,3 +1,29 @@
+club_mapping = {
+    "1st Trinity" : "1st and 3rd",
+    "1st and 3rd" : "1st and 3rd",
+    "2nd St. John's" : "LMBC",
+    "2nd Trinity" : "1st and 3rd",
+    "3rd St. John's" : "LMBC",
+    "3rd Trinity" : "1st and 3rd",
+    "Anglia Ruskin" : "Anglia Ruskin",
+    "CCAT" : "Anglia Ruskin",
+    "New Hall" : "Murray Edwards",
+    "QMABC" : "King's",
+    "St. John's" : "LMBC",
+    "St. John's 'Tally-Ho'" : "LMBC",
+    "St. John's Argo" : "LMBC",
+    "St. John's Corsair" : "LMBC",
+    "Trinity Eton" : "1st and 3rd",
+    "Trinity King Edward" : "1st and 3rd",
+    "Trinity Monarch" : "1st and 3rd",
+    "Trinity Tobacco Pipes and Punch Bowls" : "1st and 3rd",
+    "Trinity Westminster" : "1st and 3rd",
+    "Trinty Nautilus" : "1st and 3rd",
+    "Cantabs College" : "Cantabs",
+    "Cantabs Rugby" : "Cantabs",
+    "Macdonalds" : "MacDonalds",
+    "Old Cantabs" : "Cantabs"}
+
 def addn(d, k, n, label = None):
     if k in d:
         d[k]['total'] += n
@@ -7,7 +33,7 @@ def addn(d, k, n, label = None):
     if label is not None:
         d[k]['labels'].append(label)
 
-def get_stats(event, stats):
+def get_stats(event, stats, combine = False):
     if 'set' not in stats:
         stats['set'] = event['set']
     if 'years' not in stats:
@@ -55,14 +81,19 @@ def get_stats(event, stats):
     for num in range(len(event['crews'])):
         pos = num
         crew = event['crews'][num]
-        if len(crew['club']) == 0:
+
+        club_name = crew['club']
+        if combine and club_name in club_mapping:
+            club_name = club_mapping[club_name]
+
+        if len(club_name) == 0:
             continue
-        if crew['club'] not in stats['club']:
-            stats['club'][crew['club']] = {'day' : {}, 'set' : {}, 'blades' : [], 'crews' : {}, 'headships' : {}, 'highest' : {}, 'years' : [], 'points' : 0, 'count' : 0}
-            stats['club'][crew['club']]['safename'] = ''.join(ch for ch in crew['club'] if ch.isalnum())
-            addn(stats['club'][crew['club']], 'withdrew', 0)
-        club = stats['club'][crew['club']]
-        addn(club_count, crew['club'], 1)
+        if club_name not in stats['club']:
+            stats['club'][club_name] = {'day' : {}, 'set' : {}, 'blades' : [], 'crews' : {}, 'headships' : {}, 'highest' : {}, 'years' : [], 'points' : 0, 'count' : 0}
+            stats['club'][club_name]['safename'] = ''.join(ch for ch in club_name if ch.isalnum())
+            addn(stats['club'][club_name], 'withdrew', 0)
+        club = stats['club'][club_name]
+        addn(club_count, club_name, 1)
         club['count'] += 1
         if event['year'] not in club['years']:
             club['years'].append(event['year'])
@@ -70,7 +101,7 @@ def get_stats(event, stats):
 
         gained = 0
         for day in range(event['days']):
-            crec = {'club' : crew['club'], 'number' : crew['number'], 'gender' : event['gender'], 'day' : day, 'year' : event['year']}
+            crec = {'club' : club_name, 'number' : crew['number'], 'gender' : event['gender'], 'day' : day, 'year' : event['year']}
             m = event['move'][day][pos]
             if m == None:
                 addn(sall, 'withdrew', 1, crec)
@@ -138,14 +169,14 @@ def get_stats(event, stats):
                 if crew['number'] in club['highest']:
                     club['highest'][crew['number']]['run'] = 0
 
-        crec = {'club' : crew['club'], 'number' : crew['number'], 'gender' : event['gender'], 'year' : event['year']}
+        crec = {'club' : club_name, 'number' : crew['number'], 'gender' : event['gender'], 'year' : event['year']}
         addn(sall['set'], gained, 1, crec)
         addn(club['set'], gained, 1, crec)
 
         if crew['number'] not in headships:
-            headships[crew['number']] = {'club' : crew['club'], 'num' : pos}
+            headships[crew['number']] = {'club' : club_name, 'num' : pos}
         elif pos < headships[crew['number']]['num']:
-            headships[crew['number']]['club'] = crew['club']
+            headships[crew['number']]['club'] = club_name
             headships[crew['number']]['num'] = pos
 
         if crew['blades']:
