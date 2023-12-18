@@ -4,7 +4,7 @@ Gender,Men
 Year,1995
 
 Division,R,N,Ci,R2,F,N2,Ci2,Ca,R3,F2,Ci3,N3,Maximum Entropy,Ca2,Trinity Hall,Ca3,R4
-Division,N4,N5,Red Lion Toft,Ci4,R5,F3,Ca4,F4,F5,Ca5,N6,F6,Ca6,F7,R6,Maximum Entropy 2,Mott Macdonald
+Division,N4,N5,Red Lion Toft,Ci4,R5,F3,Ca4,F4,F5,Ca5,N6,F6,Ca6,F7,R6,Maximum Entropy 2,Mott MacDonald
 Division,Ch,Marshalls,N7,Cam Consultants,Ci5,P,Ca7,Leckhampton,F8,Ca8,N8,R7,Ca9,Ca10,R8,R9,Ca11,Ca12
 
 Results

@@ -4,7 +4,7 @@ Gender,Men
 Year,1980
 
 Division,R,Ci,N,TTFNTT,Ci2,N2,Churchill,R2,MacDonalds,N3,R3,Ci3,Ca,SI,Univ Sports,Telephones
-Division,N4,F,N5,N6,MacDonalds 2,R4,Ci4,Fitzwilliam,Telephones 2,Darwin,Cam RUFC,Cavendish,Leckhampton,F2,Univ Sports 2,Ci5
+Division,N4,F,N5,N6,MacDonalds 2,R4,Ci4,Fitzwilliam,Telephones 2,Darwin,Cam RUFC,Cavendish Lab,Leckhampton,F2,Univ Sports 2,Ci5
 Division,Churchill 2,N7,N8,Telephones 3,MacDonalds 3,Univ Sports 3,Ci6,F3,Telephones 4,N9,Univ Sports 4,Ci7,N10,City Ladies 1,N11,Univ Sports 5,R5,City Ladies 2
 
 Results

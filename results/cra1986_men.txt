@@ -5,7 +5,7 @@ Year,1986
 
 Division,R,N,Ci,Ci2,N2,Ca,Univ Sports,Ci3,N3,R2,F,Clare,F2,N4,Lady Somerset,Ca2,Churchill
 Division,Wolfson,P,N5,F3,Metallurgy,Ca3,Macdonalds,R3,Red Lion Toft,N6,King's,Leckhampton,Ca4,F4
-Division,Univ Sports 2,F5,SN,Darwin,Chemical Eng,Deloittes,NatWest Bank,F6,N7,Ca5,Univ Sports 3,Barclays Bank,Red Lion Toft 2,Applied Biology,P2,Ca6,Ci4
+Division,Univ Sports 2,F5,SN,Darwin,Chemical Eng,Deloitte,NatWest Bank,F6,N7,Ca5,Univ Sports 3,Barclays Bank,Red Lion Toft 2,Applied Biology,P2,Ca6,Ci4
 
 Results
 uruuuruuur uurrruurrrr ururururruru
