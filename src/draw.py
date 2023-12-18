@@ -238,7 +238,7 @@ def draw_stripes(svg_config, out, xoff, yoff, width, x2off, event, event2 = None
             else:
                 out.add(out.line(start=(x2off + (r * svg_config['scale']), yoff), end=(x2off + (r * svg_config['scale']), top), stroke_width=0.2, stroke='lightgray'))
 
-def draw_join(svg_config, out, xoff, yoff, event, event2):
+def draw_join(svg_config, out, xoff, yoff, event, event2, joint_year):
     added = []
     used = [False] * len(event['crews'])
     yoff = yoff + (svg_config['scale']/2)
@@ -246,6 +246,15 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
     ynext = yoff + (svg_config['scale'] * len(event['crews'])) - (svg_config['scale']/2) + 4
     ysep = svg_config['scale'] * 0.75
     verticals = 0
+
+    # if we have one year split across two sets, award headship in the first set to the crew that finishes the second set at headship
+    match_headship = None
+    if joint_year:
+        match_headship = event2['crews'][0]['end']
+        for crew in event['crews']:
+            if crew['start'] == match_headship:
+                crew['blades'] = True
+                break
 
     for crew_num2 in range(len(event2['crews'])):
         if len(event2['crews'][crew_num2]['start']) == 0:
@@ -259,6 +268,8 @@ def draw_join(svg_config, out, xoff, yoff, event, event2):
 
         if found:
             colour = 'lightgray'
+            if joint_year and event2['crews'][crew_num2]['start'] == match_headship:
+                colour = 'red'
             if 'highlight' in event2['crews'][crew_num2] and event2['crews'][crew_num2]['highlight']:
                 colour = 'blue'
             out.add(out.line(start=(xoff, yoff + (svg_config['scale']*crew_num)), end=(xoff + svg_config['sep'], yoff + (svg_config['scale']*crew_num2)), stroke = colour, stroke_width = 1))
@@ -409,7 +420,7 @@ def write_multi_svg(output, sets, svg_config):
         xpos = xpos + (svg_config['scale'] * event['days']) + svg_config['sep']
 
         if event_num < len(sets)-1:
-            h = draw_join(svg_config, out, xpos-svg_config['sep'], top, event, event2)
+            h = draw_join(svg_config, out, xpos-svg_config['sep'], top, event, event2, skip_first)
             if h > height:
                 height = h
 

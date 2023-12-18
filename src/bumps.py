@@ -69,8 +69,8 @@ def add_crew(crew_state, crews, str, abbrev):
 
 def read_file(name, highlight = None, data = None):
     abbrev = {}
-
     crew_state = {}
+    time = re.compile("([0-9]*):([0-9][0-9](\.[0-9]+)*)")
     
     if name != None:
         try:
@@ -85,10 +85,12 @@ def read_file(name, highlight = None, data = None):
     ret = {}
     ret['title'] = "Set name"
     ret['days'] = 4
+    ret['distance'] = 2500
     ret['flags'] = []
     ret['crews'] = []
     ret['div_size'] = None
     ret['results'] = []
+    ret['pace'] = []
 
     results = False
     for line in input:
@@ -109,6 +111,8 @@ def read_file(name, highlight = None, data = None):
             ret['year'] = p[1]
         elif p[0] == "Days":
             ret['days'] = int(p[1])
+        elif p[0] == "Distance":
+            ret['distance'] = int(p[1])
         elif p[0] == "Flags":
             ret['flags'] += p[1:]
         elif p[0] == "Division":
@@ -122,6 +126,17 @@ def read_file(name, highlight = None, data = None):
                 for i in p[1:]:
                     if add_crew(crew_state, ret['crews'], i, abbrev) == False:
                         return None
+        elif p[0] == "Pace":
+            for i in p[1:]:
+                m = time.match(i)
+                seconds = 0.0
+                try:
+                    seconds += int(m.group(1)) * 60.0
+                    seconds += float(m.group(2))
+                    ret['pace'].append(seconds)
+                except:
+                    print("Pace '%s' doesn't match required format of M:SS[.s]\n" % i)
+                    return None
         elif p[0] == "Results":
             results = True
             p.pop(0)
@@ -209,6 +224,55 @@ def check_results(event, move, back, head, debug):
 
     return ret
 
+def generate_results_by_pace(event, debug = False):
+    for d in range(event['days']):
+        move = event['move'][d]
+        back = event['back'][d]
+        if debug:
+            print("Day:%d" % d, event['pace'], event['move'][d], event['back'][d], event['completed'][d])
+
+        bumped_out = []
+        while True:
+            gaps = []
+            last = None
+            for i in range(len(event['crews'])):
+                if i not in bumped_out:
+                    if last is not None and event['pace'][i] < event['pace'][last]:
+                        # length of eight: 19m
+                        # 1 place to make up: 28.5m + 0.5m = 29m
+                        # 3 places to make up: (28.5m * 3) + (19 * 2) + 0.5m = 124m
+                        # n places to make up: (28.5m * n) + (19 * (n-1)) + 0.5m = 47.5n - 18.5
+                        gaps.append((((47.5 * (i-last)) - 18.5) / (event['pace'][last] - event['pace'][i]), i, last))
+                    last = i
+
+            if len(gaps) == 0:
+                break
+
+            gaps.sort(key = lambda x : x[0])
+            (where,up,down) = gaps[0]
+            if where < float(event['distance'])/500.0:
+                move[up] = up-down
+                move[down] = down-up
+                back[up] = down
+                back[down] = up
+                bumped_out.append(up)
+                bumped_out.append(down)
+                tmp = event['pace'][up]
+                event['pace'][up] = event['pace'][down]
+                event['pace'][down] = tmp
+            else:
+                break
+
+        for i in range(len(move)):
+            if move[i] is None:
+                move[i] = 0
+            if back[i] is None:
+                back[i] = i
+
+        event['completed'][d] = [True]
+        if debug:
+            print("Day:%d" % d, event['pace'], event['move'][d], event['back'][d], event['completed'][d])
+
 def process_results(event):
     debug = False
 
@@ -224,7 +288,7 @@ def process_results(event):
         event['back'].append([None] * len(event['crews']))
         event['skip'].append([False] * len(event['crews']))
         event['completed'].append([False] * len(event['div_size'][0]))
-    
+
     all = ""
     for r in event['results']:
         all = all + r
@@ -408,6 +472,14 @@ def process_results(event):
         if debug:
             print("Marking day %d division %d has completed" % (day_num, div_num))
         event['completed'][day_num][div_num] = True
+
+    if move is None and all == "" and len(event['pace']) == len(event['crews']) and len(event['div_size'][day_num]) == 1:
+        generate_results_by_pace(event, debug)
+        move = event['move'][-1]
+        back = event['back'][-1]
+        div_head = 0
+        crew_num = -1
+        day_num = event['days']-1
 
     if move is None:
         return

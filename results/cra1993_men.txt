@@ -4,7 +4,7 @@ Gender,Men
 Year,1993
 
 Division,R,N,Ci,N2,Ca,R2,Ci2,F,N3,Ca2,Ci3,Ca3,R3,N4,Red Lion Toft,F2,Lady Somerset
-Division,N5,Maximum Entropy,SI,F3,R4,Ci4,Ca4,Cavendish Lab,Trinity Hall,Pineapple Chunks,Mott Macdonald,F4,Univ Sports,R5,Maximum Entropy 2,N6,Ca5,Touche Ross
+Division,N5,Maximum Entropy,SI,F3,R4,Ci4,Ca4,Cavendish Lab,Trinity Hall,Pineapple Chunks,Mott MacDonald,F4,Univ Sports,R5,Maximum Entropy 2,N6,Ca5,Touche Ross
 Division,F5,N7,Bullard Lab,Cam Consultants,F6,Ca6,Cam Cable,F7,R6,N8,F8,Ca7,Ca8,N9,Marshalls,Red Lion Toft 2,F9,Ca9,Ca10,Ca11
 
 Results

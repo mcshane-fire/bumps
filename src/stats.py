@@ -1,3 +1,29 @@
+club_mapping = {
+    "1st Trinity" : "1st and 3rd",
+    "1st and 3rd" : "1st and 3rd",
+    "2nd St. John's" : "LMBC",
+    "2nd Trinity" : "1st and 3rd",
+    "3rd St. John's" : "LMBC",
+    "3rd Trinity" : "1st and 3rd",
+    "Anglia Ruskin" : "Anglia Ruskin",
+    "CCAT" : "Anglia Ruskin",
+    "New Hall" : "Murray Edwards",
+    "QMABC" : "King's",
+    "St. John's" : "LMBC",
+    "St. John's 'Tally-Ho'" : "LMBC",
+    "St. John's Argo" : "LMBC",
+    "St. John's Corsair" : "LMBC",
+    "Trinity Eton" : "1st and 3rd",
+    "Trinity King Edward" : "1st and 3rd",
+    "Trinity Monarch" : "1st and 3rd",
+    "Trinity Tobacco Pipes and Punch Bowls" : "1st and 3rd",
+    "Trinity Westminster" : "1st and 3rd",
+    "Trinty Nautilus" : "1st and 3rd",
+    "Cantabs College" : "Cantabs",
+    "Cantabs Rugby" : "Cantabs",
+    "Macdonalds" : "MacDonalds",
+    "Old Cantabs" : "Cantabs"}
+
 def addn(d, k, n, label = None):
     if k in d:
         d[k]['total'] += n
@@ -7,7 +33,7 @@ def addn(d, k, n, label = None):
     if label is not None:
         d[k]['labels'].append(label)
 
-def get_stats(event, stats):
+def get_stats(event, stats, combine = False):
     if 'set' not in stats:
         stats['set'] = event['set']
     if 'years' not in stats:
@@ -55,14 +81,19 @@ def get_stats(event, stats):
     for num in range(len(event['crews'])):
         pos = num
         crew = event['crews'][num]
-        if len(crew['club']) == 0:
+
+        club_name = crew['club']
+        if combine and club_name in club_mapping:
+            club_name = club_mapping[club_name]
+
+        if len(club_name) == 0:
             continue
-        if crew['club'] not in stats['club']:
-            stats['club'][crew['club']] = {'day' : {}, 'set' : {}, 'blades' : [], 'crews' : {}, 'headships' : {}, 'highest' : {}, 'years' : [], 'points' : 0, 'count' : 0}
-            stats['club'][crew['club']]['safename'] = ''.join(ch for ch in crew['club'] if ch.isalnum())
-            addn(stats['club'][crew['club']], 'withdrew', 0)
-        club = stats['club'][crew['club']]
-        addn(club_count, crew['club'], 1)
+        if club_name not in stats['club']:
+            stats['club'][club_name] = {'day' : {}, 'set' : {}, 'blades' : [], 'crews' : {}, 'headships' : {}, 'highest' : {}, 'years' : [], 'points' : 0, 'count' : 0}
+            stats['club'][club_name]['safename'] = ''.join(ch for ch in club_name if ch.isalnum())
+            addn(stats['club'][club_name], 'withdrew', 0)
+        club = stats['club'][club_name]
+        addn(club_count, club_name, 1)
         club['count'] += 1
         if event['year'] not in club['years']:
             club['years'].append(event['year'])
@@ -70,7 +101,7 @@ def get_stats(event, stats):
 
         gained = 0
         for day in range(event['days']):
-            crec = {'club' : crew['club'], 'number' : crew['number'], 'gender' : event['gender'], 'day' : day, 'year' : event['year']}
+            crec = {'club' : club_name, 'number' : crew['number'], 'gender' : event['gender'], 'day' : day, 'year' : event['year']}
             m = event['move'][day][pos]
             if m == None:
                 addn(sall, 'withdrew', 1, crec)
@@ -120,11 +151,11 @@ def get_stats(event, stats):
                 # if the division didn't race, then just skip this code, but don't reset any current run
                 if div_raced:
                     if crew['number'] not in club['highest']:
-                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : event['year']}
+                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
                     else:
                         rec = club['highest'][crew['number']]
                         if pos < rec['high']:
-                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'end' : event['year']}
+                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
                         elif pos == rec['high']:
                             rec['days'] += 1
                             rec['run'] += 1
@@ -138,14 +169,14 @@ def get_stats(event, stats):
                 if crew['number'] in club['highest']:
                     club['highest'][crew['number']]['run'] = 0
 
-        crec = {'club' : crew['club'], 'number' : crew['number'], 'gender' : event['gender'], 'year' : event['year']}
+        crec = {'club' : club_name, 'number' : crew['number'], 'gender' : event['gender'], 'year' : event['year']}
         addn(sall['set'], gained, 1, crec)
         addn(club['set'], gained, 1, crec)
 
         if crew['number'] not in headships:
-            headships[crew['number']] = {'club' : crew['club'], 'num' : pos}
+            headships[crew['number']] = {'club' : club_name, 'num' : pos}
         elif pos < headships[crew['number']]['num']:
-            headships[crew['number']]['club'] = crew['club']
+            headships[crew['number']]['club'] = club_name
             headships[crew['number']]['num'] = pos
 
         if crew['blades']:
@@ -158,6 +189,7 @@ def get_stats(event, stats):
         addn(sall['clubs'], club_count[club]['total'], 1, {'club' : club, 'year' : event['year'], 'gender' : event['gender']})
 
     if 'skip_headship' not in event['flags']:
+        erec['year'] = erec['year'].split(" ")[0]
         for num in headships:
             addn(stats['club'][headships[num]['club']]['headships'], num, 1, erec)
 
@@ -369,7 +401,7 @@ def html_stats(stats, initial_tab = None, initial_rank = None):
         print("<table>\n<tr><th>Crew<th>Highest position<th>Total days<th>Longest run")
         for num in sorted(cs['highest'].keys()):
             n = cs['highest'][num]
-            print("<tr><td>%s<td>%d<td>%d<td>%d days to %s" % (num, n['high']+1, n['days'], n['longest'], n['end']))
+            print("<tr><td>%s<td>%d<td>%d<td>%d days from %s to %s" % (num, n['high']+1, n['days'], n['longest'], n['start'], n['end']))
         print("</table>")
         print_s(conf, cs, club)
         print("</div>")
