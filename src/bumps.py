@@ -242,7 +242,7 @@ def generate_results_by_pace(event, debug = False):
                         # 1 place to make up: 28.5m + 0.5m = 29m
                         # 3 places to make up: (28.5m * 3) + (19 * 2) + 0.5m = 124m
                         # n places to make up: (28.5m * n) + (19 * (n-1)) + 0.5m = 47.5n - 18.5
-                        gaps.append((((47.5 * (i-last)) - 18.5) / (event['pace'][last] - event['pace'][i]), i, last))
+                        gaps.append((((47.5 * (i-last)) - 18.5) * event['pace'][i] / (event['pace'][last] - event['pace'][i]), i, last))
                     last = i
 
             if len(gaps) == 0:
@@ -250,7 +250,7 @@ def generate_results_by_pace(event, debug = False):
 
             gaps.sort(key = lambda x : x[0])
             (where,up,down) = gaps[0]
-            if where < float(event['distance'])/500.0:
+            if where < event['distance']:
                 move[up] = up-down
                 move[down] = down-up
                 back[up] = down
