@@ -487,11 +487,11 @@ def process_results(event):
     if check_results(event, move, back, div_head, debug) == False:
         return
 
-    full_set = False
+    event['full_set'] = False
     if day_num == event['days']-1 and crew_num == -1:
         if debug:
             print("Completed all divisions & days")
-        full_set = True
+        event['full_set'] = True
 
     # work out finishing names and blades, etc
     for crew_num in range(len(event['crews'])):
@@ -526,7 +526,7 @@ def process_results(event):
 
         if finished:
             # award headship blades to the top crew if we've completed all the racing
-            if nc == 0 and full_set == True and 'skip_headship' not in event['flags']:
+            if nc == 0 and event['full_set'] == True and 'skip_headship' not in event['flags']:
                 blades = True
         else:
             blades = False

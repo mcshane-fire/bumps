@@ -1,3 +1,5 @@
+import pprint
+
 club_mapping = {
     "1st Trinity" : "1st and 3rd",
     "1st and 3rd" : "1st and 3rd",
@@ -34,6 +36,11 @@ def addn(d, k, n, label = None):
         d[k]['labels'].append(label)
 
 def get_stats(event, stats, combine = False):
+
+    if event['full_set'] == False:
+        print("Ignoring set as not complete: %s, %s, %s" % (event['set'], event['year'], event['gender']))
+        return
+
     if 'set' not in stats:
         stats['set'] = event['set']
     if 'years' not in stats:
@@ -70,7 +77,6 @@ def get_stats(event, stats, combine = False):
         virtual = []
         for num in range(len(event['crews'])-skip):
             if event['move'][day][num] is None:
-                #print("Day %d crew %d withdraws" % (day, num))
                 withdrawn.append(num)
                 skip += 1
             if event['skip'][day][num] is True:
@@ -344,6 +350,11 @@ def output_span(stats, years):
         return "%sacross %d years: %s to %s</h3>" % (desc, len(uniq), uniq[0], uniq[-1])
 
 def html_stats(stats, initial_tab = None, initial_rank = None):
+
+    if 'set' not in stats:
+        print("No stats available, need at least one completed set of bumps results.")
+        return
+
     conf = {'years' : False, 'genders' : False}
     if len(stats['years']) > 1:
         conf['years'] = True
