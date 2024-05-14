@@ -559,17 +559,18 @@ def step_on(event):
     del event['completed']
     del event['skip']
     event['results'] = []
-        
-def write_file(event, name):
-    output = open(name, "w")
-    output.write("Set,%s\n" % event['set'])
-    output.write("Short,%s\n" % event['short'])
-    output.write("Gender,%s\n" % event['gender'])
-    output.write("Year,%s\n" % event['year'])
-    if event['days'] != 4:
-        output.write("Days,%s\n" % event['days'])
 
-    output.write("\n")
+def write_string(event):
+    out = ""
+
+    out += "Set,%s\n" % event['set']
+    out += "Short,%s\n" % event['short']
+    out += "Gender,%s\n" % event['gender']
+    out += "Year,%s\n" % event['year']
+    if event['days'] != 4:
+        out += "Days,%s\n" % event['days']
+
+    out += "\n"
 
     abbrev = {}
     if event['set'] in abbreviations.sets:
@@ -577,7 +578,7 @@ def write_file(event, name):
 
     crew_num = 0
     for div_size in event['div_size'][-1]:
-        output.write("Division")
+        out += "Division"
         for i in range(div_size):
             crew = event['crews'][crew_num+i]
             found = False
@@ -586,21 +587,26 @@ def write_file(event, name):
                     fin = p
                     if crew['number'] > 1:
                         fin += str(crew['number'])
-                    output.write(",%s" % fin)
+                    out += ",%s" % fin
                     found = True
                     break
             if not found:
                 if crew['number'] == 1:
-                    output.write(",%s" % crew['club'])
+                    out += ",%s" % crew['club']
                 else:
-                    output.write(",%s %s" % (crew['club'], crew['number']))
-        output.write("\n")
+                    out += ",%s %s" % (crew['club'], crew['number'])
+        out += "\n"
         crew_num += div_size
         
-    output.write("\n")
+    out += "\n"
+    out += "Results\n"
     if len(event['results']) > 0:
-        output.write("Results\n")
         for i in event['results']:
-            output.write("  %s\n" % i)
+            out += "  %s\n" % i
 
+    return out
+
+def write_file(event, name):
+    output = open(name, "w")
+    output.write(write_string(event))
     output.close()

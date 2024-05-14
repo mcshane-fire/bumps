@@ -44,12 +44,13 @@ if fullpage:
         for g in ['Men', 'Women']:
             if g in results.results[set]:
                 for year in results.results[set][g]:
-                    extra = ""
-                    if p is not None and p[0] == set and p[1] == g and p[2] == year:
-                        extra = "selected"
-                    print("<option %s value=\"%s,%s,%s\">%s %s: %s</option>" % (extra, set, g, year, set, g, year))
+                    if 'split' not in results.results[set] or year not in results.results[set]['split']:
+                        extra = ""
+                        if p is not None and p[0] == set and p[1] == g and p[2] == year:
+                            extra = "selected"
+                        print("<option %s value=\"%s,%s,%s\">%s %s: %s</option>" % (extra, set, g, year, set, g, year))
 
-    print("""</select><input type="submit" value="Populate with archive chart"></form>
+    print("""</select><input type="submit" value="Populate with archive chart"><input type="submit" name="submit" value="Populate with the next year"</select></form>
 
 <form id="form" action="create.py" method="post">
 <textarea rows="20" cols="100" name="text" id="textid">""")
@@ -59,18 +60,28 @@ if 'text' in data:
     if fullpage:
         print(manual)
 
+set = None
+
 if 'populate' in data:
     p = data['populate'].value.split(",")
     if p[0] in results.results and p[1] in results.results[p[0]] and p[2] in results.results[p[0]][p[1]]:
         try:
             file = "/home/mcshane/src/bumps/results/%s%s_%s.txt" % (p[0].lower(), p[2], p[1].lower())
             if fullpage:
-                fp = open(file)
-                for line in fp:
-                    print(line.strip())
-                fp.close()
+                if 'submit' in data and data['submit'].value == 'Populate with the next year':
+                    set = bumps.read_file(file)
+                    bumps.process_results(set)
+                    bumps.step_on(set)
+                    print(bumps.write_string(set))
+                    file = None
+                else:
+                    fp = open(file)
+                    for line in fp:
+                        print(line.strip())
+                    fp.close()
         except:
             file = None
+            set = None
 
 if fullpage:
     print("""</textarea><p>
@@ -83,7 +94,6 @@ if fullpage:
 
 svg_config = {'scale' : 16, 'sep' : 32, 'dash' : 6, 'colours' : False}
 
-set = None
 if file is not None:
     set = bumps.read_file(file)
 elif manual is not None:
