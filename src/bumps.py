@@ -558,6 +558,7 @@ def step_on(event):
     del event['move']
     del event['completed']
     del event['skip']
+    del event['full_set']
     event['results'] = []
 
 def write_string(event):
