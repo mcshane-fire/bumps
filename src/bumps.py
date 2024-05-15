@@ -563,7 +563,7 @@ def step_on(event):
         clubs[c['club']] += 1
 
         if c['number'] < len(abbreviations.roman):
-            c['num_name'] = "%s %s" % (c['club'], abbreviations.roman[c['number']])
+            c['num_name'] = "%s %s" % (c['club'], abbreviations.roman[c['number']-1])
         else:
             c['num_name'] = "%s %s" % (c['club'], c['number'])
 
