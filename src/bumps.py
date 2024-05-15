@@ -544,11 +544,34 @@ def step_on(event):
         if crew['gain'] is not None:
             ep = i - crew['gain']
             if newlist[ep] is None:
-                crew['gain'] = 0
+                crew['gain'] = None
                 crew['blades'] = False
+                crew['highlight'] = False
+                crew['withdrawn'] = False
+                crew['end'] = None
                 newlist[ep] = crew
 
     event['crews'] = newlist
+
+    # reorder crews from the same club in order
+    clubs = {}
+    for c in event['crews']:
+        if c['club'] not in clubs:
+            clubs[c['club']] = 1
+
+        c['number'] = clubs[c['club']]
+        clubs[c['club']] += 1
+
+        if c['number'] < len(abbreviations.roman):
+            c['num_name'] = "%s %s" % (c['club'], abbreviations.roman[c['number']])
+        else:
+            c['num_name'] = "%s %s" % (c['club'], c['number'])
+
+        if c['number'] > 1:
+            c['start'] = c['num_name']
+        else:
+            c['start'] = c['club']
+
     try:
         year = int(event['year'])
         event['year'] = str(year+1)
