@@ -304,14 +304,16 @@ def draw_join(svg_config, out, xoff, yoff, event, event2, joint_year):
 
 
     return ynext
-    
 
 def draw_chart(out, event, svg_config, xoffset):
     # leave space for division titles down the left hand side
     left = xoffset + svg_config['scale'] * 2
 
     tleft = estimate_max_length(event['crews'], 'start', 0.8) + svg_config['scale']
-    tright = estimate_max_length(event['crews'], 'end', 0.8) + svg_config['scale']
+    if 'full_set' in event:
+        tright = estimate_max_length(event['crews'], 'end', 0.8) + svg_config['scale']
+    else:
+        tright = svg_config['scale']
 
     draw_stripes(svg_config, out, left, 0, tleft + tright + (svg_config['scale'] * event['days']), left+tleft, event)
     draw_numbers(svg_config, out, left+3, 0, event, 'start', True)
@@ -321,7 +323,8 @@ def draw_chart(out, event, svg_config, xoffset):
     draw_extra_text(svg_config, out, left, 0, event, 'both')
 
     draw_crews(svg_config, out, left + tleft-3, 0, event, 0, 'end')
-    draw_crews(svg_config, out, left + tleft + (svg_config['scale'] * event['days']) + 3, 0, event, 1, 'start')
+    if 'full_set' in event:
+        draw_crews(svg_config, out, left + tleft + (svg_config['scale'] * event['days']) + 3, 0, event, 1, 'start')
 
     h = draw_divisions(svg_config, out, left + tleft, 0, event, tleft, tright, draw_colours = svg_config['colours'])
 
