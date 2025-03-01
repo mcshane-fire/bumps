@@ -1,0 +1,16 @@
+Set,Torpids
+Short,Torpids
+Gender,Men
+Year,2025
+
+Division-1a,Ch,Wf,O,P,U,K
+Division-1b,B,Mt,SC,N,Wh,H
+Division-2a,SE,Mg,LM,J,E,SHu
+Division-2b,Lc,Q,Br,L,T,SP
+Division-3a,SJ,Wt,S,GT,Mf,Wh2
+Division-3b,Wf2,Co,P2,SAt,SHi,O2,U2
+
+Results
+rw2ur uuru e2re1e-3ur w2e2re1e-3 w4rr rrrw3
+rrw2u rw2e2re-2 rrurrr e2re1e-3w2 uuru rrurrr
+rrrw2r w4rr rrruu e2re1e1e-4u ruw2r rrrrrrr
