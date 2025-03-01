@@ -150,19 +150,19 @@ def draw_extra_text(svg_config, out, xoff, yoff, event, extra):
         colour = 'darkred'
         height = event['div_size'][0][div_num] * svg_config['scale']
 
-        label = "%s %s - %s, Division %d" % (event['short'], event['year'], event['gender'], div_num+1)
+        label = "%s %s - %s, Division %s" % (event['short'], event['year'], event['gender'], event['div_name'][div_num])
         if estimate_text_length(label, fontscale) > height - svg_config['scale']:
-            label = "%s %s - %s, Div %d" % (event['short'], event['year'], event['gender'], div_num+1)
+            label = "%s %s - %s, Div %s" % (event['short'], event['year'], event['gender'], event['div_name'][div_num])
             if estimate_text_length(label, fontscale) > height - svg_config['scale']:
-                label = "%s %s,%s%s" % (event['short'], event['year'], event['gender'][0], div_num+1)
+                label = "%s %s,%s%s" % (event['short'], event['year'], event['gender'][0], event['div_name'][div_num])
                 if estimate_text_length(label, fontscale) > height - svg_config['scale']:
-                    label = "%s%s, %s%s" % (event['short'][0], event['year'], event['gender'][0], div_num+1)
+                    label = "%s%s, %s%s" % (event['short'][0], event['year'], event['gender'][0], event['div_name'][div_num])
                     if estimate_text_length(label, fontscale) > height - svg_config['scale']:
-                        label = "Division %d" % (div_num+1)
+                        label = "Division %s" % (event['div_name'][div_num])
                         if estimate_text_length(label, fontscale) > height - svg_config['scale']:
-                            label = "Div %d" % (div_num+1)
+                            label = "Div %s" % (event['div_name'][div_num])
                             if estimate_text_length(label, fontscale) > height - svg_config['scale']:
-                                label = "%d" % (div_num+1)
+                                label = "%s" % (event['div_name'][div_num])
                                 if estimate_text_length(label, fontscale) > height - svg_config['scale']:
                                     label = None
 

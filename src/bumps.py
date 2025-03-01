@@ -89,6 +89,7 @@ def read_file(name, highlight = None, data = None):
     ret['flags'] = []
     ret['crews'] = []
     ret['div_size'] = None
+    ret['div_name'] = []
     ret['results'] = []
     ret['pace'] = []
 
@@ -115,13 +116,17 @@ def read_file(name, highlight = None, data = None):
             ret['distance'] = int(p[1])
         elif p[0] == "Flags":
             ret['flags'] += p[1:]
-        elif p[0] == "Division":
+        elif p[0] == "Division" or (p[0].startswith("Division-") and len(p[0]) > len("Division-")):
             if ret['div_size'] is None:
                 ret['div_size'] = []
                 for d in range(ret['days']):
                     ret['div_size'].append([])
             for d in ret['div_size']:
                 d.append(len(p)-1)
+            if p[0] == "Division":
+                ret['div_name'].append("%d" % len(ret['div_size'][-1]))
+            else:
+                ret['div_name'].append(p[0][len("Division-"):])
             if len(p) > 1:
                 for i in p[1:]:
                     if add_crew(crew_state, ret['crews'], i, abbrev) == False:
@@ -154,7 +159,7 @@ def read_file(name, highlight = None, data = None):
         for crew in ret['crews']:
             if crew['start'].startswith(highlight):
                 crew['highlight'] = True
-                    
+
     return ret
 
 def swap_crews(move, back, pos_a, pos_b):
