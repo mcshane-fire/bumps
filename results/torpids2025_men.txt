@@ -13,4 +13,5 @@ Division-3b,Wf2,Co,P2,SAt,SHi,O2,U2
 Results
 rw2ur uuru e2re1e-3ur w2e2re1e-3 w4rr rrrw3
 rrw2u rw2e2re-2 rrurrr e2re1e-3w2 uuru rrurrr
-rrrw2r w4rr rrruu e2re1e1e-4u ruw2r rrrrrrr
+rrrw2r w4rr rrruu e2re1e1e-4u ruw2r rt
+rrrrw2 uw2rr rrrrur rrrurr rrrrur rt
