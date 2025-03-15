@@ -157,16 +157,19 @@ def get_stats(event, stats, combine = False):
                 # if the division didn't race, then just skip this code, but don't reset any current run
                 if div_raced:
                     if crew['number'] not in club['highest']:
-                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
+                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'run_start' : event['year'], 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
                     else:
                         rec = club['highest'][crew['number']]
                         if pos < rec['high']:
-                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
+                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'run_start' : event['year'], 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
                         elif pos == rec['high']:
+                            if rec['run'] == 0:
+                                rec['run_start'] = event['year']
                             rec['days'] += 1
                             rec['run'] += 1
                             if rec['run'] > rec['longest']:
                                 rec['longest'] = rec['run']
+                                rec['start'] = rec['run_start']
                                 rec['end'] = event['year']
                         else:
                             rec['run'] = 0
