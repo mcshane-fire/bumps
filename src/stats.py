@@ -415,7 +415,9 @@ def html_stats(stats, initial_tab = None, initial_rank = None):
         print("<table>\n<tr><th>Crew<th>Highest position<th>Total days<th>Longest run")
         for num in sorted(cs['highest'].keys()):
             n = cs['highest'][num]
-            print("<tr><td>%s<td>%d<td>%d<td>%d days from %s to %s" % (num, n['high']+1, n['days'], n['longest'], n['start'], n['end']))
+            run = "%s %s" % (n['longest'], 'day' if n['longest'] == 1 else 'days')
+            span = "from %s to %s" % (n['start'], n['end']) if n['start'] != n['end'] else "in %s" % n['start']
+            print("<tr><td>%s<td>%d<td>%d<td>%s %s" % (num, n['high']+1, n['days'], run, span))
         print("</table>")
         print_s(conf, cs, club)
         print("</div>")
