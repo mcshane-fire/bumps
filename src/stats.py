@@ -157,16 +157,19 @@ def get_stats(event, stats, combine = False):
                 # if the division didn't race, then just skip this code, but don't reset any current run
                 if div_raced:
                     if crew['number'] not in club['highest']:
-                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
+                        club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'run_start' : event['year'], 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
                     else:
                         rec = club['highest'][crew['number']]
                         if pos < rec['high']:
-                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
+                            club['highest'][crew['number']] = {'high' : pos, 'days' : 1, 'run' : 1, 'run_start' : event['year'], 'longest' : 1, 'start' : event['year'], 'end' : event['year']}
                         elif pos == rec['high']:
+                            if rec['run'] == 0:
+                                rec['run_start'] = event['year']
                             rec['days'] += 1
                             rec['run'] += 1
                             if rec['run'] > rec['longest']:
                                 rec['longest'] = rec['run']
+                                rec['start'] = rec['run_start']
                                 rec['end'] = event['year']
                         else:
                             rec['run'] = 0
@@ -412,7 +415,9 @@ def html_stats(stats, initial_tab = None, initial_rank = None):
         print("<table>\n<tr><th>Crew<th>Highest position<th>Total days<th>Longest run")
         for num in sorted(cs['highest'].keys()):
             n = cs['highest'][num]
-            print("<tr><td>%s<td>%d<td>%d<td>%d days from %s to %s" % (num, n['high']+1, n['days'], n['longest'], n['start'], n['end']))
+            run = "%s %s" % (n['longest'], 'day' if n['longest'] == 1 else 'days')
+            span = "from %s to %s" % (n['start'], n['end']) if n['start'] != n['end'] else "in %s" % n['start']
+            print("<tr><td>%s<td>%d<td>%d<td>%s %s" % (num, n['high']+1, n['days'], run, span))
         print("</table>")
         print_s(conf, cs, club)
         print("</div>")
